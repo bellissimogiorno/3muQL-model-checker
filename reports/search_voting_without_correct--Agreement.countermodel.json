@@ -1,0 +1,84 @@
+{
+  "schema": "muql-countermodel-v1",
+  "theory": "Voting",
+  "scope": {
+    "points": [
+      "p0",
+      "p1"
+    ],
+    "quorums": [
+      [
+        "p0",
+        "p1"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "unit"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "property": "Agreement",
+  "failure": {
+    "time": 0,
+    "point": "p0",
+    "quorum": [
+      "p0",
+      "p1"
+    ],
+    "value": "f"
+  },
+  "valuation": [
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "p0",
+      "args": [],
+      "value": "b"
+    },
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "p1",
+      "args": [],
+      "value": "b"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "p0",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "p1",
+      "args": [],
+      "value": "t"
+    }
+  ],
+  "axiom_values": {
+    "Intersection": [
+      "t"
+    ],
+    "ObserveBack": [
+      "b",
+      "t"
+    ],
+    "ObserveNotBack": [
+      "b",
+      "t"
+    ],
+    "ObserveForward": [
+      "b",
+      "t"
+    ],
+    "ObserveNotForward": [
+      "b",
+      "t"
+    ]
+  },
+  "replayed": true
+}

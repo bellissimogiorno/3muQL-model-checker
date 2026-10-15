@@ -1,0 +1,747 @@
+{
+  "schema": "muql-report-v1",
+  "status": "checked",
+  "theory": "Bracha Broadcast",
+  "scope": {
+    "points": [
+      "alice",
+      "bob",
+      "carol",
+      "dave"
+    ],
+    "quorums": [
+      [
+        "alice",
+        "bob",
+        "carol"
+      ],
+      [
+        "alice",
+        "bob",
+        "dave"
+      ],
+      [
+        "alice",
+        "carol",
+        "dave"
+      ],
+      [
+        "bob",
+        "carol",
+        "dave"
+      ],
+      [
+        "alice",
+        "bob",
+        "carol",
+        "dave"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "red",
+      "blue"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "reason": "",
+  "properties": [
+    {
+      "name": "BrConsistency",
+      "status": "counterexample",
+      "reason": "",
+      "countermodel": {
+        "schema": "muql-countermodel-v1",
+        "theory": "Bracha Broadcast",
+        "scope": {
+          "points": [
+            "alice",
+            "bob",
+            "carol",
+            "dave"
+          ],
+          "quorums": [
+            [
+              "alice",
+              "bob",
+              "carol"
+            ],
+            [
+              "alice",
+              "bob",
+              "dave"
+            ],
+            [
+              "alice",
+              "carol",
+              "dave"
+            ],
+            [
+              "bob",
+              "carol",
+              "dave"
+            ],
+            [
+              "alice",
+              "bob",
+              "carol",
+              "dave"
+            ]
+          ],
+          "stages": 1,
+          "time": "finite",
+          "values": [
+            "red",
+            "blue"
+          ],
+          "claim": "finite-scope validity; no unbounded or natural-time proof"
+        },
+        "property": "BrConsistency",
+        "failure": {
+          "time": 0,
+          "point": "alice",
+          "quorum": [
+            "alice",
+            "bob",
+            "carol"
+          ],
+          "value": "f"
+        },
+        "valuation": [
+          {
+            "predicate": "bcst",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "red"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "bcst",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "blue"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "bcst",
+            "time": 0,
+            "point": "bob",
+            "args": [
+              "red"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "bcst",
+            "time": 0,
+            "point": "bob",
+            "args": [
+              "blue"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "bcst",
+            "time": 0,
+            "point": "carol",
+            "args": [
+              "red"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "bcst",
+            "time": 0,
+            "point": "carol",
+            "args": [
+              "blue"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "bcst",
+            "time": 0,
+            "point": "dave",
+            "args": [
+              "red"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "bcst",
+            "time": 0,
+            "point": "dave",
+            "args": [
+              "blue"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "echo",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "red"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "echo",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "blue"
+            ],
+            "value": "f"
+          },
+          {
+            "predicate": "echo",
+            "time": 0,
+            "point": "bob",
+            "args": [
+              "red"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "echo",
+            "time": 0,
+            "point": "bob",
+            "args": [
+              "blue"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "echo",
+            "time": 0,
+            "point": "carol",
+            "args": [
+              "red"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "echo",
+            "time": 0,
+            "point": "carol",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "echo",
+            "time": 0,
+            "point": "dave",
+            "args": [
+              "red"
+            ],
+            "value": "f"
+          },
+          {
+            "predicate": "echo",
+            "time": 0,
+            "point": "dave",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "ready",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "red"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "ready",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "ready",
+            "time": 0,
+            "point": "bob",
+            "args": [
+              "red"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "ready",
+            "time": 0,
+            "point": "bob",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "ready",
+            "time": 0,
+            "point": "carol",
+            "args": [
+              "red"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "ready",
+            "time": 0,
+            "point": "carol",
+            "args": [
+              "blue"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "ready",
+            "time": 0,
+            "point": "dave",
+            "args": [
+              "red"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "ready",
+            "time": 0,
+            "point": "dave",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "dlvr",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "red"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "dlvr",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "blue"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "dlvr",
+            "time": 0,
+            "point": "bob",
+            "args": [
+              "red"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "dlvr",
+            "time": 0,
+            "point": "bob",
+            "args": [
+              "blue"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "dlvr",
+            "time": 0,
+            "point": "carol",
+            "args": [
+              "red"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "dlvr",
+            "time": 0,
+            "point": "carol",
+            "args": [
+              "blue"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "dlvr",
+            "time": 0,
+            "point": "dave",
+            "args": [
+              "red"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "dlvr",
+            "time": 0,
+            "point": "dave",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          }
+        ],
+        "axiom_values": {
+          "Intersection": [
+            "t"
+          ],
+          "BrDeliverBack": [
+            "t"
+          ],
+          "BrReadyBack": [
+            "b"
+          ],
+          "BrEchoBack": [
+            "b"
+          ],
+          "BrBroadcastUnique": [
+            "b"
+          ],
+          "BrDeliverForward": [
+            "b",
+            "t"
+          ],
+          "BrReadyForward": [
+            "b",
+            "t"
+          ],
+          "BrEchoForward": [
+            "b",
+            "t"
+          ],
+          "BrReadyRelay": [
+            "b",
+            "t"
+          ],
+          "BrCorrect": [
+            "t"
+          ],
+          "BrReadyUniform": [
+            "t"
+          ],
+          "BrEchoUniform": [
+            "t"
+          ],
+          "BrBroadcastUniform": [
+            "t"
+          ]
+        },
+        "replayed": true
+      }
+    }
+  ],
+  "consistency_model": [
+    {
+      "predicate": "bcst",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "bcst",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "bcst",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "bcst",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "bcst",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "bcst",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "bcst",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "red"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "bcst",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "red"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "echo",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "red"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "echo",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "red"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "echo",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "blue"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "echo",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "red"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "echo",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "ready",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "red"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "ready",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "blue"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "ready",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "red"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "ready",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "ready",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "red"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "ready",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "ready",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "red"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "ready",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "dlvr",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "red"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "dlvr",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "dlvr",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "red"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "dlvr",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "dlvr",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "red"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "dlvr",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "dlvr",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "red"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "dlvr",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    }
+  ],
+  "stats": {
+    "seconds": 0.057445,
+    "backend": "builtin",
+    "decisions": 154,
+    "variables": 451,
+    "clauses": 1647
+  }
+}

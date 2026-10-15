@@ -1,0 +1,273 @@
+$ node tests/browser/highlight.mjs
+✔ preserves source exactly, including whitespace, line endings and unfinished input (2.298418ms)
+✔ highlights Markdown without interpreting embedded HTML (0.413582ms)
+✔ recognises declared names and every declaration keyword (0.289626ms)
+✔ recognises Unicode and ASCII logic, including unique and affine existence (1.452395ms)
+✔ superscript quorum Q is one operator and preserves literal source and spacing (0.470248ms)
+✔ recognises builtins, temporal operators and truth constants as whole words (0.537749ms)
+✔ does not colour rejected => as a valid logic operator (0.129725ms)
+✔ comments and escaped quoted values take precedence over operators (0.205509ms)
+✔ only exact lowercase muql fences activate logic highlighting (0.328284ms)
+✔ fences close only with matching characters, sufficient length and no info (0.474234ms)
+✔ escapes hostile text in every highlighting context (0.460794ms)
+✔ preserves all shipped theories and highlights their executable declarations (14.438499ms)
+✔ handles long lines and incomplete delimiters without runaway scanning (158.351097ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 190.524869
+
+$ node tests/browser/notation.mjs
+✔ all quorum quantifiers raise only Q and retain copyable source text (1.440818ms)
+✔ native superscript Q is copied intact and never raised a second time (0.186531ms)
+✔ quoted values, escaped quotes, comments and unfinished literals remain literal (0.246901ms)
+✔ user text can never introduce HTML elements or attributes (0.240531ms)
+✔ every generated guide formula keeps its exact Unicode and ASCII text (5.288487ms)
+✔ quorum toolbar labels insert the same native superscript Q shown to the reader (0.823549ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12.586897
+
+$ node tests/browser/editor.mjs
+✔ parser positions select whole Unicode characters after supplementary values (1.583192ms)
+✔ parser positions follow every Python splitlines separator and clamp at line ends (0.389576ms)
+✔ mount and typing decorate exact source without changing the native editor (2.871861ms)
+✔ plain-text toggle preserves source, selection and scroll when switched off and on (0.941527ms)
+✔ composition uses native text immediately, then decorates the completed input (0.761385ms)
+✔ forced colours selects native text, including changes while editing (1.718275ms)
+✔ empty, oversized and null-containing input fall back and recover without losing source (0.742257ms)
+✔ dense token input is rejected before oversized decoration reaches the DOM (58.728002ms)
+✔ decoration insertion failure restores native text and can recover on refresh (1.506406ms)
+✔ scroll and both resize paths match the textarea viewport without repainting (1.358433ms)
+✔ rapid input coalesces into one paint of the latest source (1.546477ms)
+✔ an explicit refresh cancels a pending paint and disclosure refreshes programmatic changes (3.314497ms)
+✔ without ResizeObserver the native editor remains available and highlighting is disabled (0.571059ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 83.760985
+
+$ node tests/browser/model-data.mjs
+✔ all shipped witnesses retain every exact atom, cell and failure context (15.036543ms)
+✔ failure quorum matches sets and permits an external failure participant (0.313242ms)
+✔ zero predicates is a complete model without fabricated atoms (0.151568ms)
+✔ atom keys and readable labels distinguish commas, parentheses, quotes and Unicode (0.800484ms)
+✔ finite and stuttering time expose exactly the represented stages (0.232149ms)
+✔ missing cells and wholly omitted argument tuples are flagged, never false (0.489456ms)
+✔ all duplicate cells are unavailable even if their values agree (0.218409ms)
+✔ invalid rows and inconsistent predicate arities produce bounded diagnostics (0.607154ms)
+✔ invalid scope and generators never produce invented quorum diagrams (0.348234ms)
+✔ failure metadata is checked separately from usable valuations (0.449756ms)
+✔ index snapshots do not retain mutable model arrays or valuation rows (0.170407ms)
+✔ huge advertised domains are diagnosed without Cartesian allocation (13.826242ms)
+✔ invalid model containers and absent lookups are safely unavailable (0.470618ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 40.30561
+
+$ node tests/browser/model-svg.mjs
+✔ every saved countermodel produces standalone, inactive, well-formed SVG (567.245011ms)
+✔ XML metacharacters and active-looking names remain inert text (31.300988ms)
+✔ non-XML characters cannot corrupt an SVG download (23.336731ms)
+✔ visible geometry stays inside the declared canvas at mobile and desktop widths (128.448658ms)
+✔ outside-quorum failure retains its participant and never invents membership (26.178636ms)
+✔ failure highlight requires its recorded stage and quorum, independently of selected atom (207.19844ms)
+✔ truth labels follow atomic data and do not change when quorum changes (75.514062ms)
+✔ an empty atomic signature still draws the frame and recorded failure (28.231981ms)
+✔ a missing atomic cell is visibly unavailable, never silently false (22.737989ms)
+✔ participant pagination states its exact extent and keeps global membership indices (130.575163ms)
+✔ models with no recorded failure never acquire a failure marker (23.696672ms)
+✔ invalid selections are rejected rather than depicting a different model context (0.983149ms)
+✔ standalone descriptions preserve temporal horizon and the finite or stuttering boundary (101.286193ms)
+✔ enlarged text scales physical SVG dimensions while retaining semantic facts (96.002678ms)
+✔ long CJK and wide Latin participant labels fit their cards while full names remain accessible (104.655807ms)
+✔ long wide-character atom titles wrap within the picture and retain their full description (95.600754ms)
+✔ the default overview makes both conflicting choices visible together (30.36835ms)
+✔ default Paxos diagrams expose all nine atoms, including both decision values (57.697457ms)
+✔ models sharing the first atom still have different visible default assignments (80.791638ms)
+✔ a selected atom remains named inside every participant card (24.085176ms)
+✔ overview atom pagination is bounded and explicitly states each displayed range (88.450877ms)
+✔ overview labels and values change with stage while quorum membership stays separate (84.248975ms)
+✔ overview keeps a failing participant outside the selected quorum visible (28.944798ms)
+✔ overview distinguishes a missing cell from an atom whose value is false (25.653116ms)
+✔ overview escapes hostile and long atom names without losing their complete accessible labels (88.844298ms)
+✔ overview cards keep readable text within their bounds without row overlap (200.031451ms)
+✔ every saved witness overview renders precisely its recorded atom values (613.062787ms)
+✔ the visible quorum set and each participant's membership agree exactly with the selected frame quorum (54.625035ms)
+✔ a paginated diagram names the complete quorum even when every member is on another page (103.28299ms)
+✔ quorum banners bound long visible member lists while preserving every exact name safely (71.769559ms)
+✔ quorum set notation distinguishes punctuation inside a participant name from set separators (21.937876ms)
+✔ quorum banner text and cards do not overlap at narrow widths or enlarged text sizes (177.247673ms)
+✔ a paginated multistage export visibly identifies precisely the selected view (34.893734ms)
+✔ a focused export names its one atom without presenting the current atom page as visible (26.057829ms)
+✔ singleton coverage confirms all available stages and quorums are represented without invented omissions (64.655246ms)
+✔ an empty signature retains view coverage while explaining the absence of atom values (31.335449ms)
+✔ coverage describes selected recorded atoms without claiming incomplete values are complete (30.275575ms)
+✔ coverage and focused labels fit before the quorum banner at narrow and enlarged sizes (380.072377ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3995.02584
+
+$ node tests/browser/model-controller.mjs
+✔ initial diagram uses the recorded failure while including participants outside its quorum (8.908283ms)
+✔ stage and quorum changes update context without inventing property failures (4.145858ms)
+✔ large scopes use a bounded stage input and reject blank or invalid stage edits (6.112346ms)
+✔ atom selection uses structured keys and preserves the recorded context (5.893828ms)
+✔ timeline activation retains focus and pressed state on the replacement stage button (2.620232ms)
+✔ no-predicate frames, axiom models and invalid models have truthful fallback text (3.36316ms)
+✔ missing atomic cells remain unlisted rather than being displayed as false (1.855582ms)
+✔ participant and stage pagination remain bounded in a larger model (17.830245ms)
+✔ atom filtering caps options and retains the selected atom when there is no match (4.713432ms)
+✔ SVG downloads match the displayed atom, stage, quorum and participant page (3.111451ms)
+✔ responsive redraws coalesce and disposal stops observers and pending frames (1.977686ms)
+✔ window resize fallback is removed on disposal when ResizeObserver is unavailable (1.772416ms)
+✔ enlarging text redraws the diagram even when its container width stays fixed (1.850404ms)
+✔ the stage snapshot shows simultaneous true choices and retains focus when selecting an atom (2.554434ms)
+✔ the overview and stage snapshot share twelve-atom pages and retain linked selection (7.1785ms)
+✔ a fresh diagram visibly includes both choices without requiring any atom selection (11.022323ms)
+✔ the default Simpler Paxos overview visibly contains all nine recorded atoms (1.909843ms)
+✔ two models with identical first-atom values visibly differ when later atoms differ (4.333309ms)
+✔ overview stages update all atoms, while an individual atom enables its named time trace (2.970289ms)
+✔ the exact selected quorum is stated before the picture and changes with quorum selection (2.38599ms)
+✔ the quorum summary keeps off-page and hostile member names complete without creating HTML (2.687804ms)
+✔ single-stage or single-quorum controls are disabled independently without disabling meaningful choices (4.078767ms)
+✔ an axiom model uses a neutral context notice, while a recorded counterexample retains its failure notice (3.411743ms)
+✔ whole-model totals stay fixed as the reader changes and pages the current diagram view (57.010058ms)
+✔ the full-model action is optional, direct, and does not reset the current view (3.822251ms)
+✔ one-stage and no-predicate models still separate whole-model scope from their current view (2.566111ms)
+✔ diagram, stage table and time trace each state the distinct portion they display (41.974862ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 218.359542
+
+$ node tests/browser/model-integration.mjs
+✔ closed witnesses defer diagram and exact valuation, then build each only once (3.677624ms)
+✔ initially open witnesses render before insertion and retain the download boundary (1.748982ms)
+✔ opening exact evidence exposes every valuation row through the existing pagination (5.647206ms)
+✔ renderer failure leaves scope and full valuation open and usable (1.130881ms)
+✔ clearing results disposes each built view and detached toggle events cannot recreate it (1.35594ms)
+✔ the full-model action opens only its own complete data and keeps the table lazy (3.707308ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 24.546932
+
+$ node --experimental-vm-modules tests/browser/worker-protocol.cjs
+✔ mock worker: startup is lazy, project-relative, and reused (3.780031ms)
+✔ mock worker: Unicode theory is JSON data and cannot replace the action (1.365255ms)
+✔ mock worker: native solver downloads once, only when selected for a run (1.395179ms)
+✔ mock worker: packageFailure offers built-in retry without silently changing solver (1.598384ms)
+✔ mock worker: probeFailure offers built-in retry without silently changing solver (1.410792ms)
+✔ mock worker: a mismatched release never reaches the bridge (1.11688ms)
+✔ mock worker: an overlapping request is rejected without disrupting startup (2.026879ms)
+✔ mock worker: networkFailure is readable and a later request can retry (1.740529ms)
+✔ mock worker: httpFailure is readable and a later request can retry (1.70166ms)
+✔ mock worker: configFailure is readable and a later request can retry (1.554529ms)
+✔ mock worker: runtimeFailure is readable and a later request can retry (1.331213ms)
+✔ mock worker: parser error location is preserved (1.051582ms)
+✔ mock worker: unexpected bridge failures are sanitized and release the busy guard (1.253836ms)
+✔ mock worker: malformed bridge responses cannot be reported as successes (4.926101ms)
+✔ mock worker: malformed requests do not initialize the runtime (1.687629ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 36.518918
+(node:234) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+$ node tests/browser/app-state.mjs
+✔ startup failures preserve an existing draft when the page is closed (11.93614ms)
+✔ startup locks imports and editing until the first example loads and preserves drafts if interrupted (3.839668ms)
+✔ restored drafts retain source, highlight choice, and inspection settings on close (6.927804ms)
+✔ a first visit begins with the first curated example and does not invent a custom draft (2.460613ms)
+✔ normalized CRLF examples are not incorrectly treated as edits (3.142799ms)
+✔ search bounds stay visible and become disabled only for fixed-frame checks (7.110439ms)
+✔ run requests include size bounds for search and omit them for fixed frames (10.428831ms)
+✔ a fixed-frame draft preserves inactive search bounds across reload and mode changes (13.609097ms)
+✔ a theory without a declared frame explains why fixed-frame checking is unavailable (4.030645ms)
+✔ search retains every named value and its minimum survives mode changes (4.395294ms)
+✔ unsupported named values explain the browser limit without an impossible numeric field (4.855486ms)
+✔ an oversized declared frame can still be used as a smaller-frame search template (6.264106ms)
+✔ scope guidance is rewritten only when its live announcement changes (4.552409ms)
+✔ run summary explains property selection and axiom-only model finding (4.222504ms)
+✔ source edits preserve deliberate property and axiom choices across inspection and reload (14.955824ms)
+✔ reinspection removes obsolete choices while preserving an axiom-model investigation (4.252218ms)
+✔ importing a different theory starts with its own complete selection (7.100343ms)
+✔ hiding or leaving the page flushes the latest edit before the draft debounce (7.910693ms)
+✔ page lifecycle events preserve startup drafts and respect Forget draft (7.341276ms)
+✔ choosing another example loads that theory immediately, before any run (5.362089ms)
+✔ a pending example download cannot run the previous theory under a new selection (3.984475ms)
+✔ cancelling replacement restores the custom selection and preserves the investigation (4.328883ms)
+✔ an example download failure restores the loaded selection and description (7.265913ms)
+✔ edited, imported and restored source cannot masquerade as a bundled example (10.63358ms)
+✔ a preset that removes an axiom identifies the actual theory and omitted assumption (5.685696ms)
+✔ changing an experiment closes old results with their own theory and download controls (6.171516ms)
+✔ numeric input marks results as previous before the field loses focus (8.359128ms)
+✔ property, axiom, mode and source changes each separate previous results from the current experiment (20.581468ms)
+✔ adjusting assumptions clears preset guidance and Reset example restores all defaults (7.631843ms)
+✔ loading or resetting an example restores focus lost when its control was disabled (7.31716ms)
+✔ completing an example load does not take focus from a user who moved elsewhere (8.390134ms)
+✔ Keep exploring follows the tour, ends at the custom section, and excludes custom source (7.606195ms)
+✔ each visit starts at First steps while curated exploration preserves a saved custom draft (10.870356ms)
+✔ both Load theory buttons open the same file picker and are locked while the engine is busy (3.670973ms)
+✔ loading a file can be cancelled without losing current edits or a separate saved draft (6.531838ms)
+✔ Create a theory opens an editable custom starter and returning to the tour preserves it (8.617337ms)
+✔ a saved draft is protected when cancelling creation of a new theory (2.720974ms)
+✔ returning to First steps flushes custom edits before a pending autosave (3.965547ms)
+✔ loading unedited files or a just-downloaded source does not claim there are unsaved edits (6.909337ms)
+✔ undoing every source edit restores the curated example without resetting deliberate settings (6.469324ms)
+✔ undo restores the exact last preset when two curated examples share one source file (3.607187ms)
+✔ explicitly opened or restored custom source never acquires a preset merely by matching its text (6.471158ms)
+✔ undo after reading edited declarations restores original metadata and surviving choices (5.067164ms)
+✔ undo identifies an adjusted preset if a selected property disappeared during custom inspection (4.990329ms)
+✔ saving an edit then undoing it keeps the curated Keep exploring route (5.817604ms)
+✔ custom Save theory downloads the same exact source as the editor button and marks it saved (3.863513ms)
+✔ both custom return controls restore the last curated preset and flush the latest custom draft (11.931773ms)
+✔ cancelling custom Reset preserves source and choices, and a failed reset still preserves the latest draft (9.452463ms)
+✔ stale Run and Continue actions lead to the visible refresh button before native bound validation (9.727708ms)
+✔ refresh guidance stays coherent for axiom-model searches, failed reads, and an empty theory (4.076213ms)
+ℹ tests 50
+ℹ suites 0
+ℹ pass 50
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 360.146344

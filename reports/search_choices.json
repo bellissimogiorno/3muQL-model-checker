@@ -1,0 +1,132 @@
+{
+  "schema": "muql-search-report-v1",
+  "theory": "Correct choices need not be unique",
+  "bounds": {
+    "points": [
+      1,
+      1
+    ],
+    "values": [
+      1,
+      2
+    ],
+    "named_values": [
+      "v0"
+    ],
+    "stages": [
+      1,
+      1
+    ],
+    "max_quorums": 8,
+    "time": "finite",
+    "max_frames": 1000,
+    "timeout": 30.0,
+    "max_decisions": 100000,
+    "max_nodes": 500000,
+    "max_mu_contexts": 8,
+    "frame_class": "all union-closed nonempty quorum families containing the full point set, up to point isomorphism",
+    "claim": "bounded finite-model search; no unbounded or natural-time proof"
+  },
+  "status": "counterexample",
+  "complete": false,
+  "reason": "Found an independently replayed counterexample for every selected property.",
+  "properties": [
+    {
+      "name": "AtMostOne",
+      "status": "counterexample",
+      "reason": "",
+      "countermodel": {
+        "schema": "muql-countermodel-v1",
+        "theory": "Correct choices need not be unique",
+        "scope": {
+          "points": [
+            "p0"
+          ],
+          "quorums": [
+            [
+              "p0"
+            ]
+          ],
+          "stages": 1,
+          "time": "finite",
+          "values": [
+            "v0",
+            "value0"
+          ],
+          "claim": "finite-scope validity; no unbounded or natural-time proof"
+        },
+        "property": "AtMostOne",
+        "failure": {
+          "time": 0,
+          "point": "p0",
+          "quorum": [
+            "p0"
+          ],
+          "value": "f"
+        },
+        "valuation": [
+          {
+            "predicate": "chosen",
+            "time": 0,
+            "point": "p0",
+            "args": [
+              "v0"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "chosen",
+            "time": 0,
+            "point": "p0",
+            "args": [
+              "value0"
+            ],
+            "value": "t"
+          }
+        ],
+        "axiom_values": {
+          "Correct": [
+            "t"
+          ]
+        },
+        "replayed": true
+      }
+    }
+  ],
+  "stats": {
+    "frames": 2,
+    "consistent_frames": 2,
+    "inconsistent_frames": 0,
+    "unknown_frames": 0,
+    "decisions": 3,
+    "solver": "builtin",
+    "seconds": 0.000653
+  },
+  "consistency_scope": {
+    "points": [
+      "p0"
+    ],
+    "quorums": [
+      [
+        "p0"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "v0"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "consistency_model": [
+    {
+      "predicate": "chosen",
+      "time": 0,
+      "point": "p0",
+      "args": [
+        "v0"
+      ],
+      "value": "f"
+    }
+  ]
+}

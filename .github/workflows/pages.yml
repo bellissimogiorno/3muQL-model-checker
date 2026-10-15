@@ -1,0 +1,117 @@
+name: Browser demo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "muql/**"
+      - "web/**"
+      - "examples/**"
+      - "tests/**"
+      - "tools/**"
+      - "docs/**"
+      - "README.md"
+      - "VERSION"
+      - "pyproject.toml"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    timeout-minutes: 20
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check release version
+        run: python tools/check_version.py
+      - name: Run engine and browser bridge tests
+        run: python -m unittest discover -s tests -v
+      - name: Run the search demonstrations
+        run: python demo.py --search-only --brief
+      - name: Build the static site
+        run: python tools/build_site.py --output dist/muql-explorer
+      - name: Set up Node for browser validation
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check worker lifecycle and cancellation protocol
+        run: node --experimental-vm-modules tests/browser/worker-protocol.cjs
+      - name: Check source highlighting and editor fallback
+        run: |
+          node tests/browser/highlight.mjs
+          node tests/browser/notation.mjs
+          node tests/browser/editor.mjs
+          node tests/browser/app-state.mjs
+          node tests/browser/model-data.mjs
+          node tests/browser/model-svg.mjs
+          node tests/browser/model-controller.mjs
+          node tests/browser/model-integration.mjs
+      - name: Install the browser test tools
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Check model diagrams in the browser
+        run: node tests/browser/model-view.mjs
+      - name: Test the real browser runtime under a project prefix
+        env:
+          MUQL_WEB_URL: http://127.0.0.1:8765/muql-explorer/
+          MUQL_BROWSER_NATIVE: "1"
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory dist > "$RUNNER_TEMP/muql-http.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          python - <<'PY'
+          import time
+          import urllib.request
+          for attempt in range(50):
+              try:
+                  urllib.request.urlopen("http://127.0.0.1:8765/muql-explorer/", timeout=1).close()
+                  break
+              except OSError:
+                  if attempt == 49:
+                      raise
+                  time.sleep(0.1)
+          PY
+          node tests/browser/smoke.mjs
+      - name: Keep browser diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-diagnostics
+          path: tests/browser/artifacts
+          if-no-files-found: ignore
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/muql-explorer
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

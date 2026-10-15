@@ -1,0 +1,137 @@
+{
+  "schema": "muql-countermodel-v1",
+  "theory": "Voting",
+  "scope": {
+    "points": [
+      "alice",
+      "bob",
+      "carol",
+      "dave"
+    ],
+    "quorums": [
+      [
+        "alice",
+        "bob",
+        "carol"
+      ],
+      [
+        "alice",
+        "bob",
+        "dave"
+      ],
+      [
+        "alice",
+        "carol",
+        "dave"
+      ],
+      [
+        "bob",
+        "carol",
+        "dave"
+      ],
+      [
+        "alice",
+        "bob",
+        "carol",
+        "dave"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "unit"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "property": "Agreement",
+  "failure": {
+    "time": 0,
+    "point": "alice",
+    "quorum": [
+      "alice",
+      "bob",
+      "carol"
+    ],
+    "value": "f"
+  },
+  "valuation": [
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "alice",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "bob",
+      "args": [],
+      "value": "b"
+    },
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "carol",
+      "args": [],
+      "value": "b"
+    },
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "dave",
+      "args": [],
+      "value": "b"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "alice",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "bob",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "carol",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "dave",
+      "args": [],
+      "value": "f"
+    }
+  ],
+  "axiom_values": {
+    "Intersection": [
+      "t"
+    ],
+    "ObserveBack": [
+      "b",
+      "t"
+    ],
+    "ObserveNotBack": [
+      "b",
+      "t"
+    ],
+    "ObserveForward": [
+      "b",
+      "t"
+    ],
+    "ObserveNotForward": [
+      "b",
+      "t"
+    ]
+  },
+  "replayed": true
+}

@@ -1,0 +1,149 @@
+{
+  "schema": "muql-countermodel-v1",
+  "theory": "Bracha with existential delivery",
+  "scope": {
+    "points": [
+      "alice"
+    ],
+    "quorums": [
+      [
+        "alice"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "red",
+      "blue"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "property": "OriginalDeliverForward",
+  "failure": {
+    "time": 0,
+    "point": "alice",
+    "quorum": [
+      "alice"
+    ],
+    "value": "f"
+  },
+  "valuation": [
+    {
+      "predicate": "bcst",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "bcst",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "echo",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "ready",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "ready",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "dlvr",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "red"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "dlvr",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    }
+  ],
+  "axiom_values": {
+    "Intersection": [
+      "t"
+    ],
+    "BrDeliverBack": [
+      "b"
+    ],
+    "BrReadyBack": [
+      "t"
+    ],
+    "BrEchoBack": [
+      "t"
+    ],
+    "BrEchoAffine": [
+      "t"
+    ],
+    "BrBroadcastUnique": [
+      "t"
+    ],
+    "BrDeliverExistential": [
+      "b"
+    ],
+    "BrReadyForward": [
+      "t"
+    ],
+    "BrEchoForward": [
+      "t"
+    ],
+    "BrReadyRelay": [
+      "t"
+    ],
+    "BrCorrect": [
+      "t"
+    ],
+    "BrReadyUniform": [
+      "t"
+    ],
+    "BrEchoUniform": [
+      "t"
+    ],
+    "BrBroadcastUniform": [
+      "t"
+    ]
+  },
+  "replayed": true
+}

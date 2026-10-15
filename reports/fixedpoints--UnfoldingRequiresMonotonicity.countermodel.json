@@ -1,0 +1,54 @@
+{
+  "schema": "muql-countermodel-v1",
+  "theory": "Fixed points on a finite context lattice",
+  "scope": {
+    "points": [
+      "alice"
+    ],
+    "quorums": [
+      [
+        "alice"
+      ]
+    ],
+    "stages": 3,
+    "time": "stutter",
+    "values": [
+      "unit"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "property": "UnfoldingRequiresMonotonicity",
+  "failure": {
+    "time": 0,
+    "point": "alice",
+    "quorum": [
+      "alice"
+    ],
+    "value": "f"
+  },
+  "valuation": [
+    {
+      "predicate": "pulse",
+      "time": 0,
+      "point": "alice",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "pulse",
+      "time": 1,
+      "point": "alice",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "pulse",
+      "time": 2,
+      "point": "alice",
+      "args": [],
+      "value": "f"
+    }
+  ],
+  "axiom_values": {},
+  "replayed": true
+}

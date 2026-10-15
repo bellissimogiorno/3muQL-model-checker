@@ -1,0 +1,248 @@
+{
+  "schema": "muql-report-v1",
+  "status": "checked",
+  "theory": "Simple: eventual delivery, crashes allowed",
+  "scope": {
+    "points": [
+      "a",
+      "b",
+      "c"
+    ],
+    "quorums": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "a",
+        "c"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "a",
+        "b",
+        "c"
+      ]
+    ],
+    "stages": 3,
+    "time": "stutter",
+    "values": [
+      "unit"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "reason": "",
+  "properties": [
+    {
+      "name": "NoInventedDecision",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "EventualProgressRule",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    }
+  ],
+  "consistency_model": [
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "c",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "propose",
+      "time": 1,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 1,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 1,
+      "point": "c",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "propose",
+      "time": 2,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 2,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 2,
+      "point": "c",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "c",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 1,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 1,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 1,
+      "point": "c",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 2,
+      "point": "a",
+      "args": [],
+      "value": "b"
+    },
+    {
+      "predicate": "accept",
+      "time": 2,
+      "point": "b",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "accept",
+      "time": 2,
+      "point": "c",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "c",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 1,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 1,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 1,
+      "point": "c",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 2,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 2,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 2,
+      "point": "c",
+      "args": [],
+      "value": "b"
+    }
+  ],
+  "stats": {
+    "seconds": 0.031372,
+    "backend": "builtin",
+    "decisions": 118,
+    "variables": 308,
+    "clauses": 1127
+  }
+}

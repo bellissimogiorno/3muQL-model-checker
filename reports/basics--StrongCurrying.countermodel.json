@@ -1,0 +1,77 @@
+{
+  "schema": "muql-countermodel-v1",
+  "theory": "Three values and the meaning of uniqueness",
+  "scope": {
+    "points": [
+      "alice"
+    ],
+    "quorums": [
+      [
+        "alice"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "red",
+      "blue"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "property": "StrongCurrying",
+  "failure": {
+    "time": 0,
+    "point": "alice",
+    "quorum": [
+      "alice"
+    ],
+    "value": "f"
+  },
+  "valuation": [
+    {
+      "predicate": "P",
+      "time": 0,
+      "point": "alice",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "Q",
+      "time": 0,
+      "point": "alice",
+      "args": [],
+      "value": "b"
+    },
+    {
+      "predicate": "R",
+      "time": 0,
+      "point": "alice",
+      "args": [],
+      "value": "b"
+    },
+    {
+      "predicate": "choice",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "red"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "choice",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "blue"
+      ],
+      "value": "b"
+    }
+  ],
+  "axiom_values": {
+    "ChoicesBroken": [
+      "t"
+    ]
+  },
+  "replayed": true
+}

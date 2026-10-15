@@ -1,0 +1,49 @@
+{
+  "schema": "muql-report-v1",
+  "status": "inconsistent",
+  "theory": "Declarative Paxos (Figure 11)",
+  "scope": {
+    "points": [
+      "a",
+      "b",
+      "c"
+    ],
+    "quorums": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "a",
+        "c"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "a",
+        "b",
+        "c"
+      ]
+    ],
+    "stages": 3,
+    "time": "finite",
+    "values": [
+      "red",
+      "blue",
+      "undef"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "reason": "No valuation satisfies every axiom in this scope. No properties are reported as proved. Check the frame, truth requirements, and temporal boundary.",
+  "properties": [],
+  "consistency_model": null,
+  "stats": {
+    "seconds": 0.163866,
+    "backend": "builtin",
+    "decisions": 0,
+    "variables": 3135,
+    "clauses": 10100
+  }
+}

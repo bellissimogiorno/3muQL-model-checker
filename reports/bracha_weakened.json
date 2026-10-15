@@ -1,0 +1,414 @@
+{
+  "schema": "muql-report-v1",
+  "status": "checked",
+  "theory": "Bracha with existential delivery",
+  "scope": {
+    "points": [
+      "alice"
+    ],
+    "quorums": [
+      [
+        "alice"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "red",
+      "blue"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "reason": "",
+  "properties": [
+    {
+      "name": "OriginalDeliverForward",
+      "status": "counterexample",
+      "reason": "",
+      "countermodel": {
+        "schema": "muql-countermodel-v1",
+        "theory": "Bracha with existential delivery",
+        "scope": {
+          "points": [
+            "alice"
+          ],
+          "quorums": [
+            [
+              "alice"
+            ]
+          ],
+          "stages": 1,
+          "time": "finite",
+          "values": [
+            "red",
+            "blue"
+          ],
+          "claim": "finite-scope validity; no unbounded or natural-time proof"
+        },
+        "property": "OriginalDeliverForward",
+        "failure": {
+          "time": 0,
+          "point": "alice",
+          "quorum": [
+            "alice"
+          ],
+          "value": "f"
+        },
+        "valuation": [
+          {
+            "predicate": "bcst",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "red"
+            ],
+            "value": "f"
+          },
+          {
+            "predicate": "bcst",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "echo",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "red"
+            ],
+            "value": "f"
+          },
+          {
+            "predicate": "echo",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "ready",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "red"
+            ],
+            "value": "f"
+          },
+          {
+            "predicate": "ready",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "dlvr",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "red"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "dlvr",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "blue"
+            ],
+            "value": "f"
+          }
+        ],
+        "axiom_values": {
+          "Intersection": [
+            "t"
+          ],
+          "BrDeliverBack": [
+            "b"
+          ],
+          "BrReadyBack": [
+            "t"
+          ],
+          "BrEchoBack": [
+            "t"
+          ],
+          "BrEchoAffine": [
+            "t"
+          ],
+          "BrBroadcastUnique": [
+            "t"
+          ],
+          "BrDeliverExistential": [
+            "b"
+          ],
+          "BrReadyForward": [
+            "t"
+          ],
+          "BrEchoForward": [
+            "t"
+          ],
+          "BrReadyRelay": [
+            "t"
+          ],
+          "BrCorrect": [
+            "t"
+          ],
+          "BrReadyUniform": [
+            "t"
+          ],
+          "BrEchoUniform": [
+            "t"
+          ],
+          "BrBroadcastUniform": [
+            "t"
+          ]
+        },
+        "replayed": true
+      }
+    },
+    {
+      "name": "BrValidity",
+      "status": "counterexample",
+      "reason": "",
+      "countermodel": {
+        "schema": "muql-countermodel-v1",
+        "theory": "Bracha with existential delivery",
+        "scope": {
+          "points": [
+            "alice"
+          ],
+          "quorums": [
+            [
+              "alice"
+            ]
+          ],
+          "stages": 1,
+          "time": "finite",
+          "values": [
+            "red",
+            "blue"
+          ],
+          "claim": "finite-scope validity; no unbounded or natural-time proof"
+        },
+        "property": "BrValidity",
+        "failure": {
+          "time": 0,
+          "point": "alice",
+          "quorum": [
+            "alice"
+          ],
+          "value": "f"
+        },
+        "valuation": [
+          {
+            "predicate": "bcst",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "red"
+            ],
+            "value": "f"
+          },
+          {
+            "predicate": "bcst",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "echo",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "red"
+            ],
+            "value": "f"
+          },
+          {
+            "predicate": "echo",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "ready",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "red"
+            ],
+            "value": "f"
+          },
+          {
+            "predicate": "ready",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "dlvr",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "red"
+            ],
+            "value": "b"
+          },
+          {
+            "predicate": "dlvr",
+            "time": 0,
+            "point": "alice",
+            "args": [
+              "blue"
+            ],
+            "value": "f"
+          }
+        ],
+        "axiom_values": {
+          "Intersection": [
+            "t"
+          ],
+          "BrDeliverBack": [
+            "b"
+          ],
+          "BrReadyBack": [
+            "t"
+          ],
+          "BrEchoBack": [
+            "t"
+          ],
+          "BrEchoAffine": [
+            "t"
+          ],
+          "BrBroadcastUnique": [
+            "t"
+          ],
+          "BrDeliverExistential": [
+            "b"
+          ],
+          "BrReadyForward": [
+            "t"
+          ],
+          "BrEchoForward": [
+            "t"
+          ],
+          "BrReadyRelay": [
+            "t"
+          ],
+          "BrCorrect": [
+            "t"
+          ],
+          "BrReadyUniform": [
+            "t"
+          ],
+          "BrEchoUniform": [
+            "t"
+          ],
+          "BrBroadcastUniform": [
+            "t"
+          ]
+        },
+        "replayed": true
+      }
+    }
+  ],
+  "consistency_model": [
+    {
+      "predicate": "bcst",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "red"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "bcst",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "blue"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "echo",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "ready",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "ready",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "dlvr",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "dlvr",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    }
+  ],
+  "stats": {
+    "seconds": 0.00605,
+    "backend": "builtin",
+    "decisions": 11,
+    "variables": 94,
+    "clauses": 253
+  }
+}

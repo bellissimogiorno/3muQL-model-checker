@@ -1,0 +1,18 @@
+{
+  "source": "Audited example meanings with conjunction-based Paxos agreement (0.3.2).",
+  "semantic_sha256": {
+    "basics.md": "bd740d947dd1e556f714fa0bca63042d3e9956d3e8bc245c624ecb3f6a78d4ca",
+    "bracha.md": "0e3af7502f1c41b4cda9b7d39a828502a768429dd4be51cf1a21e426aa68920d",
+    "bracha_weakened.md": "7e8f263b353785b34073101a4ba9ec40018f6726575fdcb5685e3a9aa8bf010e",
+    "crusader.md": "28c5c87a3c69be9354ed4479688396360b17fea74be0095be41f746723be898e",
+    "fixedpoints.md": "73d37e3c4699e1dc35c430a5dfc9efad6457792a0f6120b68f03b1eb518a7138",
+    "paxos.md": "ed35c2cb2a5019c77bd0b41a1693058754ad995770d6d0b1b401e873888062e2",
+    "paxos_simpler.md": "35516e3be0209427fd4dd77817e89bb475a623fa341aef69f3d66ae0621f0cd1",
+    "semitopology.md": "e2f36a8b368f262d0799aea40ddf468ad5ced360e065bdf5aed876a0de5076be",
+    "simple_crashes.md": "49321dd3cfb0449713147be2df1927bc4fef4ef77d0b4ca8f7c80e38174870bc",
+    "simple_eventual.md": "2622027673c19286945168ef0c14a4c624c37bcba02f36d6da5a8bab847d62b0",
+    "simple_eventual_crashes.md": "8815947fbf77428a12233bd7354faaeb494d0b1870feb4b606e6351fcbfbfda7",
+    "simple_reliable.md": "ef5ddc3efe7ae7183d107cca7e6038766013944fdf68186e2ae08790fa856f11",
+    "voting.md": "78f25f7c9c575a718df12ed7d54074c02c1252569cd01917c017b5fc9080e403"
+  }
+}

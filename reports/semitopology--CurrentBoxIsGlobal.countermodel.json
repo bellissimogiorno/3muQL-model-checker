@@ -1,0 +1,61 @@
+{
+  "schema": "muql-countermodel-v1",
+  "theory": "Current quorums and a non-upward-closed semitopology",
+  "scope": {
+    "points": [
+      "a",
+      "b",
+      "c"
+    ],
+    "quorums": [
+      [
+        "a"
+      ],
+      [
+        "a",
+        "b",
+        "c"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "unit"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "property": "CurrentBoxIsGlobal",
+  "failure": {
+    "time": 0,
+    "point": "a",
+    "quorum": [
+      "a"
+    ],
+    "value": "f"
+  },
+  "valuation": [
+    {
+      "predicate": "live",
+      "time": 0,
+      "point": "a",
+      "args": [],
+      "value": "b"
+    },
+    {
+      "predicate": "live",
+      "time": 0,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "live",
+      "time": 0,
+      "point": "c",
+      "args": [],
+      "value": "t"
+    }
+  ],
+  "axiom_values": {},
+  "replayed": true
+}

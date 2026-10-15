@@ -1,0 +1,295 @@
+{
+  "schema": "muql-search-report-v1",
+  "theory": "Simpler Declarative Paxos (Figure 12)",
+  "bounds": {
+    "points": [
+      1,
+      2
+    ],
+    "values": [
+      2,
+      2
+    ],
+    "named_values": [
+      "red",
+      "blue"
+    ],
+    "stages": [
+      1,
+      3
+    ],
+    "max_quorums": 8,
+    "time": "stutter",
+    "max_frames": 1000,
+    "timeout": 30.0,
+    "max_decisions": 100000,
+    "max_nodes": 500000,
+    "max_mu_contexts": 8,
+    "frame_class": "all union-closed nonempty quorum families containing the full point set, up to point isomorphism",
+    "claim": "bounded finite-model search; no unbounded or natural-time proof"
+  },
+  "status": "counterexample",
+  "complete": false,
+  "reason": "Found an independently replayed counterexample for every selected property.",
+  "properties": [
+    {
+      "name": "Agreement",
+      "status": "counterexample",
+      "reason": "",
+      "countermodel": {
+        "schema": "muql-countermodel-v1",
+        "theory": "Simpler Declarative Paxos (Figure 12)",
+        "scope": {
+          "points": [
+            "p0"
+          ],
+          "quorums": [
+            [
+              "p0"
+            ]
+          ],
+          "stages": 1,
+          "time": "stutter",
+          "values": [
+            "red",
+            "blue"
+          ],
+          "claim": "finite-scope validity; no unbounded or natural-time proof"
+        },
+        "property": "Agreement",
+        "failure": {
+          "time": 0,
+          "point": "p0",
+          "quorum": [
+            "p0"
+          ],
+          "value": "f"
+        },
+        "valuation": [
+          {
+            "predicate": "leader",
+            "time": 0,
+            "point": "p0",
+            "args": [],
+            "value": "t"
+          },
+          {
+            "predicate": "propose",
+            "time": 0,
+            "point": "p0",
+            "args": [
+              "red"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "propose",
+            "time": 0,
+            "point": "p0",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "write",
+            "time": 0,
+            "point": "p0",
+            "args": [
+              "red"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "write",
+            "time": 0,
+            "point": "p0",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "accept",
+            "time": 0,
+            "point": "p0",
+            "args": [
+              "red"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "accept",
+            "time": 0,
+            "point": "p0",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "decide",
+            "time": 0,
+            "point": "p0",
+            "args": [
+              "red"
+            ],
+            "value": "t"
+          },
+          {
+            "predicate": "decide",
+            "time": 0,
+            "point": "p0",
+            "args": [
+              "blue"
+            ],
+            "value": "t"
+          }
+        ],
+        "axiom_values": {
+          "SPaxPropose_back": [
+            "t"
+          ],
+          "SPaxWrite_back": [
+            "t"
+          ],
+          "SPaxAccept_back": [
+            "t"
+          ],
+          "SPaxDecide_back": [
+            "t"
+          ],
+          "SPaxWrite_forward": [
+            "t"
+          ],
+          "SPaxAccept_forward": [
+            "t"
+          ],
+          "SPaxDecide_forward": [
+            "t"
+          ],
+          "SLdrExist": [
+            "t"
+          ],
+          "SLdrCorrect": [
+            "t"
+          ],
+          "SPaxPCorrect": [
+            "t"
+          ],
+          "SPax2Twined": [
+            "t"
+          ]
+        },
+        "replayed": true
+      }
+    }
+  ],
+  "stats": {
+    "frames": 1,
+    "consistent_frames": 1,
+    "inconsistent_frames": 0,
+    "unknown_frames": 0,
+    "decisions": 2,
+    "solver": "builtin",
+    "seconds": 0.002876
+  },
+  "consistency_scope": {
+    "points": [
+      "p0"
+    ],
+    "quorums": [
+      [
+        "p0"
+      ]
+    ],
+    "stages": 1,
+    "time": "stutter",
+    "values": [
+      "red",
+      "blue"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "consistency_model": [
+    {
+      "predicate": "leader",
+      "time": 0,
+      "point": "p0",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "p0",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "p0",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "write",
+      "time": 0,
+      "point": "p0",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 0,
+      "point": "p0",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "p0",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "p0",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "p0",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "p0",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    }
+  ]
+}

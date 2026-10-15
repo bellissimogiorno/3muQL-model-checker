@@ -1,0 +1,172 @@
+{
+  "schema": "muql-report-v1",
+  "status": "checked",
+  "theory": "Current quorums and a non-upward-closed semitopology",
+  "scope": {
+    "points": [
+      "a",
+      "b",
+      "c"
+    ],
+    "quorums": [
+      [
+        "a"
+      ],
+      [
+        "a",
+        "b",
+        "c"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "unit"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "reason": "",
+  "properties": [
+    {
+      "name": "SomewhereDefinition",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "EverywhereDefinition",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "QuorumDefinition",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "ContraDefinition",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "LocalJoinBelowGlobalJoin",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "GlobalMeetBelowLocalMeet",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "PairwiseIntersection",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "TripleIntersection",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "CurrentBoxIsGlobal",
+      "status": "counterexample",
+      "reason": "",
+      "countermodel": {
+        "schema": "muql-countermodel-v1",
+        "theory": "Current quorums and a non-upward-closed semitopology",
+        "scope": {
+          "points": [
+            "a",
+            "b",
+            "c"
+          ],
+          "quorums": [
+            [
+              "a"
+            ],
+            [
+              "a",
+              "b",
+              "c"
+            ]
+          ],
+          "stages": 1,
+          "time": "finite",
+          "values": [
+            "unit"
+          ],
+          "claim": "finite-scope validity; no unbounded or natural-time proof"
+        },
+        "property": "CurrentBoxIsGlobal",
+        "failure": {
+          "time": 0,
+          "point": "a",
+          "quorum": [
+            "a"
+          ],
+          "value": "f"
+        },
+        "valuation": [
+          {
+            "predicate": "live",
+            "time": 0,
+            "point": "a",
+            "args": [],
+            "value": "b"
+          },
+          {
+            "predicate": "live",
+            "time": 0,
+            "point": "b",
+            "args": [],
+            "value": "f"
+          },
+          {
+            "predicate": "live",
+            "time": 0,
+            "point": "c",
+            "args": [],
+            "value": "t"
+          }
+        ],
+        "axiom_values": {},
+        "replayed": true
+      }
+    },
+    {
+      "name": "SharedPointAgreement",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    }
+  ],
+  "consistency_model": [
+    {
+      "predicate": "live",
+      "time": 0,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "live",
+      "time": 0,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "live",
+      "time": 0,
+      "point": "c",
+      "args": [],
+      "value": "t"
+    }
+  ],
+  "stats": {
+    "seconds": 0.006822,
+    "backend": "builtin",
+    "decisions": 18,
+    "variables": 43,
+    "clauses": 120
+  }
+}

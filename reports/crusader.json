@@ -1,0 +1,513 @@
+{
+  "schema": "muql-report-v1",
+  "status": "checked",
+  "theory": "Crusader Agreement",
+  "scope": {
+    "points": [
+      "alice",
+      "bob",
+      "carol",
+      "dave"
+    ],
+    "quorums": [
+      [
+        "alice",
+        "bob",
+        "carol"
+      ],
+      [
+        "alice",
+        "bob",
+        "dave"
+      ],
+      [
+        "alice",
+        "carol",
+        "dave"
+      ],
+      [
+        "bob",
+        "carol",
+        "dave"
+      ],
+      [
+        "alice",
+        "bob",
+        "carol",
+        "dave"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "zero",
+      "half",
+      "one"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "reason": "",
+  "properties": [
+    {
+      "name": "CaAgree",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "CaValid1",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "CaValid2",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "CaLive",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    }
+  ],
+  "consistency_model": [
+    {
+      "predicate": "input",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "input",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "input",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "input",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "input",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "input",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "input",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "input",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "input",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "input",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "zero"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "input",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "input",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "one"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo1",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo1",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo1",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "echo1",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo1",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo1",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "echo1",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo1",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo1",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "echo1",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "zero"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "echo1",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "half"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "echo1",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "one"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "echo2",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo2",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo2",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "echo2",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo2",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo2",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "echo2",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo2",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo2",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "echo2",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo2",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "echo2",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "output",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "output",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "output",
+      "time": 0,
+      "point": "alice",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "output",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "output",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "output",
+      "time": 0,
+      "point": "bob",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "output",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "output",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "output",
+      "time": 0,
+      "point": "carol",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "output",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "zero"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "output",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "half"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "output",
+      "time": 0,
+      "point": "dave",
+      "args": [
+        "one"
+      ],
+      "value": "t"
+    }
+  ],
+  "stats": {
+    "seconds": 0.28629,
+    "backend": "builtin",
+    "decisions": 494,
+    "variables": 840,
+    "clauses": 3021
+  }
+}

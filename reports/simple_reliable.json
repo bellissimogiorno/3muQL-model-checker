@@ -1,0 +1,122 @@
+{
+  "schema": "muql-report-v1",
+  "status": "checked",
+  "theory": "Simple: reliable delivery, no crashes",
+  "scope": {
+    "points": [
+      "a",
+      "b",
+      "c"
+    ],
+    "quorums": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "a",
+        "c"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "a",
+        "b",
+        "c"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "unit"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "reason": "",
+  "properties": [
+    {
+      "name": "NoInventedDecision",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "ProposerDecides",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    }
+  ],
+  "consistency_model": [
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "c",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "a",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "b",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "c",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "c",
+      "args": [],
+      "value": "t"
+    }
+  ],
+  "stats": {
+    "seconds": 0.008555,
+    "backend": "builtin",
+    "decisions": 15,
+    "variables": 98,
+    "clauses": 321
+  }
+}

@@ -1,0 +1,261 @@
+{
+  "schema": "muql-report-v1",
+  "status": "checked",
+  "theory": "Voting",
+  "scope": {
+    "points": [
+      "alice",
+      "bob",
+      "carol",
+      "dave"
+    ],
+    "quorums": [
+      [
+        "alice",
+        "bob",
+        "carol"
+      ],
+      [
+        "alice",
+        "bob",
+        "dave"
+      ],
+      [
+        "alice",
+        "carol",
+        "dave"
+      ],
+      [
+        "bob",
+        "carol",
+        "dave"
+      ],
+      [
+        "alice",
+        "bob",
+        "carol",
+        "dave"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "unit"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "reason": "",
+  "properties": [
+    {
+      "name": "Agreement",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "UnanimousTrueDelivery",
+      "status": "counterexample",
+      "reason": "",
+      "countermodel": {
+        "schema": "muql-countermodel-v1",
+        "theory": "Voting",
+        "scope": {
+          "points": [
+            "alice",
+            "bob",
+            "carol",
+            "dave"
+          ],
+          "quorums": [
+            [
+              "alice",
+              "bob",
+              "carol"
+            ],
+            [
+              "alice",
+              "bob",
+              "dave"
+            ],
+            [
+              "alice",
+              "carol",
+              "dave"
+            ],
+            [
+              "bob",
+              "carol",
+              "dave"
+            ],
+            [
+              "alice",
+              "bob",
+              "carol",
+              "dave"
+            ]
+          ],
+          "stages": 1,
+          "time": "finite",
+          "values": [
+            "unit"
+          ],
+          "claim": "finite-scope validity; no unbounded or natural-time proof"
+        },
+        "property": "UnanimousTrueDelivery",
+        "failure": {
+          "time": 0,
+          "point": "alice",
+          "quorum": [
+            "alice",
+            "bob",
+            "carol"
+          ],
+          "value": "f"
+        },
+        "valuation": [
+          {
+            "predicate": "vote",
+            "time": 0,
+            "point": "alice",
+            "args": [],
+            "value": "t"
+          },
+          {
+            "predicate": "vote",
+            "time": 0,
+            "point": "bob",
+            "args": [],
+            "value": "f"
+          },
+          {
+            "predicate": "vote",
+            "time": 0,
+            "point": "carol",
+            "args": [],
+            "value": "t"
+          },
+          {
+            "predicate": "vote",
+            "time": 0,
+            "point": "dave",
+            "args": [],
+            "value": "t"
+          },
+          {
+            "predicate": "observe",
+            "time": 0,
+            "point": "alice",
+            "args": [],
+            "value": "b"
+          },
+          {
+            "predicate": "observe",
+            "time": 0,
+            "point": "bob",
+            "args": [],
+            "value": "b"
+          },
+          {
+            "predicate": "observe",
+            "time": 0,
+            "point": "carol",
+            "args": [],
+            "value": "b"
+          },
+          {
+            "predicate": "observe",
+            "time": 0,
+            "point": "dave",
+            "args": [],
+            "value": "b"
+          }
+        ],
+        "axiom_values": {
+          "Intersection": [
+            "t"
+          ],
+          "ObserveBack": [
+            "t"
+          ],
+          "ObserveNotBack": [
+            "b"
+          ],
+          "ObserveForward": [
+            "b"
+          ],
+          "ObserveNotForward": [
+            "t"
+          ],
+          "Correct": [
+            "t"
+          ]
+        },
+        "replayed": true
+      }
+    }
+  ],
+  "consistency_model": [
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "alice",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "bob",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "carol",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "dave",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "alice",
+      "args": [],
+      "value": "b"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "bob",
+      "args": [],
+      "value": "b"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "carol",
+      "args": [],
+      "value": "b"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "dave",
+      "args": [],
+      "value": "b"
+    }
+  ],
+  "stats": {
+    "seconds": 0.017928,
+    "backend": "builtin",
+    "decisions": 42,
+    "variables": 104,
+    "clauses": 442
+  }
+}

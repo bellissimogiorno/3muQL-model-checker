@@ -1,0 +1,130 @@
+{
+  "schema": "muql-report-v1",
+  "status": "checked",
+  "theory": "Voting",
+  "scope": {
+    "points": [
+      "alice",
+      "bob",
+      "carol",
+      "dave"
+    ],
+    "quorums": [
+      [
+        "alice",
+        "bob",
+        "carol"
+      ],
+      [
+        "alice",
+        "bob",
+        "dave"
+      ],
+      [
+        "alice",
+        "carol",
+        "dave"
+      ],
+      [
+        "bob",
+        "carol",
+        "dave"
+      ],
+      [
+        "alice",
+        "bob",
+        "carol",
+        "dave"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "unit"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "reason": "",
+  "properties": [
+    {
+      "name": "Agreement",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "UnanimousTrueDelivery",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "UnanimousFalseDelivery",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    }
+  ],
+  "consistency_model": [
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "alice",
+      "args": [],
+      "value": "b"
+    },
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "bob",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "carol",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "vote",
+      "time": 0,
+      "point": "dave",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "alice",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "bob",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "carol",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "observe",
+      "time": 0,
+      "point": "dave",
+      "args": [],
+      "value": "f"
+    }
+  ],
+  "stats": {
+    "seconds": 0.023469,
+    "backend": "builtin",
+    "decisions": 41,
+    "variables": 112,
+    "clauses": 475
+  }
+}

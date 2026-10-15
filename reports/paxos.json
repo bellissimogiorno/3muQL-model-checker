@@ -1,0 +1,1349 @@
+{
+  "schema": "muql-report-v1",
+  "status": "checked",
+  "theory": "Declarative Paxos (Figure 11)",
+  "scope": {
+    "points": [
+      "a",
+      "b",
+      "c"
+    ],
+    "quorums": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "a",
+        "c"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "a",
+        "b",
+        "c"
+      ]
+    ],
+    "stages": 3,
+    "time": "stutter",
+    "values": [
+      "red",
+      "blue",
+      "undef"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "reason": "",
+  "properties": [
+    {
+      "name": "Validity",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "Agreement",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "Termination",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "DecidingQuorum",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    }
+  ],
+  "consistency_model": [
+    {
+      "predicate": "leader",
+      "time": 0,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "leader",
+      "time": 0,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "leader",
+      "time": 0,
+      "point": "c",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "leader",
+      "time": 1,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "leader",
+      "time": 1,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "leader",
+      "time": 1,
+      "point": "c",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "leader",
+      "time": 2,
+      "point": "a",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "leader",
+      "time": 2,
+      "point": "b",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "leader",
+      "time": 2,
+      "point": "c",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "propose",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "propose",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "propose",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "propose",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "propose",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "propose",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "send",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "send",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "send",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "send",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "send",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "send",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "send",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "send",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "send",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "write",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "write",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "write",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "accept",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "accept",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "accept",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "accept",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 0,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 1,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 1,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 1,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "blue"
+      ],
+      "value": "b"
+    },
+    {
+      "predicate": "decide",
+      "time": 2,
+      "point": "a",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "decide",
+      "time": 2,
+      "point": "b",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "red"
+      ],
+      "value": "f"
+    },
+    {
+      "predicate": "decide",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "blue"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "decide",
+      "time": 2,
+      "point": "c",
+      "args": [
+        "undef"
+      ],
+      "value": "f"
+    }
+  ],
+  "stats": {
+    "seconds": 1.137918,
+    "backend": "builtin",
+    "decisions": 3227,
+    "variables": 3135,
+    "clauses": 10232
+  }
+}

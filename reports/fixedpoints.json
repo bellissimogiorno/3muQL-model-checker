@@ -1,0 +1,148 @@
+{
+  "schema": "muql-report-v1",
+  "status": "checked",
+  "theory": "Fixed points on a finite context lattice",
+  "scope": {
+    "points": [
+      "alice"
+    ],
+    "quorums": [
+      [
+        "alice"
+      ]
+    ],
+    "stages": 3,
+    "time": "stutter",
+    "values": [
+      "unit"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "reason": "",
+  "properties": [
+    {
+      "name": "InclusivePast",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "StrictPast",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "StrictFuture",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "FutureGreatest",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "EmptyPastRecurrence",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "NonmonotoneMeet",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    },
+    {
+      "name": "UnfoldingRequiresMonotonicity",
+      "status": "counterexample",
+      "reason": "",
+      "countermodel": {
+        "schema": "muql-countermodel-v1",
+        "theory": "Fixed points on a finite context lattice",
+        "scope": {
+          "points": [
+            "alice"
+          ],
+          "quorums": [
+            [
+              "alice"
+            ]
+          ],
+          "stages": 3,
+          "time": "stutter",
+          "values": [
+            "unit"
+          ],
+          "claim": "finite-scope validity; no unbounded or natural-time proof"
+        },
+        "property": "UnfoldingRequiresMonotonicity",
+        "failure": {
+          "time": 0,
+          "point": "alice",
+          "quorum": [
+            "alice"
+          ],
+          "value": "f"
+        },
+        "valuation": [
+          {
+            "predicate": "pulse",
+            "time": 0,
+            "point": "alice",
+            "args": [],
+            "value": "t"
+          },
+          {
+            "predicate": "pulse",
+            "time": 1,
+            "point": "alice",
+            "args": [],
+            "value": "f"
+          },
+          {
+            "predicate": "pulse",
+            "time": 2,
+            "point": "alice",
+            "args": [],
+            "value": "f"
+          }
+        ],
+        "axiom_values": {},
+        "replayed": true
+      }
+    },
+    {
+      "name": "NegationMeet",
+      "status": "holds",
+      "reason": "No countermodel in the declared scope."
+    }
+  ],
+  "consistency_model": [
+    {
+      "predicate": "pulse",
+      "time": 0,
+      "point": "alice",
+      "args": [],
+      "value": "t"
+    },
+    {
+      "predicate": "pulse",
+      "time": 1,
+      "point": "alice",
+      "args": [],
+      "value": "f"
+    },
+    {
+      "predicate": "pulse",
+      "time": 2,
+      "point": "alice",
+      "args": [],
+      "value": "f"
+    }
+  ],
+  "stats": {
+    "seconds": 0.004386,
+    "backend": "builtin",
+    "decisions": 15,
+    "variables": 20,
+    "clauses": 47
+  }
+}

@@ -1,0 +1,219 @@
+"""Release checks for a portable site build and safe output replacement."""
+
+import contextlib
+import html
+import io
+import json
+from pathlib import Path
+import re
+import tempfile
+import unittest
+from urllib.parse import unquote, urlsplit
+import zipfile
+
+from tools.build_site import build
+
+
+class SiteBuildTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name) / "repository"
+        files = {
+            "VERSION": "1.2.3\n",
+            "LICENSE": "Test license\n",
+            "README.md": "# Explorer\n[Theories](docs/theories.html) [Contribute](CONTRIBUTING.md) [Sources](SOURCES.md) [License](LICENSE)\n",
+            "CONTRIBUTING.md": "[Validation](docs/validation.md)\n",
+            "SOURCES.md": "[Language](docs/language.md)\n",
+            "pyproject.toml": '[project]\nversion = "1.2.3"\n',
+            "muql/__init__.py": '__version__ = "1.2.3"\n',
+            "muql/web.py": '"""Test bridge."""\n',
+            "web/index.html": '<!doctype html><html lang="en"><title>Explorer</title></html>',
+            "web/examples.json": json.dumps([{"id": "choice", "file": "examples/search/choice.md", "mode": "search"}]),
+            "web/styles/main.css": "body { color: black; }",
+            "examples/search/choice.md": "# Choice\n",
+            "docs/theories.html": '<!doctype html><title>Theories</title><a href="../examples/search/choice.md">Source</a><a href="language.md">Guide</a><a href="#formula">Formula</a>',
+            "docs/language.md": "# Language\n",
+            "docs/validation.md": "[Tests](../reports/tests.txt) [Browser](../reports/browser-tests.txt) [Demo](../reports/demo.txt) [Benchmarks](../reports/audit-benchmarks.json) [Fresh benchmarks](../reports/audit-0.6.4-benchmarks.json)\n",
+            "reports/tests.txt": "Python tests\n",
+            "reports/browser-tests.txt": "JavaScript tests\n",
+            "reports/demo.txt": "Demo checks\n",
+            "reports/audit-benchmarks.json": "{}\n",
+            "reports/audit-0.6.4-benchmarks.json": "{}\n",
+        }
+        for name, contents in files.items():
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(contents, encoding="utf-8")
+
+    def build(self, output=None):
+        with contextlib.redirect_stdout(io.StringIO()):
+            return build(output, root=self.root)
+
+    def test_complete_site_and_reproducible_engine(self):
+        output = self.build()
+        config = json.loads((output / "config.json").read_text())
+        self.assertEqual(config["version"], "1.2.3")
+        self.assertEqual(config["engine"], "engine.zip")
+        self.assertTrue((output / "examples/search/choice.md").is_file())
+        self.assertTrue((output / "styles/main.css").is_file())
+        self.assertTrue((output / "theories.html").is_file())
+        reader = (output / "theories.html").read_text()
+        self.assertIn('href="examples/search/choice.md"', reader)
+        self.assertIn('href="docs/language.md"', reader)
+        self.assertIn('href="#formula"', reader)
+        self.assertTrue((output / "docs/language.md").is_file())
+        with zipfile.ZipFile(output / "engine.zip") as engine:
+            self.assertEqual(engine.namelist(), ["muql/__init__.py", "muql/web.py", "LICENSE"])
+        before = (output / "engine.zip").read_bytes()
+        (output / "obsolete.txt").write_text("old output")
+        self.build()
+        self.assertFalse((output / "obsolete.txt").exists())
+        self.assertEqual((output / "engine.zip").read_bytes(), before)
+
+    def test_public_document_links_resolve_at_both_guide_locations(self):
+        output = self.build()
+        self.assertEqual((output / "docs/theories.html").read_bytes(),
+                         (self.root / "docs/theories.html").read_bytes())
+        self.assertEqual((output / "LICENSE").read_bytes(), (output / "LICENSE.txt").read_bytes())
+        self.assert_document_links_resolve(output)
+
+    def test_repository_documentation_has_no_missing_public_targets(self):
+        repository = Path(__file__).resolve().parents[1]
+        destination = repository / "dist"
+        destination.mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=destination) as directory:
+            output = Path(directory) / "site"
+            with contextlib.redirect_stdout(io.StringIO()):
+                build(output, root=repository)
+            self.assert_document_links_resolve(output)
+
+    def assert_document_links_resolve(self, output):
+        # Follow each built Markdown/HTML file's actual relative references.
+        # Checking from the output paths detects relocated guides and omitted
+        # transitive documentation dependencies, rather than only source links.
+        for source in output.rglob("*"):
+            if source.suffix not in {".md", ".html"}:
+                continue
+            text = source.read_text(encoding="utf-8")
+            targets = re.findall(r"\]\(([^\s)]+)\)", text) if source.suffix == ".md" else []
+            targets += re.findall(r'''\bhref=["']([^"']+)["']''', text)
+            for target in targets:
+                url = urlsplit(html.unescape(target))
+                if url.scheme or url.netloc or not url.path:
+                    continue
+                path = (source.parent / unquote(url.path)).resolve()
+                with self.subTest(source=source.relative_to(output), target=target):
+                    self.assertTrue(path.is_relative_to(output))
+                    self.assertTrue(path.is_file() or (path / "index.html").is_file())
+
+    def test_unlisted_repository_and_report_files_are_not_published(self):
+        for name in ("private.md", "docs/private.txt", "reports/private.txt",
+                     "reports/private.json", "reports/private.md", "local-config.json"):
+            (self.root / name).write_text("Not public\n", encoding="utf-8")
+        output = self.build()
+        for name in ("private.md", "docs/private.txt", "reports/private.txt",
+                     "reports/private.json", "reports/private.md", "local-config.json"):
+            with self.subTest(name=name):
+                self.assertFalse((output / name).exists())
+
+    def test_missing_or_symlinked_public_files_preserve_previous_build(self):
+        output = self.build()
+        original = (output / "engine.zip").read_bytes()
+        for name in ("README.md", "LICENSE", "CONTRIBUTING.md", "SOURCES.md",
+                     "reports/tests.txt", "docs/theories.html"):
+            source = self.root / name
+            saved = source.read_bytes()
+            source.unlink()
+            try:
+                with self.subTest(name=name, mode="missing"), self.assertRaisesRegex(ValueError, "missing"):
+                    self.build()
+                self.assertEqual((output / "engine.zip").read_bytes(), original)
+                external = self.root.parent / "private-content"
+                external.write_text("Private\n", encoding="utf-8")
+                try:
+                    source.symlink_to(external)
+                except (OSError, NotImplementedError):
+                    self.skipTest("symbolic links are not available")
+                with self.subTest(name=name, mode="symlink"), self.assertRaisesRegex(ValueError, "symbolic links"):
+                    self.build()
+                self.assertEqual((output / "engine.zip").read_bytes(), original)
+            finally:
+                if source.is_symlink():
+                    source.unlink()
+                source.write_bytes(saved)
+
+    def test_unrelated_output_is_preserved(self):
+        output = Path(self.temporary.name) / "valuable-files"
+        output.mkdir()
+        valuable = output / "notes.txt"
+        valuable.write_text("Keep me")
+        with self.assertRaisesRegex(ValueError, "not a MuQL site build"):
+            self.build(output)
+        self.assertEqual(valuable.read_text(), "Keep me")
+
+    def test_source_and_ancestors_are_preserved(self):
+        for output in [self.root, self.root.parent, self.root / "web", self.root / "muql/new-output"]:
+            with self.subTest(output=output), self.assertRaises(ValueError):
+                self.build(output)
+        self.assertTrue((self.root / "web/index.html").is_file())
+
+    def test_invalid_input_preserves_previous_build(self):
+        output = self.build()
+        engine = (output / "engine.zip").read_bytes()
+        (self.root / "web/examples.json").write_text('[{"id":"broken","file":"examples/missing.md","mode":"check"}]')
+        with self.assertRaisesRegex(ValueError, "missing or unsafe"):
+            self.build()
+        self.assertEqual((output / "engine.zip").read_bytes(), engine)
+
+    def test_manifest_cannot_escape_examples(self):
+        (self.root / "web/examples.json").write_text('[{"id":"escape","file":"examples/../VERSION","mode":"check"}]')
+        with self.assertRaisesRegex(ValueError, "below examples"):
+            self.build()
+
+    def test_invalid_next_reference_preserves_previous_build(self):
+        output = self.build()
+        original = (output / "engine.zip").read_bytes()
+        for next_example in [[], {}, 7, True, "missing"]:
+            with self.subTest(next_example=next_example):
+                manifest = [{"id": "choice", "file": "examples/search/choice.md",
+                             "mode": "search", "next": next_example}]
+                (self.root / "web/examples.json").write_text(json.dumps(manifest))
+                with self.assertRaisesRegex(ValueError, "next example"):
+                    self.build()
+                self.assertEqual((output / "engine.zip").read_bytes(), original)
+
+    def test_symlinked_input_roots_do_not_copy_external_files(self):
+        output = self.build()
+        original = (output / "engine.zip").read_bytes()
+        for name in ["web", "examples", "docs", "muql", "reports"]:
+            with self.subTest(name=name):
+                source = self.root / name
+                external = self.root.parent / ("external-" + name)
+                source.rename(external)
+                try:
+                    try:
+                        source.symlink_to(external, target_is_directory=True)
+                    except (OSError, NotImplementedError):
+                        self.skipTest("symbolic links are not available")
+                    with self.assertRaisesRegex(ValueError, "symbolic links"):
+                        self.build()
+                    self.assertEqual((output / "engine.zip").read_bytes(), original)
+                finally:
+                    if source.is_symlink():
+                        source.unlink()
+                    external.rename(source)
+
+    def test_symlink_output_cannot_replace_target(self):
+        output = Path(self.temporary.name) / "redirect"
+        try:
+            output.symlink_to(self.root / "web", target_is_directory=True)
+        except (OSError, NotImplementedError):
+            self.skipTest("symbolic links are not available")
+        with self.assertRaisesRegex(ValueError, "symbolic link"):
+            self.build(output)
+        self.assertTrue((self.root / "web/index.html").is_file())
+
+
+if __name__ == "__main__":
+    unittest.main()

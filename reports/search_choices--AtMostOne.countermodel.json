@@ -1,0 +1,56 @@
+{
+  "schema": "muql-countermodel-v1",
+  "theory": "Correct choices need not be unique",
+  "scope": {
+    "points": [
+      "p0"
+    ],
+    "quorums": [
+      [
+        "p0"
+      ]
+    ],
+    "stages": 1,
+    "time": "finite",
+    "values": [
+      "v0",
+      "value0"
+    ],
+    "claim": "finite-scope validity; no unbounded or natural-time proof"
+  },
+  "property": "AtMostOne",
+  "failure": {
+    "time": 0,
+    "point": "p0",
+    "quorum": [
+      "p0"
+    ],
+    "value": "f"
+  },
+  "valuation": [
+    {
+      "predicate": "chosen",
+      "time": 0,
+      "point": "p0",
+      "args": [
+        "v0"
+      ],
+      "value": "t"
+    },
+    {
+      "predicate": "chosen",
+      "time": 0,
+      "point": "p0",
+      "args": [
+        "value0"
+      ],
+      "value": "t"
+    }
+  ],
+  "axiom_values": {
+    "Correct": [
+      "t"
+    ]
+  },
+  "replayed": true
+}
