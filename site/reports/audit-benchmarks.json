@@ -1,0 +1,159 @@
+{
+  "baseline": "0.5.6",
+  "release": "0.5.7",
+  "python": "3.12.14",
+  "note": "Local illustrative measurements; circuit sizes and oracle results are stable evidence, timings are not promises.",
+  "declarations": {
+    "baseline": {
+      "names_5000": 0.009126946002652403,
+      "names_10000": 0.028935929003637284,
+      "names_20000": 0.10868119999940973,
+      "names_40000": 0.41339778999827104,
+      "validate_8191_nodes": 0.01677494399336865
+    },
+    "revised": {
+      "names_5000": 0.0029520059979404323,
+      "names_10000": 0.0056050210041576065,
+      "names_20000": 0.010565141994447913,
+      "names_40000": 0.021689125002012588,
+      "validate_8191_nodes": 0.0032930599991232157
+    }
+  },
+  "quantifiers": {
+    "baseline": [
+      {
+        "values": 1,
+        "variables": 3,
+        "clauses": 2,
+        "compile_median_seconds": 1.3880999176762998e-05,
+        "evaluate_median_seconds": 7.501999789383262e-06
+      },
+      {
+        "values": 2,
+        "variables": 7,
+        "clauses": 9,
+        "compile_median_seconds": 1.9610000890679657e-05,
+        "evaluate_median_seconds": 7.110997103154659e-06
+      },
+      {
+        "values": 10,
+        "variables": 113,
+        "clauses": 373,
+        "compile_median_seconds": 0.00027132799732498825,
+        "evaluate_median_seconds": 3.829700290225446e-05
+      },
+      {
+        "values": 100,
+        "variables": 10103,
+        "clauses": 39703,
+        "compile_median_seconds": 0.04224041699490044,
+        "evaluate_median_seconds": 0.0020651399972848594
+      },
+      {
+        "values": 300,
+        "variables": 90303,
+        "clauses": 359103,
+        "compile_median_seconds": 0.5302361350040883,
+        "evaluate_median_seconds": 0.016199828001845162
+      }
+    ],
+    "current": [
+      {
+        "values": 1,
+        "variables": 3,
+        "clauses": 2,
+        "compile_median_seconds": 4.268500197213143e-05,
+        "evaluate_median_seconds": 4.60700539406389e-06
+      },
+      {
+        "values": 2,
+        "variables": 7,
+        "clauses": 9,
+        "compile_median_seconds": 2.744200173765421e-05,
+        "evaluate_median_seconds": 6.160000339150429e-06
+      },
+      {
+        "values": 10,
+        "variables": 71,
+        "clauses": 161,
+        "compile_median_seconds": 0.00018328599981032312,
+        "evaluate_median_seconds": 2.081099955830723e-05
+      },
+      {
+        "values": 100,
+        "variables": 791,
+        "clauses": 1871,
+        "compile_median_seconds": 0.0019883450004272163,
+        "evaluate_median_seconds": 0.00021161799668334424
+      },
+      {
+        "values": 300,
+        "variables": 2391,
+        "clauses": 5671,
+        "compile_median_seconds": 0.006243874006031547,
+        "evaluate_median_seconds": 0.0008251830004155636
+      }
+    ]
+  },
+  "replay": {
+    "baseline": {
+      "cells": 64000,
+      "repetitions": 5,
+      "median_seconds": 0.20448090299760224,
+      "peak_bytes": 20226620,
+      "all_seconds": [
+        0.2126497270000982,
+        0.22756061099789804,
+        0.20062758100539213,
+        0.20448090299760224,
+        0.20314446900010807
+      ]
+    },
+    "current": {
+      "cells": 64000,
+      "repetitions": 5,
+      "median_seconds": 0.07416918899980374,
+      "peak_bytes": 12794988,
+      "all_seconds": [
+        0.09422421300405404,
+        0.07416918899980374,
+        0.07287632299994584,
+        0.07494696600042516,
+        0.07387285299773794
+      ]
+    }
+  },
+  "solver": {
+    "corpus_formulas": 103,
+    "repeats": 7,
+    "release_0_5_6": {
+      "median_seconds": 0.2923407009948278,
+      "all_trial_seconds": [
+        0.2923407009948278,
+        0.3702283590027946,
+        0.27757003599981545,
+        0.28459870100050466,
+        0.2794780590047594,
+        0.2948967310003354,
+        0.29941413999767974
+      ],
+      "zero_timeout_100000_variables_seconds": 0.2282420000046841,
+      "zero_timeout_100000_variables_peak_bytes": 16826328
+    },
+    "audited": {
+      "median_seconds": 0.2834278079972137,
+      "all_trial_seconds": [
+        0.2928146240010392,
+        0.28902338500483893,
+        0.27505899400421185,
+        0.2736000669974601,
+        0.2834278079972137,
+        0.27836776800540974,
+        0.2879673050047131
+      ],
+      "zero_timeout_100000_variables_seconds": 0.00010877399472519755,
+      "zero_timeout_100000_variables_peak_bytes": 1598
+    },
+    "identical_results_decisions_and_assignments": true
+  }
+}

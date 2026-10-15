@@ -1,4 +1,203 @@
-# Release validation: 0.6.10
+# Release validation: 0.7.1
+
+Prepared on **15 October 2026**, using **CPython 3.12.14** and **Node v24.19.0**
+on Linux. `3muql` is the primary installed command; `muql` remains a compatibility
+alias and `python -m muql` remains supported. The mathematical engine and bundled
+theories are unchanged. This release also fixes ambiguous full-model labels,
+autosave conflicts between tabs, and release portability and input validation.
+
+## Fresh execution record
+
+| Check | Result |
+| --- | --- |
+| Complete Python suite | **409 collected: 406 passed, 3 skipped.** The skips need optional native PySAT. |
+| Nine dependency-free Node suites | **189 passed**, including 57 page-state checks. DOM and runtime doubles are not real-browser evidence. |
+| Outer handover builder | **12 passed**, including malformed artifacts, redirected outputs, archive modes and simulated Windows newlines. |
+| CLI demonstration | **30 scenarios, 81 property outcomes, 22 countermodels**, all expected results confirmed. |
+| Independent semantic oracles | **95,940 truth comparisons; 3,402 compiler SAT queries; 226 checker comparisons; 1,094 syntax round-trips; 7 macro/export cases; 2 bridge cases.** |
+| Independent frames and SAT | Every union-closed frame class through four points and each quorum limit matches exhaustive enumeration; **2,512 Boolean CNFs** match brute force. |
+| Clean wheel installation | Installs with `--no-index --no-deps` in a fresh venv. Both `3muql` and `muql`, plus `python -m muql`, expose the same version and commands. |
+| Installed CLI and HTTP | Canonical check/search/export/replay and actual `3muql serve` run outside the source tree. Assets return 200, source paths return 404, and Ctrl+C stops cleanly. |
+| Source distribution | Builds and installs with locally supplied build dependencies; its extracted source rebuilds all four artifacts and their manifest identically with the same toolchain. |
+| Pages assets | Project-prefix HTTP checks cover Actions-style and branch-root entry points; bundled engine/config/assets agree with 0.7.1. |
+| Git checkout portability | A real `core.autocrlf=true` checkout on Linux passes the consistency check with the new attributes. Generator tests simulate Windows ZIP/newline defaults. |
+| Syntax and integrity | Browser JavaScript syntax, workflow YAML, version declarations, relative documentation links and final handover checksums checked. |
+
+Current transcripts are [Python](../reports/tests.txt),
+[Node](../reports/browser-tests.txt) and [demonstrations](../reports/demo.txt).
+The full handover's `evidence/` contains the clean-install and rebuild records,
+the independent oracle scripts and results, and the fresh audit of the original
+0.7.0 archive. All 11 core modules in the independent semantic audit match the
+original bytes. The complete example catalog remains unchanged.
+
+## Defects fixed after the fresh audit
+
+- Canonical shell entry point, help and diagnostics now use `3muql`. `muql`
+  remains installed as a compatibility alias. The Python module and distribution
+  names remain `muql` and `muql-explorer`.
+- Full-model tables use unambiguous quoted names for atomic arguments,
+  participants, values and quorum members, matching the diagram labels.
+- Unchanged tabs do not rewrite saved drafts. Concurrent edits keep separate
+  recovery copies; drafts are scoped to the application's path. Recovery
+  restores settings or downloads source. Storage limits/failures are explicit.
+- Site ZIP metadata and generated text no longer depend on host defaults.
+  Git attributes keep checked-out text consistent with the bundled application.
+- Release builders reject redirected or nonregular output paths before writes,
+  require all four exact artifacts, and exclude nested hidden files except the
+  documented GitHub/Pages inputs. Visible files in maintained directories are
+  still included; the builders do not identify private content automatically.
+
+## Verification limits
+
+**Real Chromium/Pyodide execution remains unverified in this environment.**
+Playwright 1.62.1 is available, but Chromium is absent. Fresh browser and runtime
+download attempts returned HTTP 403 with the environment's network-policy
+rejection. The real browser harness fails before any browser scenario runs;
+no mocked result is counted as a browser pass. Optional native PySAT was also
+unavailable, so native execution is not claimed.
+
+The Pages workflow requires real diagram rendering and Pyodide checks (including
+MiniSat), plus branch and installed routes, before deployment. Those gates
+still need to pass on GitHub. No remote Actions run, public deployment, native
+Windows/macOS execution, other Python version run or human accessibility review
+was performed here. Simulated Windows behavior and the Git checkout probe do
+not replace native operating-system tests.
+
+The release bundles the app and Python engine, but not Chromium, Pyodide or
+native SAT packages. The CLI works offline. Browser use normally loads pinned
+Pyodide from its CDN; offline browser use needs a separately obtained complete
+runtime, as described in [the browser guide](browser.md). These bounded tests
+are not a formal proof of the checker or of unbounded protocol correctness.
+
+## Reproduce this release
+
+From the source root:
+
+```sh
+python tools/check_version.py
+python -m unittest discover -s tests -v
+python demo.py
+python tools/build_release.py --check
+python tools/build_release.py
+python tools/test_install.py dist/releases/muql_explorer-0.7.1-py3-none-any.whl
+```
+
+Building distributions requires `setuptools>=61` and `wheel`; installing the
+provided wheel needs neither build tools nor network access. The nine Node
+commands and real-browser prerequisites are in [Contributing](../CONTRIBUTING.md).
+The full handover also provides `tools/test_build_handover.py` and the independent
+scripts under `evidence/independent-semantics-0.7.1/`, each with reproduction
+instructions. With Chromium and the runtime available:
+
+```sh
+node tests/browser/model-view.mjs
+python tools/test_browser.py --target actions --native
+python tools/test_browser.py --target branch
+python tools/test_browser.py --target installed --python /path/to/venv/bin/python
+```
+
+After source or documentation changes, regenerate snapshots with
+`python tools/build_release.py --prepare-only` before `--check` or publishing.
+
+
+The earlier reports below retain their original dates and counts. Their relative
+links to `reports/tests.txt`, `reports/browser-tests.txt` and `reports/demo.txt`
+now lead to the current run. Exact 0.7.0 transcripts remain inside its preserved
+source ZIP in the full handover. The new handover also preserves the original
+0.7.0 source, site, wheel and sdist byte-for-byte.
+
+# Historical release validation: 0.7.0
+
+Validated on **15 October 2026**, with **CPython 3.12.14** and **Node v24.19.0**
+on Linux. This release adds portable installation, installed browser serving,
+direct Pages entry points and reproducible distribution builders. The parser,
+compiler, solvers, evaluator, checking/search algorithms and all bundled theory
+files are byte-for-byte unchanged from 0.6.10. The package version and CLI
+dispatch change; the new server is separate from the mathematical engine.
+
+| Check | Observed result |
+| --- | --- |
+| Complete Python suite | **403 collected: 400 passed, 3 skipped.** Skips require optional native PySAT. |
+| Dependency-free Node suites | **181 passed** across nine suites; controller/runtime doubles are distinguished from a real browser. |
+| Complete CLI demonstration | **30 scenarios, 81 property outcomes, 22 countermodels**, all expected results confirmed. |
+| Wheel installation | Fresh virtual environment, `--no-index --no-deps`; version and installed import path verified outside the source tree. |
+| Installed CLI | Fixed-frame check, bounded countermodel search, exported theory/JSON replay pass. |
+| Installed browser server | Loopback from an unrelated directory; page, config, worker, engine, examples, font and reader return HTTP 200; source paths return 404; Ctrl+C exits cleanly. |
+| Source/site ZIPs | Entry points, hidden Pages files, configuration, engine, examples and executable launcher verified; extracted source rebuilds independently. |
+| Source distribution | Required source/generated assets retained; extracted sdist passes `--check` and rebuilds all four artifacts. |
+| Reproducibility | Source ZIP, static-site ZIP, wheel, sdist and release manifest rebuild byte-for-byte identically with the same toolchain and inputs. |
+| Site consistency | `tools/build_release.py --check` detects stale source/site/package assets without modifying them. |
+| Runtime options | Safe mirror URLs and pinned runtime-directory bundling tested with controlled fixtures, including invalid input and preservation of existing output. |
+| Syntax/configuration | JavaScript syntax and workflow YAML parsed; release version declarations agree. |
+
+Release transcripts at publication: [Python](../reports/tests.txt),
+[Node](../reports/browser-tests.txt), and [all demonstrations](../reports/demo.txt).
+The full handover also includes installation, packaging and blocked-browser
+records in its outer `evidence/` directory. The 29 new Python regressions cover
+installed serving, runtime/site builds and portable release delivery.
+
+## Checks that could not be completed here
+
+**Real Chromium/Pyodide execution has not passed in this environment.**
+Playwright 1.62.1 is installed, but Chromium is absent. Its attempted download
+returned HTTP 403 with the environment's network-policy rejection. The pinned
+Pyodide CDN was also unreachable in a bounded download attempt. Running the
+actual browser harness therefore failed before any browser scenario executed.
+No mock result substitutes for that missing evidence. The optional native
+Python `python-sat` dependency is also absent (three skipped tests).
+
+The Actions workflow keeps real diagram rendering and the full Pyodide suite
+mandatory, including MiniSat, then separately exercises the branch entry and
+installed application. Deployment follows only after those checks succeed.
+Branch publishing has no equivalent automatic browser gate. Remote Actions,
+public deployment, Windows/macOS execution, other Python versions and human
+accessibility review have not been performed here.
+
+Runtime-directory fixtures establish structural validation, not execution of a
+vendored runtime. The release uses the default CDN and does **not** bundle
+Chromium, Pyodide or native SAT binaries. The CLI works offline. Browser use
+without CDN access needs a complete separately obtained runtime directory;
+MiniSat additionally needs its compatible packages and dependencies.
+
+## Reproduce the checks
+
+From the source root:
+
+```sh
+python tools/check_version.py
+python -m unittest discover -s tests -v
+python demo.py
+python tools/build_release.py --check
+python tools/build_release.py
+python tools/test_install.py dist/releases/muql_explorer-0.7.0-py3-none-any.whl
+```
+
+Building Python distributions needs `setuptools>=61` and `wheel`. The wheel
+itself installs without build dependencies or network access. See
+[Contributing](../CONTRIBUTING.md) for all nine Node commands and browser
+prerequisites. Once Chromium and the runtime are available:
+
+```sh
+node tests/browser/model-view.mjs
+python tools/test_browser.py --target actions --native
+python tools/test_browser.py --target branch
+# First install the wheel into the selected interpreter:
+python tools/test_browser.py --target installed --python /path/to/venv/bin/python
+```
+
+The generated site and installed asset ZIP are release snapshots. After source
+or documentation edits, run `python tools/build_release.py --prepare-only`
+before checking/publishing them. Source-preview `bash serve.sh` rebuilds at
+startup.
+
+## Historical validation records
+
+The sections below retain earlier releases' observations and dates. Their
+counts are historical; links named `tests.txt`, `browser-tests.txt` and
+`demo.txt` now show the current 0.7.0 run. Exact earlier transcripts remain
+inside the unchanged historical release ZIPs in the full handover.
+
+## Historical release: 0.6.10
 
 Validated on 14 October 2026 with CPython 3.12.14. This release changes the
 browser's editing and continuation controls. The logic engine, theories, and

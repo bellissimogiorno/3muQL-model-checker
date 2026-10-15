@@ -1,0 +1,12 @@
+/* Shared by the explorer and the self-contained theory reader. */
+/* U+A7F4 is recent: this original, local glyph also supports older systems. */
+@font-face {
+  font-family: "MuQL Quorum";
+  src: url("quorum-superscript.woff") format("woff");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range: U+A7F4;
+}
+.quorum-quantifier { white-space: nowrap; }
+sup.quorum-mark { position: relative; top: -.5em; vertical-align: baseline; font-size: .7em; line-height: 0; font-style: normal; }

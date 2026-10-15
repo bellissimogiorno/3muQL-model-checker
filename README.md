@@ -20,32 +20,29 @@ In particular, the terminal self-loop of `time stutter` does not encode the
 paper's full natural-number time with past history. See
 [semantics](docs/semantics.md) before interpreting temporal results.
 
-**Release 0.6.10 · Clearer editing and return paths.**
-Start at **First steps** and follow **Keep exploring** through the eleven
-curated examples. The tour ends at **Custom experiment — create your own
-theory**, where you can start, load, or save a theory, restore a saved draft,
-or reset to your last curated example. **Load theory** and **Save theory**
-also sit together in the source editor. Undoing edits back to an example's
-original source restores its curated context. If the source needs checking,
-the main run action takes you directly to **Update choices**.
-The bundled theory files, displayed formulas, and symbol toolbar now use a
-real Unicode superscript Q: `∃ꟴ`, `∀ꟴ`, `∃ꟴ◇`, and the other quorum modalities.
-The plain-Q spellings `∃Q` / `∀Q` and ASCII names remain accepted.
-Version **0.6.9** is preserved unchanged as the latest pinned baseline;
-the earlier **0.6.6** pin is also retained.
-The archive expands into `3muql-explorer/`, with its release number in `VERSION`. See
-[GitHub setup](docs/github.md) for upload instructions and
-[the browser guide](docs/browser.md) for deployment and use. The `search` command
-chooses participants, values, stages, and quorum families within explicit
-bounds. The core still needs no dependencies; optional PySAT supplies a native
-SAT backend. Read and write formulas with
-`∀`, `∧`, `→`, and `⇀`, or type their ASCII equivalents. The bundled theories
-use Unicode by default. Strong implication is `⇀`, written `-\` in ASCII.
-The [notation guide](docs/notation.md) has a copyable symbol table and practical
-typing examples. The [fresh package audit](docs/audit-0.6.4.md) records the
-findings, fixes, independent checks, measured improvements, and remaining
-limits. The [0.5.7 audit](docs/audit-0.5.7.md) and
-[original audit](docs/audit.md) remain available for reference.
+**Release 0.7.1 · Install locally or open the explorer on GitHub Pages.**
+The same Python engine supports both routes, with the existing four-step blue
+interface, eleven curated examples, editor, and replayable countermodels.
+The source release includes a ready-built `site/`, a root landing page, and
+an automatic Pages deployment workflow. Installable wheels include the browser
+application too: `3muql serve --port 0 --open` launches it without a source
+checkout or Bash. The Python CLI remains fully offline and dependency-free;
+the default browser application downloads pinned Pyodide on first use.
+
+[Open the GitHub Pages explorer](https://bellissimogiorno.github.io/3muQL-model-checker/)
+after deploying this release. The supplied package does not change the live
+repository or site by itself. See [GitHub setup](docs/github.md) for the exact
+update and Pages settings, [the browser guide](docs/browser.md) for runtime and
+offline options, and [release validation](docs/validation.md) for the checks
+actually completed and the remaining browser-validation gate.
+
+The archive expands into `3muql-explorer/`, with the version in `VERSION`.
+Strong implication is `⇀`, written `-\` in ASCII. The bundled theories use
+Unicode, including superscript-Q modalities such as `∃ꟴ◇`; plain-Q and ASCII
+spellings remain accepted. See the [notation guide](docs/notation.md).
+Earlier release audits remain available as historical evidence:
+[0.6.4](docs/audit-0.6.4.md), [0.5.7](docs/audit-0.5.7.md), and
+[the original audit](docs/audit.md).
 
 ## Explore in the browser
 
@@ -86,29 +83,40 @@ Eleven presets include all five search demonstrations, Voting and Simpler
 Paxos comparisons, and tutorials on truth values and quorums. MiniSat is
 available as an optional additional browser download.
 
-For a local preview, open a terminal in the package directory and run:
+For the installed application (Python 3.10 or later), install the supplied
+wheel in a virtual environment and launch it:
 
 ```sh
-bash serve.sh
+python -m venv .venv
+# Linux/macOS:
+. .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install /path/to/muql_explorer-0.7.1-py3-none-any.whl
+3muql serve --port 0 --open
 ```
 
-The Bash script uses `python3` by default (Python 3.10 or later). Use
-`bash serve.sh --python python` to select `python` instead. It uses the selected
-interpreter throughout and needs no package installation. It
-builds the site and serves it at **http://127.0.0.1:8000/**. Press **Ctrl+C** to
-stop; restart after changing source files. Add `--open` to open your browser,
-or `--port 8001` to use another port (`--port 0` chooses a free one).
+Use the actual path to the downloaded wheel. Wheel installation needs no
+network or build tools. `3muql` is the primary installed command; `muql` remains
+a compatibility alias. `python -m muql serve --port 0 --open` is equivalent;
+the Python module remains `muql` and the distribution remains `muql-explorer`.
+The command prints a local address, serves only to your computer, and stops
+with **Ctrl+C**. It serves the packaged browser app; checking still runs in
+the browser. First use requires access to the pinned Pyodide runtime CDN.
 
-An internet connection is required to load the browser's Python runtime on
-first use. To publish, upload this repository, choose
-**Settings → Pages → GitHub Actions**, and run the **Browser demo** workflow.
-It runs the engine tests and real Chromium/Pyodide browser checks before
-deployment. See [the browser guide](docs/browser.md) for the complete workflow.
+From the extracted source directory, the same command works without installation:
 
-The browser source and deployment workflow are included. Browser execution
-could not be tested in the release-preparation environment: it has no browser
-binary. The real browser checks are a required
-deployment gate; they are not claimed to have passed locally.
+```sh
+python -m muql serve --port 0 --open
+```
+
+For development, `bash serve.sh` rebuilds the site before serving it at
+**http://127.0.0.1:8000/**. It uses `python3` by default; select another
+interpreter with `--python python`. It also accepts `--port 0` and `--open`.
+Restart after changing source files. To publish, follow
+[GitHub setup](docs/github.md): the recommended **Deploy explorer** workflow
+builds and validates the app before deploying it directly at the Pages root.
+A branch deployment from **main / (root)** also works using the supplied
+landing page and generated `site/`.
 
 ## Start in one command
 
@@ -164,7 +172,7 @@ python -m muql check examples/bracha_weakened.md --countermodels witnesses
 ```
 
 A command that finds a counterexample exits with code `1`; that is an expected
-result of these weakening experiments. For the shorter installed `muql`
+result of these weakening experiments. For the shorter installed `3muql`
 command, use a virtual environment:
 
 ```sh
@@ -173,12 +181,13 @@ python -m venv .venv
 . .venv/bin/activate
 # Windows PowerShell: .venv\Scripts\Activate.ps1
 python -m pip install -e .
-muql check examples/voting.md
+3muql check examples/voting.md
 ```
 
 For offline editable installation when `setuptools>=61` is already available,
-use `python -m pip install -e . --no-build-isolation`. Source execution needs
-neither pip nor setuptools.
+use `python -m pip install -e . --no-build-isolation`. If your setuptools
+version requires it, install `wheel` too. Installing the supplied wheel is the
+simplest offline route. Source execution needs neither pip nor setuptools.
 
 For the optional native SAT backend, install `python-sat` through the extra:
 

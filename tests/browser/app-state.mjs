@@ -5,13 +5,18 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import vm from "node:vm";
+import { randomUUID } from "node:crypto";
 
 const source = (await readFile(new URL("../../web/app.js", import.meta.url), "utf8"))
   .replace(/^import .* from "\.\/editor\.js";$/m, "")
   .replace(/^import .* from "\.\/model-view\.js";$/m, "")
+  .replace(/^import .* from "\.\/model-data\.js";$/m, "")
   .replace(/^import .* from "\.\/notation\.js";$/m, "")
   .replaceAll("import.meta.url", '"https://example.test/muql-explorer/app.js"');
-const key = "muql-explorer-draft-v1";
+const legacyKey = "muql-explorer-draft-v1";
+const key = `${legacyKey}:/muql-explorer/`;
+const modelSource = await readFile(new URL("../../web/model-data.js", import.meta.url), "utf8");
+const { atomLabel, nameLabel } = await import(`data:text/javascript;base64,${Buffer.from(modelSource).toString("base64")}`);
 const notationSource = await readFile(new URL("../../web/notation.js", import.meta.url), "utf8");
 const { formulaHTML } = await import(`data:text/javascript;base64,${Buffer.from(notationSource).toString("base64")}`);
 const theory = '```muql\ntheory "Saved work"\npredicate chosen/1\nproperty P: t\n```\n';
@@ -65,11 +70,13 @@ function element(id = "", focused = () => {}, scrolled = () => {}) {
 }
 
 async function fixture({ draft = { source: theory }, failure, gate, exampleSource = theory,
-  examples = [tinyExample], files = {}, confirm = true, fetchGate = {}, restore = true } = {}) {
-  const nodes = new Map(), stored = new Map(), writes = [], requests = [], timers = new Map(), workers = [], downloads = [], scrolls = [];
+  examples = [tinyExample], files = {}, confirm = true, fetchGate = {}, restore = true,
+  sharedStorage, appPath = "/muql-explorer/", storageFailure = false, insecureCrypto = false } = {}) {
+  const nodes = new Map(), stored = sharedStorage || new Map(), writes = [], requests = [], timers = new Map(), workers = [], downloads = [], scrolls = [];
   let timerId = 0, confirms = 0, activeElement;
   const focused = node => { activeElement = node; };
-  if (draft !== null) stored.set(key, JSON.stringify(draft));
+  const scopedKey = `${legacyKey}:${appPath}`;
+  if (draft !== null && !stored.has(scopedKey)) stored.set(scopedKey, JSON.stringify(draft));
   function node(id) {
     if (!nodes.has(id)) nodes.set(id, element(id, focused, node => scrolls.push(node)));
     return nodes.get(id);
@@ -96,6 +103,7 @@ async function fixture({ draft = { source: theory }, failure, gate, exampleSourc
   });
   activeElement = document.body;
   const context = vm.createContext({
+    crypto: insecureCrypto ? {} : { randomUUID }, atomLabel, nameLabel,
     URL: class extends URL {
       static createObjectURL(blob) { downloads.push(blob); return `blob:download-${downloads.length}`; }
       static revokeObjectURL() {}
@@ -105,8 +113,10 @@ async function fixture({ draft = { source: theory }, failure, gate, exampleSourc
     document,
     window, location: { protocol: "https:" }, matchMedia: () => ({ matches: true }),
     localStorage: {
+      get length() { return stored.size; },
+      key: index => [...stored.keys()][index] ?? null,
       getItem: name => stored.get(name) ?? null,
-      setItem(name, text) { stored.set(name, text); writes.push(text); },
+      setItem(name, text) { if (storageFailure) throw new Error("Storage unavailable"); stored.set(name, text); if (name === scopedKey) writes.push(text); },
       removeItem(name) { stored.delete(name); },
     },
     setTimeout(callback) { const id = ++timerId; timers.set(id, callback); return id; },
@@ -127,7 +137,7 @@ async function fixture({ draft = { source: theory }, failure, gate, exampleSourc
       return { ok: true, text: async () => content };
     },
   });
-  vm.runInContext(source, context, { filename: "web/app.js" });
+  vm.runInContext(source.replaceAll('https://example.test/muql-explorer/app.js', `https://example.test${appPath}app.js`), context, { filename: "web/app.js" });
   await tick();
   // Most state tests exercise custom work. Explicitly take the user action
   // after First steps loads; startup tests pass restore:false to inspect it.
@@ -451,7 +461,99 @@ test("page lifecycle events preserve startup drafts and respect Forget draft", a
   await f.node("theory-editor").emit("input");
   f.document.visibilityState = "hidden";
   await f.document.emit("visibilitychange"); await f.window.emit("pagehide");
-  assert.equal(f.stored.has(key), false);
+  assert.deepEqual(JSON.parse(f.stored.get(key)), { forgotten: true });
+});
+
+test("closing an unchanged tab cannot replace a newer draft from another tab", async () => {
+  const sharedStorage = new Map();
+  const a = await fixture({ sharedStorage }); await a.inspected();
+  const b = await fixture({ sharedStorage }); await b.inspected();
+  const fresh = theory.replace("Saved work", "New work in A");
+  a.node("theory-editor").value = fresh; await a.node("theory-editor").emit("input");
+  await a.window.emit("pagehide");
+  const writes = b.writes.length;
+  for (const event of ["pagehide", "beforeunload"]) await b.window.emit(event);
+  b.document.visibilityState = "hidden"; await b.document.emit("visibilitychange");
+  assert.equal(b.writes.length, writes);
+  assert.equal(JSON.parse(sharedStorage.get(key)).source, fresh);
+});
+
+test("concurrent dirty tabs preserve both sources and recover settings without replacing the main draft", async () => {
+  const sharedStorage = new Map();
+  const a = await fixture({ sharedStorage }); await a.inspected();
+  const b = await fixture({ sharedStorage }); await b.inspected();
+  const first = theory.replace("Saved work", "A edits"), second = theory.replace("Saved work", "B edits");
+  for (const [f, text] of [[a, first], [b, second]]) {
+    f.node("theory-editor").value = text; await f.node("theory-editor").emit("input");
+    f.node("timeout").value = f === b ? "17" : "11";
+    await f.window.emit("pagehide");
+  }
+  assert.equal(JSON.parse(sharedStorage.get(key)).source, first);
+  assert.match(b.node("draft-status").textContent, /Another tab/);
+  assert.equal(b.node("draft-recovery").hidden, false);
+  const copies = [...sharedStorage.entries()].filter(([name]) => name.startsWith(`${key}:copy:`)).map(([, data]) => JSON.parse(data).draft);
+  assert.ok(copies.some(copy => copy.source === first));
+  assert.ok(copies.some(copy => copy.source === second && copy.limits.timeout === 17));
+  // A fresh visit can download or restore the losing tab's complete work.
+  const reopened = await fixture({ sharedStorage, restore: false }); await reopened.inspected();
+  const restore = reopened.node("draft-recovery-actions").children.find(node => node.textContent === "Restore recovery copy 1");
+  await restore.emit("click"); await reopened.inspected();
+  assert.equal(reopened.node("theory-editor").value, second);
+  assert.equal(reopened.node("timeout").value, "17");
+  assert.equal(JSON.parse(sharedStorage.get(key)).source, first);
+});
+
+test("drafts from separate project paths cannot overwrite each other", async () => {
+  const sharedStorage = new Map();
+  const a = await fixture({ sharedStorage }); await a.inspected();
+  const b = await fixture({ sharedStorage, appPath: "/different-project/" }); await b.inspected();
+  b.node("theory-editor").value = theory.replace("Saved work", "Other project");
+  await b.node("theory-editor").emit("input"); await b.window.emit("pagehide");
+  assert.equal(JSON.parse(sharedStorage.get(key)).source, theory);
+  assert.match(JSON.parse(sharedStorage.get(`${legacyKey}:/different-project/`)).source, /Other project/);
+});
+
+test("legacy drafts migrate without deletion and scoped Forget suppresses remigration", async () => {
+  const legacy = JSON.stringify({ source: theory, highlight: false, limits: { timeout: 7 } });
+  const sharedStorage = new Map([[legacyKey, legacy]]);
+  const f = await fixture({ sharedStorage, draft: null, restore: false }); await f.inspected();
+  assert.equal(f.node("restore-draft").hidden, false);
+  await f.node("restore-draft").emit("click"); await f.inspected();
+  assert.equal(JSON.parse(sharedStorage.get(key)).source, theory);
+  assert.equal(sharedStorage.get(legacyKey), legacy);
+  await f.node("forget-draft").emit("click");
+  assert.equal([...sharedStorage.keys()].some(name => name.startsWith(`${key}:copy:`)), false);
+  const fresh = await fixture({ sharedStorage, draft: null, restore: false }); await fresh.inspected();
+  assert.equal(fresh.node("restore-draft").hidden, true);
+  assert.equal(sharedStorage.get(legacyKey), legacy);
+});
+
+test("full recovery storage retains every copy and leaves unsaved work editable with guidance", async () => {
+  const sharedStorage = new Map(Array.from({ length: 20 }, (_, index) => [`${key}:copy:${index}`,
+    JSON.stringify({ savedAt: "2026-10-15", draft: { source: theory + index } })]));
+  const before = new Map(sharedStorage);
+  const f = await fixture({ sharedStorage }); await f.inspected();
+  f.node("theory-editor").value = theory + "\nLatest unsaved edit";
+  await f.node("theory-editor").emit("input"); await f.window.emit("pagehide");
+  assert.match(f.node("draft-status").textContent, /recovery storage is full/);
+  assert.match(f.node("theory-editor").value, /Latest unsaved edit/);
+  assert.equal(f.node("theory-editor").readOnly, false);
+  for (const [name, value] of before) assert.equal(sharedStorage.get(name), value);
+  assert.equal([...sharedStorage.keys()].filter(name => name.startsWith(`${key}:copy:`)).length, 20);
+});
+
+test("storage failure leaves the open source editable and offers an explicit download fallback", async () => {
+  const f = await fixture({ storageFailure: true }); await f.inspected();
+  assert.match(f.node("draft-status").textContent, /Draft not saved.*Save theory/);
+  assert.equal(f.node("theory-editor").value, theory);
+  assert.equal(f.node("theory-editor").readOnly, false);
+});
+
+test("custom drafts remain usable on plain HTTP without crypto.randomUUID", async () => {
+  const f = await fixture({ insecureCrypto: true }); await f.inspected();
+  f.node("theory-editor").value = theory + "\nSaved without secure-context crypto";
+  await f.node("theory-editor").emit("input"); await f.window.emit("pagehide");
+  assert.match(JSON.parse(f.stored.get(key)).source, /Saved without secure-context crypto/);
 });
 
 const protocolTheory = '```muql\ntheory "Protocol agreement"\npredicate decide/1\naxiom A: t\naxiom B: t\nproperty P: t\nproperty Q: f\n```\n';

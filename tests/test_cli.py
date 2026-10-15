@@ -17,6 +17,22 @@ class CommandLineTests(unittest.TestCase):
             text=True, capture_output=True, timeout=30,
         )
 
+    def test_canonical_command_help_version_and_errors(self):
+        from muql import __version__
+
+        version = self.run_cli("--version")
+        self.assertEqual(version.returncode, 0, version.stderr)
+        self.assertEqual(version.stdout.strip(), f"3muql {__version__}")
+        help_result = self.run_cli("serve", "--help")
+        self.assertEqual(help_result.returncode, 0, help_result.stderr)
+        self.assertIn("usage: 3muql serve", help_result.stdout)
+        invalid = self.run_cli("serve", "--port", "65536")
+        self.assertEqual(invalid.returncode, 2)
+        self.assertIn("3muql serve: error:", invalid.stderr)
+        missing = self.run_cli("check", "this-file-does-not-exist.md")
+        self.assertEqual(missing.returncode, 2)
+        self.assertIn("3muql:", missing.stderr)
+
     def test_json_stdout_is_parseable_and_success_is_scoped(self):
         process = self.run_cli("check", "examples/voting.md", "--property", "Agreement", "--json", "-")
         self.assertEqual(process.returncode, 0, process.stderr)

@@ -24,7 +24,8 @@ try {
   playwright = require(path.join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES, 'playwright'));
 }
 
-const url = process.env.MUQL_WEB_URL || 'http://127.0.0.1:8765/muql-explorer/';
+const entryURL = process.env.MUQL_WEB_URL || 'http://127.0.0.1:8765/muql-explorer/';
+let url = entryURL;
 const artifacts = path.resolve(process.env.MUQL_BROWSER_ARTIFACTS || 'tests/browser/artifacts');
 const timeout = 90_000;
 const checks = [];
@@ -349,6 +350,9 @@ try {
     const response = await page.goto(url, { waitUntil: 'domcontentloaded' });
     assert.equal(response.status(), 200);
     await ready(page);
+    // Branch-based Pages enters through the repository's root redirect. All
+    // following asset and guide checks must use the final application URL.
+    url = page.url();
     assert.equal(await page.locator('#example-select').inputValue(), 'choices');
     const titles = await page.locator('#example-select option').allTextContents();
     assert.match(titles[0], /^First steps/);
@@ -657,13 +661,13 @@ try {
     assert.doesNotMatch(await page.locator('#example-description').innerText(), /Does a two-valued choice have to be unique/);
     await highlightedSource(page);
     await page.waitForFunction(source => {
-      const draft = JSON.parse(localStorage.getItem('muql-explorer-draft-v1'));
+      const draft = JSON.parse(localStorage.getItem(`muql-explorer-draft-v1:${new URL('.', location.href).pathname}`));
       return draft?.source === source;
     }, source);
     await page.reload({ waitUntil: 'domcontentloaded' });
     await ready(page);
     assert.equal(await page.locator('#example-select').inputValue(), 'choices', 'Each visit starts at First steps');
-    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('muql-explorer-draft-v1')).source), source,
+    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem(`muql-explorer-draft-v1:${new URL('.', location.href).pathname}`)).source), source,
       'Starting the curated tour must preserve the saved custom draft');
     await page.locator('#restore-draft').click();
     await ready(page);
@@ -770,7 +774,7 @@ try {
     assert.equal(await page.locator('#example-select').inputValue(), 'paxos-without-write');
     assert.equal(await page.locator('#theory-editor').inputValue(), original);
     assert.match(await page.locator('#run-omissions').innerText(), /SPaxWrite01/);
-    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('muql-explorer-draft-v1')).source), edited,
+    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem(`muql-explorer-draft-v1:${new URL('.', location.href).pathname}`)).source), edited,
       'Reset flushes custom work before opening the curated example');
     assert.equal(await page.locator('#restore-draft').isVisible(), true);
     await (await sourceEditor(page)).fill(original + '\n<!-- Another temporary edit -->\n');
@@ -1059,7 +1063,7 @@ try {
   }
 } finally {
   await writeFile(path.join(artifacts, 'summary.json'), JSON.stringify({
-    url, success: failure === null, failure, checks, browserErrors, unexpectedDialogs, consoleMessages,
+    entryURL, url, success: failure === null, failure, checks, browserErrors, unexpectedDialogs, consoleMessages,
     nativeRequested: process.env.MUQL_BROWSER_NATIVE === '1',
   }, null, 2) + '\n');
   if (browser) await browser.close();

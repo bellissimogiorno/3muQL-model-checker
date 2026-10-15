@@ -462,5 +462,5 @@ Command (from the package root):
      0  p0      write      red=t, blue=t
   Expected outcomes confirmed.
 
-30 scenarios, 81 property results, 22 countermodels; 3.84s.
+30 scenarios, 81 property results, 22 countermodels; 4.50s.
 All expected outcomes confirmed. Edit a theory or use --drop/--replace to continue exploring.

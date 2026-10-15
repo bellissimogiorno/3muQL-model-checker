@@ -1,4 +1,6 @@
-include LICENSE README.md CHANGELOG.md CONTRIBUTING.md SOURCES.md VERSION .gitignore demo.py serve.sh
+include LICENSE README.md CHANGELOG.md CONTRIBUTING.md SOURCES.md VERSION .gitattributes .gitignore demo.py serve.sh
+include index.html .nojekyll
+recursive-include site *
 recursive-include docs *.md
 recursive-include docs *.html
 recursive-include examples *.md
@@ -10,3 +12,4 @@ recursive-include web *.html *.css *.js *.json *.svg *.woff
 recursive-include reports *.txt *.json *.md
 recursive-include .github *.yml
 exclude *.zip
+include muql/_site.zip

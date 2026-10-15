@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Explore three-valued quorum logic. Choose a theory, adjust its assumptions, and inspect finite models in your browser.">
+  <title>3μQL Explorer</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="notation.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#choose">Skip to the explorer</a>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="3μQL Explorer home"><span class="brand-mark" aria-hidden="true">3μ</span><span>3μQL <strong>Explorer</strong></span></a>
+    <nav aria-label="Resources"><a href="theories.html" target="_blank" rel="noopener">Theory reader <span aria-hidden="true">↗</span><span class="sr-only"> (opens a new tab)</span></a><a href="#help">Help</a><span id="version" class="version"></span></nav>
+  </header>
+  <main>
+    <div class="intro"><h1>3μQL: three-valued fixpoint quorum logic</h1><p>Choose a theory, adjust its assumptions, and inspect the evidence.</p></div>
+    <nav class="workflow-nav" aria-label="Experiment steps">
+      <a href="#choose" aria-current="step"><span>1</span> Theory</a>
+      <a href="#workspace"><span>2</span> Claims</a>
+      <a href="#configure"><span>3</span> Run</a>
+      <a href="#evidence"><span>4</span> Results</a>
+    </nav>
+    <noscript><p class="notice error">JavaScript is needed to run the checker. You can still use the <a href="theories.html">theory reader</a> or the Python package.</p></noscript>
+    <div id="boot-error" class="notice error" role="alert" hidden></div>
+    <div class="workbench">
+      <section id="choose" class="workflow-step panel example-panel" aria-labelledby="example-heading">
+        <div class="step-content">
+          <div class="section-heading"><div><h2 id="example-heading" tabindex="-1"><span class="step-index" aria-hidden="true">1</span><span class="sr-only">Step 1. </span>Choose a theory</h2><p>Begin with First steps, then follow Keep exploring through the curated examples.</p></div></div>
+          <div id="curated-picker"><div class="example-picker"><label for="example-select">Curated example<select id="example-select" aria-describedby="example-help" disabled><option>Loading examples…</option></select></label><button id="load-example" class="button secondary" type="button" disabled>Reset example</button></div>
+          <p id="example-help" class="small-text picker-help">Choosing an example loads its theory and settings immediately. Reset restores the loaded example’s defaults.</p></div><div id="custom-context" class="custom-context" hidden><p id="custom-context-message">You are working on your own theory in the editor below.</p><button id="return-examples" class="text-button" type="button">Reset to curated example</button></div>
+          <p id="example-description" class="example-description"></p><p id="example-hint" class="hint"></p>
+          <div class="loaded-theory" aria-live="polite" aria-atomic="true"><span class="small-text">Loaded theory</span><strong id="loaded-theory">Loading…</strong><span id="theory-origin" class="small-text"></span></div>
+          <p id="theory-signature" class="small-text theory-signature"></p>
+          <p id="draft-status" class="small-text"></p>
+          <details id="source-details" class="source-details">
+            <summary>View or edit the theory</summary>
+            <div class="source-content">
+              <div class="editor-meta"><label for="theory-editor">Markdown source <span class="muted">· only <code>muql</code> blocks are executed</span></label><div class="editor-actions"><label class="highlight-toggle" for="highlight-syntax"><input id="highlight-syntax" type="checkbox" checked>Highlight syntax</label><button id="load-source" type="button" class="text-button">Load theory</button><button id="save-source" type="button" class="text-button">Save theory</button></div></div>
+              <div class="editor-frame">
+                <div class="sr-only"><span id="symbol-label">Insert a logic symbol</span><span id="symbol-help">Arrow keys browse · Enter inserts · Tab returns to the editor</span></div>
+                <div id="symbol-buttons" class="symbol-buttons" role="toolbar" aria-labelledby="symbol-label" aria-describedby="symbol-help">
+                  <div class="symbol-group" role="group" aria-label="Logic"><div class="symbol-row">
+                    <button type="button" data-symbol="¬" data-description="Not · ASCII: !" aria-label="Insert not, ¬" title="Not · ASCII: !" tabindex="0">¬</button>
+                    <button type="button" data-symbol="∧" data-description="And · ASCII: &amp;" aria-label="Insert and, ∧" title="And · ASCII: &amp;" tabindex="-1">∧</button>
+                    <button type="button" data-symbol="∨" data-description="Or · ASCII: |" aria-label="Insert or, ∨" title="Or · ASCII: |" tabindex="-1">∨</button>
+                    <button type="button" data-symbol="⊕" data-description="Exclusive or · ASCII: xor" aria-label="Insert exclusive or, ⊕" title="Exclusive or · ASCII: xor" tabindex="-1">⊕</button>
+                    <button type="button" data-symbol="→" data-description="Weak implication · ASCII: -&gt;" aria-label="Insert weak implication, →" title="Weak implication · ASCII: -&gt;" tabindex="-1">→</button>
+                    <button type="button" data-symbol="⇀" data-description="Strong implication · ASCII: -\" aria-label="Insert strong implication, ⇀" title="Strong implication · ASCII: -\" tabindex="-1">⇀</button>
+                    <button type="button" data-symbol="≡" data-description="Equivalence · ASCII: &lt;=&gt;" aria-label="Insert equivalence, ≡" title="Equivalence · ASCII: &lt;=&gt;" tabindex="-1">≡</button>
+                    <button type="button" data-symbol="≤" data-description="Truth order · ASCII: &lt;=" aria-label="Insert truth order, ≤" title="Truth order · ASCII: &lt;=" tabindex="-1">≤</button>
+                    <button type="button" data-symbol="=" data-description="Value equality · ASCII: ==" aria-label="Insert value equality, =" title="Value equality · ASCII: ==" tabindex="-1">=</button>
+                    <button type="button" data-symbol="≠" data-description="Value inequality · ASCII: !=" aria-label="Insert value inequality, ≠" title="Value inequality · ASCII: !=" tabindex="-1">≠</button>
+                  </div></div>
+                  <div class="symbol-group" role="group" aria-label="Values"><div class="symbol-row">
+                    <button type="button" data-symbol="∀" data-description="Universal quantification · ASCII: forall" aria-label="Insert universal quantification, ∀" title="Universal quantification · ASCII: forall" tabindex="-1">∀</button>
+                    <button type="button" data-symbol="∃" data-description="Existence · ASCII: exists" aria-label="Insert existence, ∃" title="Existence · ASCII: exists" tabindex="-1">∃</button>
+                    <button type="button" data-symbol="∃¹" data-description="Unique existence · ASCII: unique" aria-label="Insert unique existence, ∃¹" title="Unique existence · ASCII: unique" tabindex="-1">∃¹</button>
+                    <button type="button" data-symbol="∃⁰¹" data-description="Affine existence · ASCII: affine" aria-label="Insert affine existence, ∃⁰¹" title="Affine existence · ASCII: affine" tabindex="-1">∃⁰¹</button>
+                  </div></div>
+                  <div class="symbol-group" role="group" aria-label="Points and quorums"><div class="symbol-row">
+                    <button type="button" data-symbol="◇" data-description="Some point in the current quorum · ASCII: diamond" aria-label="Insert some point in the current quorum, ◇" title="Some point in the current quorum · ASCII: diamond" tabindex="-1">◇</button>
+                    <button type="button" data-symbol="□" data-description="Every point in the current quorum · ASCII: box" aria-label="Insert every point in the current quorum, □" title="Every point in the current quorum · ASCII: box" tabindex="-1">□</button>
+                    <button type="button" data-symbol="∃ꟴ" data-description="Some quorum · ASCII: existsQ" aria-label="Insert some quorum, ∃ꟴ" title="Some quorum · ASCII: existsQ" tabindex="-1"><span class="quorum-quantifier">∃ꟴ</span></button>
+                    <button type="button" data-symbol="∀ꟴ" data-description="Every quorum · ASCII: forallQ" aria-label="Insert every quorum, ∀ꟴ" title="Every quorum · ASCII: forallQ" tabindex="-1"><span class="quorum-quantifier">∀ꟴ</span></button>
+                    <button type="button" data-symbol="∃ꟴ◇" data-description="Some point in some quorum · ASCII: someQuorumSomePoint" aria-label="Insert some point in some quorum, ∃ꟴ◇" title="Some point in some quorum · ASCII: someQuorumSomePoint" tabindex="-1"><span class="quorum-quantifier">∃ꟴ</span>◇</button>
+                    <button type="button" data-symbol="∀ꟴ□" data-description="Every point in every quorum · ASCII: everyQuorumEveryPoint" aria-label="Insert every point in every quorum, ∀ꟴ□" title="Every point in every quorum · ASCII: everyQuorumEveryPoint" tabindex="-1"><span class="quorum-quantifier">∀ꟴ</span>□</button>
+                    <button type="button" data-symbol="∃ꟴ□" data-description="Every point in some quorum · ASCII: quorum" aria-label="Insert every point in some quorum, ∃ꟴ□" title="Every point in some quorum · ASCII: quorum" tabindex="-1"><span class="quorum-quantifier">∃ꟴ</span>□</button>
+                    <button type="button" data-symbol="∀ꟴ◇" data-description="Some point in every quorum · ASCII: contra" aria-label="Insert some point in every quorum, ∀ꟴ◇" title="Some point in every quorum · ASCII: contra" tabindex="-1"><span class="quorum-quantifier">∀ꟴ</span>◇</button>
+                  </div></div>
+                  <div class="symbol-group" role="group" aria-label="Fixed points"><div class="symbol-row">
+                    <button type="button" data-symbol="μ" data-description="Least fixed point · ASCII: mu" aria-label="Insert least fixed point, μ" title="Least fixed point · ASCII: mu" tabindex="-1">μ</button>
+                    <button type="button" data-symbol="ν" data-description="Greatest fixed point · ASCII: nu" aria-label="Insert greatest fixed point, ν" title="Greatest fixed point · ASCII: nu" tabindex="-1">ν</button>
+                  </div></div>
+                </div>
+                <p id="symbol-description" class="symbol-description">Insert at the cursor · arrows browse · Enter inserts</p>
+                <div id="source-editor" class="source-editor">
+                  <pre id="source-highlight" aria-hidden="true" hidden><code id="source-highlight-code"></code></pre>
+                  <textarea id="theory-editor" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="editor-help" placeholder="Loading the example…"></textarea>
+                </div>
+              </div>
+              <div class="editor-footer"><p id="editor-help">Unicode or ASCII. Strong implication: <code>⇀</code> or <code>-\</code>.</p><button id="inspect-button" class="button secondary" type="button" disabled>Update choices</button></div>
+            </div>
+          </details>
+          <div id="error-box" class="notice error" role="alert" tabindex="-1" hidden></div>
+          <div class="section-next"><button id="continue-theory" type="button" class="button primary workflow-action" disabled>Continue to claims <span aria-hidden="true">→</span></button></div>
+        </div>
+      </section>
+      <section id="workspace" class="workflow-step panel theory-panel" aria-labelledby="theory-heading">
+        <div class="step-content">
+          <div class="section-heading"><div><h2 id="theory-heading" tabindex="-1"><span class="step-index" aria-hidden="true">2</span><span class="sr-only">Step 2. </span>Choose what to test</h2><p>Select the claims you want to investigate. Remove an assumption to see what changes.</p></div></div>
+          <div id="selection-prompt" class="selection-prompt"><p id="selection-message">Reading the theory’s properties and assumptions…</p><button id="refresh-choices" class="button primary" type="button" aria-describedby="selection-message" hidden>Update choices</button></div>
+          <div id="theory-options" hidden>
+            <p id="claims-theory" class="context-line"></p>
+            <details class="selection-details" open><summary><span>Properties</span><span id="property-count" class="count"></span></summary><div class="selection-toolbar"><p class="small-text">Select none to look for an axiom model alone.</p><div class="selection-actions"><button id="properties-all" type="button" class="text-button">Select all</button><button id="properties-none" type="button" class="text-button">Select none</button></div></div><fieldset id="property-options"><legend class="sr-only">Properties</legend></fieldset></details>
+            <details id="assumptions-details" class="selection-details"><summary><span>Assumptions</span><span id="axiom-count" class="count"></span></summary><div class="selection-toolbar"><p class="small-text">Checked axioms are required; unchecked axioms are removed from this run.</p><button id="axioms-all" type="button" class="text-button">Keep all axioms</button></div><fieldset id="axiom-options"><legend class="sr-only">Axioms</legend></fieldset></details>
+          </div>
+          <div class="section-next"><button id="continue-settings" class="button primary workflow-action" type="button" disabled>Continue to run settings <span aria-hidden="true">→</span></button></div>
+        </div>
+      </section>
+      <section id="configure" class="workflow-step panel controls-panel" aria-labelledby="explore-heading">
+        <div class="step-content">
+          <div class="section-heading"><div><h2 id="explore-heading" tabindex="-1"><span class="step-index" aria-hidden="true">3</span><span class="sr-only">Step 3. </span>Set the scope. Run the experiment.</h2><p>Both modes find truth values automatically. Choose whether to search for a frame or use the one in your theory.</p></div></div>
+          <form id="run-form">
+            <fieldset id="run-controls"><legend class="sr-only">Run settings</legend>
+              <fieldset class="mode-picker"><legend class="sr-only">Choose search or fixed-frame checking</legend><label><input id="mode-search" name="mode" type="radio" value="search" checked><span><strong>Search for a model</strong><small>Find a frame within the size limits below.</small></span></label><label><input id="mode-check" name="mode" type="radio" value="check"><span><strong>Check this frame</strong><small>Use the participants, values, stages, and quorums declared in the theory.</small></span></label></fieldset>
+              <p id="scope-note" class="small-text" aria-live="polite"></p>
+              <div class="limits-layout">
+                <div id="search-bounds"><p class="field-heading">Search up to</p><div class="bounds-grid"><label for="max-points">Participants<input id="max-points" type="number" min="1" max="6" value="1" aria-describedby="bounds-help" required></label><label for="max-values">Values<input id="max-values" type="number" min="1" max="8" value="2" aria-describedby="bounds-help" required></label><label for="max-stages">Time stages<input id="max-stages" type="number" min="1" max="12" value="1" aria-describedby="bounds-help" required></label></div><p id="bounds-help" class="small-text">Maximum sizes. Smaller frames are tried first.</p></div>
+                <div class="time-limit"><p class="field-heading">Stop after</p><label for="timeout">Seconds<input id="timeout" type="number" min="1" max="120" value="10" required></label></div>
+              </div>
+              <details class="advanced"><summary>Advanced limits and solver</summary><div class="advanced-grid">
+                <label for="max-quorums">Quorums per frame<input id="max-quorums" type="number" min="1" max="64" value="8" aria-describedby="bounds-help" required></label>
+                <label for="max-frames">Frames to try<input id="max-frames" type="number" min="1" max="5000" value="500" aria-describedby="bounds-help" required></label>
+                <label for="max-nodes">Compilation nodes<input id="max-nodes" type="number" min="1" max="500000" value="500000" required></label>
+                <label for="max-decisions">Solver decisions<input id="max-decisions" type="number" min="0" max="1000000" value="100000" required></label>
+                <label for="solver" class="solver-field">Solver<select id="solver"><option value="builtin">Built-in · no extra download</option><option value="pysat">MiniSat · additional download</option></select></label>
+              </div><p class="small-text">Quorum and frame limits apply only when searching for a frame. Compilation and solver limits apply in both modes. MiniSat can accelerate larger searches and needs an additional download.</p></details>
+            </fieldset>
+            <div class="run-strip"><div class="run-context" aria-live="polite"><p id="run-theory" class="context-line"></p><p id="run-summary" class="run-summary">Choose a theory to begin.</p><p id="run-properties" class="small-text"></p><p id="run-omissions" class="assumption-context"></p></div><div class="run-actions"><button id="run-button" class="button primary workflow-action" type="submit" aria-describedby="run-theory scope-note run-summary run-omissions" disabled>Find a counterexample <span aria-hidden="true">→</span></button><button id="stop-button" class="button stop" type="button" hidden>Stop</button></div><p class="small-text">Runs on your device. You can stop at any time.</p></div>
+          </form>
+          <div class="runtime-status"><span id="status-dot" class="status-dot" aria-hidden="true"></span><p id="status-text" role="status" aria-live="polite">Preparing the example…</p><span id="elapsed" class="elapsed" aria-hidden="true"></span></div>
+        </div>
+      </section>
+      <section id="evidence" class="workflow-step panel results-panel" aria-labelledby="results-heading" aria-busy="false">
+        <div class="step-content"><div class="section-heading"><div><h2 id="results-heading" tabindex="-1"><span class="step-index" aria-hidden="true">4</span><span class="sr-only">Step 4. </span>Inspect the results</h2><p>Read the outcome, explore a model, or download the evidence.</p></div><span id="result-label" class="result-label"></span></div><div id="results"><div class="empty-state"><h3>Your results will appear here.</h3><p>Run the first example to see a small counterexample and its complete valuation.</p></div></div></div>
+      </section>
+    </div>
+    <section id="custom-experiment" class="custom-experiment" aria-labelledby="custom-heading">
+      <div class="section-heading"><div><h2 id="custom-heading" tabindex="-1">Custom experiment — create your own theory</h2><p>Ready to try your own ideas? Start a new Markdown theory, load one from your device, or return to your saved draft. Your theory opens in the same four-step workspace above.</p></div></div>
+      <div class="custom-actions"><button id="create-theory" class="button primary workflow-action" type="button">Create a theory <span aria-hidden="true">→</span></button><div class="custom-file-actions" role="group" aria-label="Theory file"><button id="import-button" class="button secondary" type="button">Load theory</button><button id="custom-save-source" class="button secondary" type="button">Save theory</button></div><button id="restore-draft" class="button secondary" type="button" hidden>Restore saved draft</button><button id="reset-custom" class="button secondary" type="button" aria-describedby="custom-reset-help" disabled>Reset to last example</button></div>
+      <p id="custom-reset-help" class="small-text">Reset returns to the last curated example and restores its original source and settings.</p>
+      <input id="import-file" type="file" accept=".md,.txt,text/plain,text/markdown" hidden>
+      <p id="custom-draft-status" class="small-text"></p>
+      <details id="draft-recovery" class="help-details" hidden><summary>Recovery copies</summary><p>Separate copies keep concurrent edits safe. Restore a copy with its settings, or save its theory as a file. Up to 20 copies are kept; if storage fills, use Save theory. Forget saved draft removes this page’s draft and its recovery copies.</p><div id="draft-recovery-actions" class="download-actions"></div></details>
+    </section>
+    <details id="help" class="help-section"><summary>How to interpret the results</summary>
+      <div class="help-grid"><div><h3>Counterexample found</h3><p>A concrete model makes the property false while every retained axiom is satisfied. Its valuation is independently replayed before being returned.</p></div><div><h3>Holds within bounds</h3><p>The checker exhausted the selected scope or bounded search without finding a counterexample. This is finite evidence, not an unbounded proof.</p></div><div><h3>Incomplete or inconsistent</h3><p>A limit leaves the question open. If the axioms have no model in the selected scope, no property is reported as proved.</p></div></div>
+      <details class="help-details"><summary>Truth values, downloads, and privacy</summary><p><strong>t</strong> means true, <strong>b</strong> means broken, and <strong>f</strong> means false. Axioms are satisfied by either <strong>t</strong> or <strong>b</strong>. A counterexample makes a property <strong>f</strong>.</p><p>Save a counterexample’s Markdown theory and JSON valuation together. Replay them with <code>python -m muql replay theory.md countermodel.json</code>.</p><p>Your theory and results stay on your device. Custom theories are saved as a draft in this browser when local storage is available. Each visit starts at First steps; restore your draft in Custom experiment below the results. Browsing the curated examples leaves your saved draft intact. The Python runtime loads when you first use the checker; MiniSat loads an additional package if selected. The standard online build fetches these from jsDelivr; a self-contained build can serve them with the page. There is no account or analytics. Closing the page stops computation. <button id="forget-draft" type="button" class="text-button">Forget saved draft</button></p></details>
+    </details>
+  </main>
+  <div id="activity-bar" class="activity-bar" role="group" aria-label="Current operation" hidden><span class="activity-indicator" aria-hidden="true"></span><span id="activity-text">Working…</span><button id="floating-stop" class="button stop" type="button">Stop</button></div>
+  <footer><span>3μQL Explorer <span aria-hidden="true">·</span> Three-valued fixpoint quorum logic</span><span>Local computation. Reproducible evidence.</span></footer>
+</body>
+</html>

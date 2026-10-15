@@ -1,0 +1,6 @@
+{
+  "version": "0.7.1",
+  "engine": "engine.zip",
+  "examples": "examples.json",
+  "pyodide": "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/"
+}

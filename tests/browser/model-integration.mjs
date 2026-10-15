@@ -7,6 +7,8 @@ import test from "node:test";
 import vm from "node:vm";
 
 const app = await readFile(new URL("../../web/app.js", import.meta.url), "utf8");
+const modelSource = await readFile(new URL("../../web/model-data.js", import.meta.url), "utf8");
+const { atomLabel, nameLabel } = await import(`data:text/javascript;base64,${Buffer.from(modelSource).toString("base64")}`);
 // Execute the actual page helpers. Imports, startup and unrelated controls are
 // excluded so the renderer boundary and DOM can be replaced independently.
 function definition(name) {
@@ -70,7 +72,7 @@ function fixture({ fail = false } = {}) {
     createTextNode(text) { const node = new Element("#text"); node.textContent = text; return node; },
   };
   const context = vm.createContext({
-    document, download: (...args) => downloads.push(args),
+    document, atomLabel, nameLabel, download: (...args) => downloads.push(args),
     createModelView(value, options) {
       calls.push({ value, options });
       if (fail) throw new Error("Renderer unavailable");
@@ -152,6 +154,25 @@ test("renderer failure leaves scope and full valuation open and usable", () => {
   details.emit("toggle"); exact.emit("toggle");
   assert.equal(f.calls.length, 1);
   assert.equal(all(exact, node => node.tagName === "table").length, 1);
+});
+
+test("full model data distinguishes legal comma-containing values and quorum members", () => {
+  const f = fixture();
+  const value = {
+    scope: { points: ["a, b", "a", "b"], values: ["a, b", "c", "a", "b, c"],
+      stages: 1, time: "finite", quorums: [["a, b"], ["a", "b"]] },
+    valuation: [
+      { time: 0, point: "a", predicate: "p", args: ["a, b", "c"], value: "t" },
+      { time: 0, point: "a", predicate: "p", args: ["a", "b, c"], value: "f" },
+    ],
+  };
+  const { exact } = f.witness(value, { open: true });
+  exact.open = true; exact.emit("toggle");
+  const rows = all(exact, node => node.tagName === "tbody")[0].children;
+  assert.deepEqual(rows.map(row => row.children[2].textContent), ['p("a, b", c)', 'p(a, "b, c")']);
+  assert.deepEqual(rows.map(row => row.children[3].textContent), ["t true", "f false"]);
+  assert.ok(exact.textContent.includes('Participants: "a, b", a, b'));
+  assert.ok(exact.textContent.includes('Quorums: {"a, b"} {a, b}'));
 });
 
 test("clearing results disposes each built view and detached toggle events cannot recreate it", () => {

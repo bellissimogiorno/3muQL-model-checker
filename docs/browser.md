@@ -5,6 +5,32 @@ package. You can load a worked example, edit its theory, check its properties,
 or ask the engine to find counterexamples within bounds. Nothing needs to be
 installed on the visitor's computer.
 
+## Open the application
+
+After deploying 0.7.1, open
+[the GitHub Pages explorer](https://bellissimogiorno.github.io/3muQL-model-checker/).
+The recommended Actions deployment opens the application at that address;
+the supplied branch-deployment landing page forwards automatically to `site/`.
+See [GitHub setup](github.md) to publish the release. Nothing is installed on
+the visitor's computer, but the browser downloads its Python runtime on first
+use and computes on the visitor's device.
+
+For local use, install the supplied wheel with Python 3.10 or later and run:
+
+```sh
+3muql serve --port 0 --open
+```
+
+`3muql` is the primary installed command; `muql` remains a compatibility alias.
+`python -m muql serve --port 0 --open` is equivalent and also works directly
+from the extracted source without installation. The command serves the bundled
+application only on `127.0.0.1`, chooses an available port, prints the address,
+and opens your default browser. Press Ctrl+C to stop. If automatic browser
+opening fails, open the printed address yourself. Use `--port 8000` to request
+a fixed port. This launcher needs neither Bash nor a source checkout after
+installation. The default browser runtime still needs network access on first
+use; the Python CLI needs no network at all.
+
 ## A four-step workflow
 
 The explorer follows one vertical sequence on desktop and mobile. The step
@@ -339,11 +365,13 @@ JSON valuation and Markdown theory.
 Theory parsing, checking, and search run in the browser. The application does
 not send the theory or its results to a solver server. The hosting provider
 serves the page and examples, and the first run downloads the pinned Pyodide
-Python runtime from jsDelivr. Those ordinary network requests are still
+Python runtime, version **314.0.7**, from jsDelivr. Those ordinary network requests are still
 visible to the relevant hosting providers.
 
-An internet connection is needed for the first load. Browser caching may help
-on later visits, but this release does not guarantee offline availability.
+The default distribution needs an internet connection for the first load.
+Browser caching may help on later visits, but it does not guarantee offline
+availability. A separately bundled runtime can support offline use over local
+HTTP; see [runtime hosting](#runtime-hosting-and-offline-use) below.
 There is no service worker and no account or server-side experiment store.
 The default built-in SAT solver requires no additional package download.
 MiniSat is an optional solver choice that downloads Pyodide's `python-sat`
@@ -356,83 +384,139 @@ draft in this browser. Each visit starts at First steps; use **Restore saved
 draft** in the custom-experiment section to resume your work. Browsing curated
 examples does not overwrite that saved draft. Downloads remain the reliable
 way to keep a separate copy. Recent edits are also saved when the page becomes
-hidden or is left. **Forget saved draft**, under the page's help
-section, removes the stored draft and turns off saving for that visit.
+hidden or is left. Drafts are kept separately for each application path within
+the browser origin (scheme, host and port). To reuse a local draft across
+launches, use a fixed port, such as `3muql serve --port 8000 --open`, and the
+same address. `--port 0` may choose a different origin on the next launch.
+Existing drafts from older versions remain available at their original origin.
+
+If another tab changes the saved draft, your open work is kept in a separate
+**Recovery copies** entry in the custom section. Restore a copy with its settings,
+or use **Save recovery theory** to download its source. Up to 20 separate copies
+are kept; if storage fills or saving fails, use **Save theory** for your open work.
+An unchanged older tab does not overwrite a newer saved draft when hidden or closed.
+**Forget saved draft**, under the page's help section, removes this page's draft
+and recovery copies and turns off saving for that visit.
+
 Importing a file or loading an example does not upload your theory. Results
 are not saved between visits; rerun the restored draft or use saved downloads.
 
 ## Publish on GitHub Pages
 
-The repository includes `.github/workflows/pages.yml`; you do not need to
-commit a generated site or create a `gh-pages` branch.
+The source release supplies two supported routes:
 
-1. Upload the repository contents, including `.github/`, to GitHub. The
-   supplied workflow targets the `main` branch; update its branch setting if
-   your repository uses another name.
-2. Open the repository's **Settings → Pages** and choose **GitHub Actions**
-   under **Build and deployment → Source**.
-3. Open **Actions → Browser demo → Run workflow**. Later relevant pushes to
-   `main` will build and deploy automatically.
-4. When the deployment completes, follow the URL shown by the workflow or in
-   **Settings → Pages**. A repository named `muql-explorer` normally appears
-   at `https://YOUR-USERNAME.github.io/muql-explorer/`.
+| Pages source | Result at the project URL | Files used |
+| --- | --- | --- |
+| **GitHub Actions** — recommended | Application opens at the project root | Fresh build from `.github/workflows/pages.yml` |
+| **Deploy from a branch**, `main`, `/ (root)` | Automatically forwards to `site/` | Supplied `index.html`, `.nojekyll`, and `site/` |
 
-The workflow checks versions, runs tests and the search tour, builds the site,
-then runs a Chromium smoke test with the real Python runtime under a project
-URL prefix. Deployment follows only if these checks pass. Browser diagnostics
-are saved as an Actions artifact. The build job has read access to repository
-contents and Pages metadata; only the deployment job requests Pages and identity-token write
-permissions. GitHub's own Pages availability and repository settings apply.
-No repository or live deployment is created merely by unpacking the release.
+For the recommended route, choose **Settings → Pages → GitHub Actions** and
+run **Actions → Deploy explorer → Run workflow**. The workflow builds the site
+and requires real Chromium/Pyodide checks under a project prefix before
+publishing, including the built-in and native solver paths. The release package
+does not update a live repository. Follow [GitHub setup](github.md) for exact
+upload instructions, both publication modes, and README-page troubleshooting.
 
-For a local preview, use Bash and Python 3.10 or later:
+## Develop and preview from source
+
+Use Bash and Python 3.10 or later:
 
 ```sh
 bash serve.sh
+bash serve.sh --python python --port 0 --open
 ```
 
-Run this from the package directory. The Bash script uses `python3` by
-default. To use `python`, run `bash serve.sh --python python`. You can also
-pass a quoted full path to the interpreter. The selected interpreter performs
-both the build and serving, with no installation or extra dependencies.
-You can also set `PYTHON=python`; an explicit `--python` takes precedence.
+The Bash launcher uses `python3` by default; `--python` selects another
+interpreter and takes precedence over the `PYTHON` environment variable.
+It works from another directory when given the path to `serve.sh`. Each start
+rebuilds `dist/site` before serving it, so this is useful while editing `web/`
+or the Python engine. Restart after edits. It binds only to your computer and
+disables browser caching for preview responses. Press Ctrl+C to stop.
 
-Open the printed address, normally `http://127.0.0.1:8000/`. The script builds
-the site before serving its generated files, and accepts connections only
-from your computer. Press **Ctrl+C** to stop. Restart it after source changes;
-each start rebuilds the site, and preview responses disable browser caching.
-You still need access to the runtime CDN on first use.
-
-```sh
-bash serve.sh --open             # Also open your default browser
-bash serve.sh --port 8001        # Choose another port
-bash serve.sh --port 0           # Let the system choose a free port
-```
-
-The script also works from another directory when given its full path, such
-as `bash /path/to/3muql-explorer/serve.sh`. It locates the package beside
-itself. Open the served address rather than double-clicking `index.html`;
-the browser needs HTTP to fetch configuration, examples, and the engine.
+By contrast, `python -m muql serve` serves `muql/_site.zip`, the packaged
+snapshot. After source changes, regenerate that snapshot using
+`python tools/build_release.py --prepare-only`. Open an HTTP address rather
+than double-clicking `index.html`; the application fetches its configuration,
+examples, and engine through HTTP.
 
 ## How the site is built
 
-The build script uses only Python's standard library. It copies `web/`, the
-Markdown examples, documentation, and the theory reader into `dist/site`; bundles the Python
-source into `engine.zip`; and writes `config.json` with the release version,
-relative asset paths, and pinned Pyodide URL. It fetches no dependencies at
-build time. The same relative URLs work under a GitHub project prefix.
+`python tools/build_site.py` uses only Python's standard library and downloads
+nothing. It copies `web/`, examples, documentation, and the theory reader into
+`dist/site`; bundles the Python engine into `engine.zip`; and writes
+`config.json` with the release version, relative asset paths, and pinned
+runtime URL. The same relative URLs work under a GitHub project prefix or on
+another static HTTP host.
 
-`python tools/build_site.py --output PATH` selects another output directory.
-Inside this repository, choose a directory below `dist/`. The builder replaces
-only empty directories or its own previous marked output, avoiding accidental
-deletion of unrelated files. Rebuilding removes obsolete generated assets.
+```sh
+python tools/build_site.py --output dist/site
+python tools/build_site.py --output dist/site --check
+```
+
+`--check` compares an existing output with a fresh build without modifying it;
+use the same runtime options as the original build. Inside this repository,
+choose an output directory under `dist/`. The builder replaces only empty
+directories or its own marked output, and removes obsolete generated assets.
+`tools/build_release.py --prepare-only` manages the tracked release snapshots
+in `site/` and `muql/_site.zip`, plus the root landing page. Its `--check` option
+checks that these agree with the current source.
+
+The standalone `3muql-explorer-site-0.7.1.zip` contains the deployable static
+application. Extract it, then serve the directory containing `index.html`:
+
+```sh
+python -m http.server 8000 --bind 127.0.0.1 --directory /path/to/extracted-site
+```
 
 Python executes in a module Web Worker. The main page renders controls and
 results; terminating the worker implements cancellation without special
-cross-origin isolation headers. The engine remains the shared Python
-implementation used by the CLI. More detail about the underlying logic is in
-[the language guide](language.md), [semantics](semantics.md), and
-[bounded search](search.md).
+cross-origin isolation headers. The shared Python engine is also used by the
+CLI; a local HTTP server only serves files and does not perform model checking.
+See [the language guide](language.md), [semantics](semantics.md), and
+[bounded search](search.md) for the mathematical behavior.
+
+## Runtime hosting and offline use
+
+The default runtime is pinned to **Pyodide 314.0.7** at
+`https://cdn.jsdelivr.net/pyodide/v314.0.7/full/`. No Python runtime is embedded
+in the default release, and no service worker promises offline availability.
+All custom runtime locations must provide the same compatible runtime.
+
+To use an HTTPS mirror or a runtime already served beside the application:
+
+```sh
+python tools/build_site.py --output dist/mirrored-site --pyodide-url https://YOUR-HOST/pyodide/v314.0.7/full/
+python tools/build_site.py --output dist/relative-site --pyodide-url runtime/pyodide/
+```
+
+The second command configures a relative URL only; place the runtime files at
+that location before serving the site. HTTPS mirrors must allow cross-origin
+browser requests when served on another origin. Changing the URL does not
+make missing runtime files available or verify an arbitrary mirror's behavior.
+
+To include a local copy of the runtime in the build:
+
+```sh
+python tools/build_site.py --output dist/offline-site --pyodide-dir /path/to/pyodide-314.0.7/full
+python tools/build_site.py --output dist/offline-site --pyodide-dir /path/to/pyodide-314.0.7/full --check
+python -m http.server 8000 --bind 127.0.0.1 --directory dist/offline-site
+```
+
+Supply the complete runtime directory, including its module loaders, WebAssembly
+binary, standard-library archive, and `pyodide-lock.json`. The builder copies it
+into `runtime/pyodide/` and checks the pinned version. The built-in solver can
+then run from a fresh browser session without internet access, provided the
+local runtime is complete and the site is served over HTTP. Optional MiniSat
+also requires the matching `python-sat` wheel and its dependency wheels in the
+runtime directory. Keep the runtime's accompanying license files with a
+redistributed copy. Bundling is opt-in because the runtime is much larger than
+the explorer itself.
+
+These commands produce a separate site; they do not silently replace the
+runtime configuration of the shipped wheel or tracked default `site/`.
+Consult [release validation](validation.md) for whether actual browser runtime
+execution was possible in the release environment. Structural runtime checks
+and mocked worker tests alone cannot establish WebAssembly execution.
 
 ## Platform references
 

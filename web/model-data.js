@@ -19,7 +19,7 @@ const TRUTH_VALUES = new Set(["t", "b", "f"]);
 const MAX_ROWS = 500_000;
 const MAX_ISSUES = 40;
 
-function nameLabel(name) {
+export function nameLabel(name) {
   return /^[A-Za-z_][A-Za-z_0-9]*$/.test(name) ? name : JSON.stringify(name);
 }
 

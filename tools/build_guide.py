@@ -510,5 +510,5 @@ fromHash();
 if __name__ == "__main__":
     document, count = build()
     target = ROOT / "docs" / "theories.html"
-    target.write_text(document, encoding="utf-8")
+    target.write_text(document, encoding="utf-8", newline="\n")
     print(f"Built {target.relative_to(ROOT)} from {count} theories.")

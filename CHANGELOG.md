@@ -1,5 +1,51 @@
 # Changelog
 
+## 0.7.1 — 2026-10-15
+
+- Make `3muql` the primary installed command, including `3muql serve`; retain
+  `muql` as a compatibility alias for existing scripts. Keep Python imports,
+  `python -m muql`, and the `muql-explorer` distribution identity unchanged.
+- Use the canonical command in help, installation guides and CI checks.
+  Exercise both installed entry points and preserve the 0.7.0 release artifacts.
+- Quote ambiguous atom arguments, participant names and quorum members in the
+  complete model tables so distinct legal names and tuples remain distinguishable.
+- Prevent background autosave in an older browser tab from replacing a newer
+  saved draft written by another tab. Keep drafts separate by application path
+  and expose conflicting work as restorable or downloadable recovery copies.
+- Normalize generated archive metadata and generated text line endings across
+  platforms. Add Git attributes to retain LF text even with `core.autocrlf=true`.
+  Validate required release files and reject symbolic-link paths before copying
+  handover artifacts; exclude unintended hidden files from release trees and
+  reject example references to files omitted by that filtering.
+- Enforce the original hashes of all seven preserved release artifacts,
+  including the four 0.7.0 distributions.
+- Recheck the delivered release independently and record fresh validation
+  evidence and remaining execution limits for this update.
+
+## 0.7.0 — 2026-10-15
+
+- Ship the interactive browser app as generated `site/`, with a root landing
+  page and `.nojekyll`, so a Pages branch deployment opens the tool directly.
+  Provide a **Deploy explorer** Actions workflow that builds and validates a
+  fresh site before publishing it at the Pages root.
+- Include the browser application in the Python distribution. Add
+  `muql serve --port 0 --open` and `python -m muql serve` for a cross-platform,
+  loopback-only launcher that works after installation and from source.
+- Provide source ZIP, installable wheel, source distribution, and standalone
+  static-site ZIP, with one release-building command and generated-file drift
+  checks. Preserve standard-library-only CLI execution and source previews.
+- Keep the browser runtime pinned to Pyodide 314.0.7. Add explicit HTTPS or
+  relative runtime mirrors and local runtime bundling for offline static
+  deployments; the default distribution downloads the runtime on first use.
+- Preserve the existing engine semantics, Unicode/ASCII notation, curated
+  examples, and four-step interface. Extend release, installation, serving,
+  runtime-configuration, and deployment regression checks.
+- Update the portable handover and documentation. Record completed validation
+  and unavailable real-browser checks in [release validation](docs/validation.md);
+  require real Chromium/Pyodide checks in the Pages deployment workflow.
+
+Earlier entries below describe their own releases and are retained as history.
+
 ## 0.6.10 — 2026-10-14
 
 - Pin the complete 0.6.9 release unchanged and deliver these refinements as a

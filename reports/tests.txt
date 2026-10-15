@@ -89,6 +89,7 @@ test_late_countermodel_replay_preserves_earlier_results_only (test_checker_deadl
 test_late_property_unsat_is_unknown_not_holds (test_checker_deadlines.SharedDeadlineTests.test_late_property_unsat_is_unknown_not_holds) ... ok
 test_no_total_timeout_preserves_separate_phase_limits (test_checker_deadlines.SharedDeadlineTests.test_no_total_timeout_preserves_separate_phase_limits) ... ok
 test_total_timeout_validation_and_zero_budget (test_checker_deadlines.SharedDeadlineTests.test_total_timeout_validation_and_zero_budget) ... ok
+test_canonical_command_help_version_and_errors (test_cli.CommandLineTests.test_canonical_command_help_version_and_errors) ... ok
 test_countermodel_export_and_replay_preserve_the_weakening (test_cli.CommandLineTests.test_countermodel_export_and_replay_preserve_the_weakening) ... ok
 test_inconsistent_input_never_reports_property_success (test_cli.CommandLineTests.test_inconsistent_input_never_reports_property_success) ... ok
 test_json_stdout_is_parseable_and_success_is_scoped (test_cli.CommandLineTests.test_json_stdout_is_parseable_and_success_is_scoped) ... ok
@@ -197,6 +198,38 @@ test_intro_inline_formulas_share_typesetting_without_rendering_html (test_guide.
 test_native_superscript_quorum_q_is_preserved_without_double_raising (test_guide.GuideTypesettingTests.test_native_superscript_quorum_q_is_preserved_without_double_raising) ... ok
 test_quoted_literals_comments_and_incomplete_quotes_stay_literal (test_guide.GuideTypesettingTests.test_quoted_literals_comments_and_incomplete_quotes_stay_literal) ... ok
 test_untrusted_formula_text_never_becomes_html (test_guide.GuideTypesettingTests.test_untrusted_formula_text_never_becomes_html) ... ok
+test_bad_configuration_shapes_are_rejected (test_installed_server.BundledSiteTests.test_bad_configuration_shapes_are_rejected) ... ok
+test_browser_failure_and_interrupt_close_server_and_remove_site (test_installed_server.BundledSiteTests.test_browser_failure_and_interrupt_close_server_and_remove_site) ... ok
+test_busy_port_reports_a_free_port_option_and_cleans_up (test_installed_server.BundledSiteTests.test_busy_port_reports_a_free_port_option_and_cleans_up) ... ok
+test_duplicate_case_alias_and_file_directory_conflict_are_rejected (test_installed_server.BundledSiteTests.test_duplicate_case_alias_and_file_directory_conflict_are_rejected) ... ok
+test_invalid_archive_is_reported_without_traceback (test_installed_server.BundledSiteTests.test_invalid_archive_is_reported_without_traceback) ... ok
+test_missing_archive_has_actionable_error_without_server_start (test_installed_server.BundledSiteTests.test_missing_archive_has_actionable_error_without_server_start) ... ok
+test_real_http_serves_public_assets_and_never_exposes_source (test_installed_server.BundledSiteTests.test_real_http_serves_public_assets_and_never_exposes_source) ... 127.0.0.1 - - [15/Oct/2026 18:15:38] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /engine.zip HTTP/1.1" 200 -
+127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /examples/demo.md HTTP/1.1" 200 -
+127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message File not found
+127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /secret.txt HTTP/1.1" 404 -
+127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message File not found
+127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /server.py HTTP/1.1" 404 -
+127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message File not found
+127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /muql/server.py HTTP/1.1" 404 -
+127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message File not found
+127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /../secret.txt HTTP/1.1" 404 -
+127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message File not found
+127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /%2e%2e/secret.txt HTTP/1.1" 404 -
+127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message No page at this address
+127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /examples/ HTTP/1.1" 404 -
+127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message File not found
+127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /_site.zip HTTP/1.1" 404 -
+ok
+test_resources_are_extracted_and_removed_on_normal_and_exceptional_exit (test_installed_server.BundledSiteTests.test_resources_are_extracted_and_removed_on_normal_and_exceptional_exit) ... ok
+test_symlinks_and_special_files_are_rejected (test_installed_server.BundledSiteTests.test_symlinks_and_special_files_are_rejected) ... ok
+test_unsafe_archive_members_are_rejected_before_any_extraction (test_installed_server.BundledSiteTests.test_unsafe_archive_members_are_rejected_before_any_extraction) ... ok
+test_version_mismatch_and_missing_required_assets_fail (test_installed_server.BundledSiteTests.test_version_mismatch_and_missing_required_assets_fail) ... ok
+test_cli_dispatch_preserves_arguments_and_exit_status (test_installed_server.InstalledServeCommandTests.test_cli_dispatch_preserves_arguments_and_exit_status) ... ok
+test_invalid_ports_fail_before_site_access (test_installed_server.InstalledServeCommandTests.test_invalid_ports_fail_before_site_access) ... ok
+test_module_launch_from_unrelated_directory_leaves_no_files_and_cleans_temporary_site (test_installed_server.InstalledServeCommandTests.test_module_launch_from_unrelated_directory_leaves_no_files_and_cleans_temporary_site) ... ok
 test_all_unary_operators_round_trip (test_parser.FormulaTests.test_all_unary_operators_round_trip) ... ok
 test_bad_syntax_is_not_partially_parsed (test_parser.FormulaTests.test_bad_syntax_is_not_partially_parsed) ... ok
 test_binary_operators_round_trip (test_parser.FormulaTests.test_binary_operators_round_trip) ... ok
@@ -235,6 +268,13 @@ test_all_six_original_theories_have_expected_scoped_results (test_paxos.Original
 test_original_eventual_theories_are_inconsistent_on_finite_dead_ends (test_paxos.OriginalPaxosExamplesTests.test_original_eventual_theories_are_inconsistent_on_finite_dead_ends) ... ok
 test_removing_accept_provenance_permits_an_unproposed_true_decision (test_paxos.PaxosMutationTests.test_removing_accept_provenance_permits_an_unproposed_true_decision) ... ok
 test_removing_write_uniqueness_permits_two_true_conflicting_decisions (test_paxos.PaxosMutationTests.test_removing_write_uniqueness_permits_two_true_conflicting_decisions) ... ok
+test_check_accepts_current_release_and_changes_no_files (test_release_package.PortableReleaseTests.test_check_accepts_current_release_and_changes_no_files) ... ok
+test_check_detects_stale_source_site_and_install_bundle_without_repairing_them (test_release_package.PortableReleaseTests.test_check_detects_stale_source_site_and_install_bundle_without_repairing_them) ... ok
+test_redirected_generated_file_is_rejected_before_preparing_assets (test_release_package.PortableReleaseTests.test_redirected_generated_file_is_rejected_before_preparing_assets) ... ok
+test_redirected_release_manifest_is_rejected_before_any_build_writes (test_release_package.PortableReleaseTests.test_redirected_release_manifest_is_rejected_before_any_build_writes) ... ok
+test_source_archive_retains_pages_installation_and_rebuild_inputs_without_private_files (test_release_package.PortableReleaseTests.test_source_archive_retains_pages_installation_and_rebuild_inputs_without_private_files) ... ok
+test_standalone_site_archive_contains_assets_and_an_independently_runnable_engine (test_release_package.PortableReleaseTests.test_standalone_site_archive_contains_assets_and_an_independently_runnable_engine) ... ok
+test_unpacked_source_verifies_and_rebuilds_without_original_checkout (test_release_package.PortableReleaseTests.test_unpacked_source_verifies_and_rebuilds_without_original_checkout) ... ok
 test_baseline_that_does_not_fail_property_requires_another_search (test_release_search.BaselineWitnessReuseTests.test_baseline_that_does_not_fail_property_requires_another_search) ... ok
 test_deadline_after_reused_property_evaluation_preserves_only_earlier_results (test_release_search.BaselineWitnessReuseTests.test_deadline_after_reused_property_evaluation_preserves_only_earlier_results) ... ok
 test_one_replayed_assignment_can_answer_several_distinct_conjectures (test_release_search.BaselineWitnessReuseTests.test_one_replayed_assignment_can_answer_several_distinct_conjectures) ... ok
@@ -246,6 +286,13 @@ test_generator_expansion_checks_the_deadline_during_work (test_release_semantics
 test_closed_recurrence_cache_retains_context_and_value_environment (test_release_semantics.RecurrenceMemoTests.test_closed_recurrence_cache_retains_context_and_value_environment) ... ok
 test_independent_nested_recurrences_do_not_repeat_exponentially (test_release_semantics.RecurrenceMemoTests.test_independent_nested_recurrences_do_not_repeat_exponentially) ... ok
 test_outer_dependent_nested_recurrences_match_direct_enumeration (test_release_semantics.RecurrenceMemoTests.test_outer_dependent_nested_recurrences_match_direct_enumeration) ... ok
+test_bundled_runtime_uses_project_relative_path_and_keeps_optional_packages (test_runtime_build.RuntimeBuildTests.test_bundled_runtime_uses_project_relative_path_and_keeps_optional_packages) ... ok
+test_default_cdn_and_safe_mirror_urls (test_runtime_build.RuntimeBuildTests.test_default_cdn_and_safe_mirror_urls) ... ok
+test_missing_empty_wrong_version_and_malformed_runtime_preserve_output (test_runtime_build.RuntimeBuildTests.test_missing_empty_wrong_version_and_malformed_runtime_preserve_output) ... ok
+test_runtime_cannot_overlap_output (test_runtime_build.RuntimeBuildTests.test_runtime_cannot_overlap_output) ... ok
+test_runtime_options_are_mutually_exclusive (test_runtime_build.RuntimeBuildTests.test_runtime_options_are_mutually_exclusive) ... ok
+test_runtime_symlinks_and_symlinked_ancestors_are_rejected (test_runtime_build.RuntimeBuildTests.test_runtime_symlinks_and_symlinked_ancestors_are_rejected) ... ok
+test_unsafe_urls_preserve_previous_output (test_runtime_build.RuntimeBuildTests.test_unsafe_urls_preserve_previous_output) ... ok
 test_clause_simplification (test_sat.CircuitTests.test_clause_simplification) ... ok
 test_constants_and_hash_consing (test_sat.CircuitTests.test_constants_and_hash_consing) ... ok
 test_every_gate_by_truth_table (test_sat.CircuitTests.test_every_gate_by_truth_table) ... ok
@@ -315,7 +362,13 @@ test_invalid_ports_fail_before_build_or_interpreter_check (test_serve.ServeLaunc
 test_missing_interpreter_has_actionable_error (test_serve.ServeLauncherTests.test_missing_interpreter_has_actionable_error) ... ok
 test_real_preview_from_another_directory_with_available_interpreters (test_serve.ServeLauncherTests.test_real_preview_from_another_directory_with_available_interpreters) ... ok
 test_unusable_interpreter_has_actionable_error (test_serve.ServeLauncherTests.test_unusable_interpreter_has_actionable_error) ... ok
+test_check_detects_modified_missing_and_extra_files_without_writing (test_site_build.SiteBuildTests.test_check_detects_modified_missing_and_extra_files_without_writing) ... ok
+test_check_missing_output_does_not_create_it (test_site_build.SiteBuildTests.test_check_missing_output_does_not_create_it) ... ok
+test_checked_in_site_is_supported_but_other_source_outputs_are_rejected (test_site_build.SiteBuildTests.test_checked_in_site_is_supported_but_other_source_outputs_are_rejected) ... ok
 test_complete_site_and_reproducible_engine (test_site_build.SiteBuildTests.test_complete_site_and_reproducible_engine) ... ok
+test_dotfiles_and_hidden_trees_are_not_public_site_inputs (test_site_build.SiteBuildTests.test_dotfiles_and_hidden_trees_are_not_public_site_inputs) ... ok
+test_generated_bytes_are_independent_of_windows_zip_and_newline_defaults (test_site_build.SiteBuildTests.test_generated_bytes_are_independent_of_windows_zip_and_newline_defaults) ... ok
+test_hidden_example_reference_is_rejected_before_building (test_site_build.SiteBuildTests.test_hidden_example_reference_is_rejected_before_building) ... ok
 test_invalid_input_preserves_previous_build (test_site_build.SiteBuildTests.test_invalid_input_preserves_previous_build) ... ok
 test_invalid_next_reference_preserves_previous_build (test_site_build.SiteBuildTests.test_invalid_next_reference_preserves_previous_build) ... ok
 test_manifest_cannot_escape_examples (test_site_build.SiteBuildTests.test_manifest_cannot_escape_examples) ... ok
@@ -375,6 +428,6 @@ test_oversized_sources_and_declared_scopes_are_rejected (test_web.WebBridgeTests
 test_search_template_exports_witness_that_replays (test_web.WebBridgeTests.test_search_template_exports_witness_that_replays) ... ok
 
 ----------------------------------------------------------------------
-Ran 374 tests in 19.608s
+Ran 409 tests in 25.544s
 
 OK (skipped=3)

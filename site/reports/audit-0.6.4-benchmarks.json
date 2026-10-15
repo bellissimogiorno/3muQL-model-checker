@@ -1,0 +1,384 @@
+{
+  "schema": "3muql-audit-benchmarks-v1",
+  "date": "2026-10-13",
+  "python": "3.12.14",
+  "baseline_release": "0.6.3",
+  "release": "0.6.4",
+  "methodology": {
+    "semantics": "tools/benchmark_semantics.py reproduces the prior closure loop and evaluator cache rule, uses fresh objects, excludes parsing, and checks identical denotations; all raw timings are included.",
+    "checking": "tools/benchmark_search.py ran separately against frozen 0.6.3 and final 0.6.4. Each entry reports a seven-run median. Call counts use wraps around the real solver/replay functions.",
+    "caveat": "Local workload-specific measurements, not universal speedup claims or timing-dependent tests."
+  },
+  "semantics": {
+    "replay": {
+      "examples/basics.md": {
+        "repetitions": 7,
+        "contexts": 1,
+        "formulas": 13,
+        "before_seconds": [
+          0.00016385799972340465,
+          0.00010327600102755241,
+          9.442200098419562e-05,
+          9.335100003227126e-05,
+          0.00013461299931805115,
+          9.496399979980197e-05,
+          9.347099876322318e-05
+        ],
+        "before_median_seconds": 9.496399979980197e-05,
+        "after_seconds": [
+          0.00010215499969490338,
+          9.861899889074266e-05,
+          9.373099965159781e-05,
+          9.48329998209374e-05,
+          9.516399950371124e-05,
+          9.378199865750503e-05,
+          9.314099952462129e-05
+        ],
+        "after_median_seconds": 9.48329998209374e-05
+      },
+      "examples/fixedpoints.md": {
+        "repetitions": 7,
+        "contexts": 3,
+        "formulas": 8,
+        "before_seconds": [
+          0.0006289110006036935,
+          0.0004943280000588857,
+          0.0005436619994725334,
+          0.0005377529996621888,
+          0.0004901910015178146,
+          0.0005220090006332612,
+          0.0004842019989155233
+        ],
+        "before_median_seconds": 0.0005220090006332612,
+        "after_seconds": [
+          0.0005292900004860712,
+          0.0004974319999746513,
+          0.0005136270010552835,
+          0.0005063360003987327,
+          0.0005245530010142829,
+          0.0004947880006511696,
+          0.0005145380000612931
+        ],
+        "after_median_seconds": 0.0005136270010552835
+      },
+      "examples/paxos.md": {
+        "repetitions": 7,
+        "contexts": 36,
+        "formulas": 24,
+        "before_seconds": [
+          0.062404872000115574,
+          0.06404407199988782,
+          0.07560888999978488,
+          0.07305105200066464,
+          0.07927192999886756,
+          0.06747887499841454,
+          0.06443837799997709
+        ],
+        "before_median_seconds": 0.06747887499841454,
+        "after_seconds": [
+          0.0740235630000825,
+          0.059738930000094115,
+          0.059752953000497655,
+          0.06685554300020158,
+          0.05840082699978666,
+          0.05949418100135517,
+          0.06443885899898305
+        ],
+        "after_median_seconds": 0.059752953000497655
+      },
+      "40-stage monotone": {
+        "repetitions": 7,
+        "contexts": 40,
+        "formulas": 2,
+        "before_seconds": [
+          0.025578881999535952,
+          0.025168271000438835,
+          0.025155029999950784,
+          0.02499001199976192,
+          0.02521815699947183,
+          0.025025604998518247,
+          0.025603869999031303
+        ],
+        "before_median_seconds": 0.025168271000438835,
+        "after_seconds": [
+          0.025767617999008507,
+          0.02564114599954337,
+          0.02564832700045372,
+          0.02574199799892085,
+          0.02572629499991308,
+          0.025722169000800932,
+          0.02563133200055745
+        ],
+        "after_median_seconds": 0.025722169000800932
+      },
+      "outer-dependent nested": {
+        "repetitions": 30,
+        "contexts": 1,
+        "formulas": 2,
+        "before_seconds": [
+          9.496399979980197e-05,
+          7.258999903569929e-05,
+          7.301100049517117e-05,
+          8.930600051826332e-05,
+          6.959599886613432e-05,
+          6.875399958516937e-05,
+          6.958499943721108e-05,
+          6.81629990140209e-05,
+          6.737200055795256e-05,
+          6.78630003676517e-05,
+          6.776299960620236e-05,
+          8.652100041217636e-05,
+          6.764199861208908e-05,
+          6.762299926776905e-05,
+          6.696099990222137e-05,
+          6.714099981763866e-05,
+          6.767200102331117e-05,
+          8.726199848752003e-05,
+          6.749200110789388e-05,
+          6.659099926764611e-05,
+          6.757200026186183e-05,
+          6.703100007143803e-05,
+          6.675099939457141e-05,
+          6.755200047336984e-05,
+          6.665999899269082e-05,
+          6.817299981776159e-05,
+          6.822300019848626e-05,
+          6.764300087525044e-05,
+          6.737200055795256e-05,
+          6.765199941582978e-05
+        ],
+        "before_median_seconds": 6.766200021957047e-05,
+        "after_seconds": [
+          0.00010378700062574353,
+          0.00010066199865832459,
+          8.028100091905799e-05,
+          7.962999916344415e-05,
+          8.0110999988392e-05,
+          7.927000115159899e-05,
+          7.811800060153473e-05,
+          7.760700100334361e-05,
+          7.740700129943434e-05,
+          7.775700032652821e-05,
+          7.780800115142483e-05,
+          7.826899854990188e-05,
+          7.696700049564242e-05,
+          9.422199946129695e-05,
+          7.850899964978453e-05,
+          7.812799958628602e-05,
+          7.738699969195295e-05,
+          7.843900129955728e-05,
+          7.721699876128696e-05,
+          7.798800106684212e-05,
+          7.732700032647699e-05,
+          7.77080003899755e-05,
+          7.767699935357086e-05,
+          7.773700053803623e-05,
+          7.673599975532852e-05,
+          7.753700083412696e-05,
+          9.279000005335547e-05,
+          7.81580001785187e-05,
+          7.6545000410988e-05,
+          7.851900045352522e-05
+        ],
+        "after_median_seconds": 7.805300083418842e-05
+      },
+      "independent 8 nested": {
+        "repetitions": 3,
+        "contexts": 1,
+        "formulas": 1,
+        "before_seconds": [
+          0.08279186199979449,
+          0.0829033209993213,
+          0.08384038899930601
+        ],
+        "before_median_seconds": 0.0829033209993213,
+        "after_seconds": [
+          0.00045601999954669736,
+          0.0004061150011693826,
+          0.0004986439998901915
+        ],
+        "after_median_seconds": 0.00045601999954669736
+      }
+    },
+    "closure": {
+      "before_seconds": [
+        0.16550303399890254,
+        0.17009364600016852,
+        0.16367924599944672,
+        0.17532014999960666,
+        0.16781870500017249
+      ],
+      "before_median_seconds": 0.16781870500017249,
+      "after_seconds": [
+        0.0038863980007590726,
+        0.0038479890008602524,
+        0.003765735000342829,
+        0.004391050000776886,
+        0.003665882999484893
+      ],
+      "after_median_seconds": 0.0038479890008602524,
+      "points": 10,
+      "generators": 10,
+      "quorums": 1023,
+      "repetitions": 5
+    }
+  },
+  "checking_before": [
+    {
+      "case": "fixedpoints",
+      "seconds": 0.0029220989999885205,
+      "solver_calls": 9,
+      "axiom_replays": 2,
+      "decisions": 15,
+      "statuses": [
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "counterexample",
+        "holds"
+      ]
+    },
+    {
+      "case": "semitopology",
+      "seconds": 0.004305540998757351,
+      "solver_calls": 11,
+      "axiom_replays": 2,
+      "decisions": 18,
+      "statuses": [
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "counterexample",
+        "holds"
+      ]
+    },
+    {
+      "case": "bracha_without_relay",
+      "seconds": 0.06415878500047256,
+      "solver_calls": 2,
+      "axiom_replays": 2,
+      "decisions": 312,
+      "statuses": [
+        "counterexample"
+      ]
+    },
+    {
+      "case": "spax_without_write_affine",
+      "seconds": 0.0029046930012555094,
+      "solver_calls": 2,
+      "axiom_replays": 2,
+      "decisions": 2,
+      "statuses": [
+        "counterexample"
+      ]
+    },
+    {
+      "case": "multiple_conjectures",
+      "seconds": 0.07364516100096807,
+      "solver_calls": 13,
+      "axiom_replays": 13,
+      "decisions": 572,
+      "statuses": [
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample"
+      ]
+    }
+  ],
+  "checking_after": [
+    {
+      "case": "fixedpoints",
+      "seconds": 0.003023160999873653,
+      "solver_calls": 8,
+      "axiom_replays": 1,
+      "decisions": 11,
+      "statuses": [
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "counterexample",
+        "holds"
+      ]
+    },
+    {
+      "case": "semitopology",
+      "seconds": 0.004528458001004765,
+      "solver_calls": 11,
+      "axiom_replays": 2,
+      "decisions": 18,
+      "statuses": [
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "holds",
+        "counterexample",
+        "holds"
+      ]
+    },
+    {
+      "case": "bracha_without_relay",
+      "seconds": 0.07640737799920316,
+      "solver_calls": 2,
+      "axiom_replays": 2,
+      "decisions": 312,
+      "statuses": [
+        "counterexample"
+      ]
+    },
+    {
+      "case": "spax_without_write_affine",
+      "seconds": 0.003092977000051178,
+      "solver_calls": 2,
+      "axiom_replays": 2,
+      "decisions": 2,
+      "statuses": [
+        "counterexample"
+      ]
+    },
+    {
+      "case": "multiple_conjectures",
+      "seconds": 0.02694077100022696,
+      "solver_calls": 1,
+      "axiom_replays": 1,
+      "decisions": 44,
+      "statuses": [
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample",
+        "counterexample"
+      ]
+    }
+  ]
+}

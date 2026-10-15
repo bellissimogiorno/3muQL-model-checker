@@ -1,16 +1,21 @@
 /* The page owns interaction and rendering; all logic runs in worker.js. */
 import { createSourceHighlighter, sourceSelection } from "./editor.js";
 import { createModelView } from "./model-view.js";
+import { atomLabel, nameLabel } from "./model-data.js";
 import { formulaHTML } from "./notation.js";
 
 const $ = (id) => document.getElementById(id);
-const DRAFT_KEY = "muql-explorer-draft-v1";
+const LEGACY_DRAFT_KEY = "muql-explorer-draft-v1";
+const DRAFT_KEY = `${LEGACY_DRAFT_KEY}:${new URL(".", import.meta.url).pathname}`;
+const DRAFT_COPY_PREFIX = `${DRAFT_KEY}:copy:`;
+const MAX_DRAFT_COPIES = 20;
 const MAX_SOURCE = 250000;
 const NEW_THEORY = '# My theory\n\nDescribe your question here. Edit the predicate and claim, then choose Continue to claims.\n\n```muql\ntheory "My theory"\npredicate p/0\nproperty Claim: p\n```\n';
 const limitIds = ["max-points", "max-values", "max-stages", "timeout", "max-quorums", "max-frames", "max-nodes", "max-decisions"];
 const searchLimitIds = ["max-points", "max-values", "max-stages", "max-quorums", "max-frames"];
 const state = { examples: [], example: null, lastCurated: null, editingCurated: false, adjusted: false, sourceAtLoad: "", metadata: null, metadataSource: null, desired: null,
-  worker: null, task: null, sequence: 0, timer: null, watchdog: null, results: null, draftTimer: null, draftEnabled: true, draftReady: false, loading: true };
+  worker: null, task: null, sequence: 0, timer: null, watchdog: null, results: null, draftTimer: null, draftEnabled: true, draftReady: false,
+  draftBase: null, draftContent: null, draftConflict: false, draftCopyKey: null, loading: true };
 const modelViews = new Set();
 function clearModelViews() { for (const view of modelViews) view.dispose(); modelViews.clear(); }
 const sourceHighlight = createSourceHighlighter({ editor: $("theory-editor"), layer: $("source-highlight"),
@@ -79,15 +84,53 @@ function settings() {
     limits: readLimits(active),
     ...currentSelection() };
 }
+function draftContent() {
+  // Keep inactive bounds too: switching modes must not erase them.
+  return JSON.stringify({ source: $("theory-editor").value, sourceOpen: $("source-details").open,
+    highlight: $("highlight-syntax").checked, example: state.example?.id, ...settings(), limits: readLimits() });
+}
+function beginDraft() {
+  try { state.draftBase = localStorage.getItem(DRAFT_KEY); } catch { state.draftBase = null; }
+  state.draftContent = null; state.draftConflict = false;
+  const copyId = globalThis.crypto?.randomUUID?.()
+    || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+  state.draftCopyKey = DRAFT_COPY_PREFIX + copyId;
+}
 function saveDraft() {
   // Only custom work is autosaved. Starting or browsing the curated tour
   // must never replace a saved theory that the user has not restored.
   if (!state.draftEnabled || !state.draftReady) return;
   try {
-    // Remember both modes' controls, even when a fixed-frame request omits the
-    // inactive search bounds. Switching modes or reloading must not erase them.
-    localStorage.setItem(DRAFT_KEY, JSON.stringify({ source: $("theory-editor").value, sourceOpen: $("source-details").open, highlight: $("highlight-syntax").checked, example: state.example?.id, ...settings(), limits: readLimits() }));
-    $("draft-status").textContent = "Draft saved on this device";
+    const content = draftContent();
+    // Lifecycle events in an unchanged tab must never rewrite another tab's work.
+    if (content === state.draftContent) return;
+    if (localStorage.getItem(state.draftCopyKey) === null) {
+      let copies = 0;
+      const keys = Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index));
+      for (const key of keys) {
+        if (!key?.startsWith(DRAFT_COPY_PREFIX)) continue;
+        // Never remove another tab's copy automatically: even an exact match
+        // can change between reading and deleting it in shared localStorage.
+        copies++;
+      }
+      if (copies >= MAX_DRAFT_COPIES) {
+        $("draft-status").textContent = "Draft not saved: recovery storage is full. Use Save theory, then keep any recovery copies you need before choosing Forget saved draft.";
+        return;
+      }
+    }
+    // A separate key per tab also preserves both copies if two tabs publish at
+    // once; localStorage has no atomic compare-and-swap for the shared draft.
+    localStorage.setItem(state.draftCopyKey, JSON.stringify({ savedAt: new Date().toISOString(), draft: JSON.parse(content) }));
+    const current = localStorage.getItem(DRAFT_KEY);
+    state.draftConflict = current !== state.draftBase && current !== content;
+    if (!state.draftConflict) {
+      localStorage.setItem(DRAFT_KEY, content);
+      state.draftBase = content;
+    }
+    state.draftContent = content;
+    $("draft-status").textContent = state.draftConflict
+      ? "Another tab changed the saved draft. Your work is kept in a separate recovery copy below."
+      : "Draft saved on this device";
     updateDraftOffer();
   } catch { $("draft-status").textContent = "Draft not saved · use Save theory"; }
 }
@@ -99,7 +142,9 @@ function scheduleSave() {
 }
 function readDraft() {
   try {
-    const draft = JSON.parse(localStorage.getItem(DRAFT_KEY));
+    // Legacy work remains available without deleting another project's draft.
+    // A scoped tombstone deliberately suppresses legacy fallback after Forget.
+    const draft = JSON.parse(localStorage.getItem(DRAFT_KEY) ?? localStorage.getItem(LEGACY_DRAFT_KEY));
     if (!draft || typeof draft.source !== "string" || draft.source.length > MAX_SOURCE) return null;
     return draft;
   } catch { return null; }
@@ -108,9 +153,42 @@ function updateDraftOffer() {
   const saved = readDraft();
   $("restore-draft").hidden = !saved || state.draftReady;
   $("custom-draft-status").textContent = !state.draftEnabled ? "Draft saving is off for this visit. Use Save theory to keep your work."
-    : state.draftReady ? "Your custom theory is open above. Use Save theory to download a copy."
+    : state.draftConflict ? "Another tab has a different saved draft. Your open theory is preserved in the recovery copies below. Use Save theory to download it."
+      : state.draftReady ? "Your custom theory is open above. Use Save theory to download a copy."
       : saved ? "A saved draft is available on this device. The curated examples leave it unchanged."
         : "Custom work is saved on this device when browser storage is available.";
+  const recovery = $("draft-recovery"), actions = $("draft-recovery-actions");
+  actions.replaceChildren();
+  try {
+    const current = localStorage.getItem(DRAFT_KEY);
+    const copies = [];
+    for (let index = 0; index < localStorage.length; index++) {
+      const key = localStorage.key(index);
+      if (!key?.startsWith(DRAFT_COPY_PREFIX)) continue;
+      try {
+        const copy = JSON.parse(localStorage.getItem(key));
+        if (typeof copy?.draft?.source === "string" && copy.draft.source.length <= MAX_SOURCE
+            && JSON.stringify(copy.draft) !== current) copies.push(copy);
+      } catch { /* Ignore damaged recovery records. */ }
+    }
+    copies.sort((a, b) => String(b.savedAt).localeCompare(String(a.savedAt)));
+    for (const [index, copy] of copies.entries()) {
+      const restore = el("button", "text-button", `Restore recovery copy ${index + 1}`);
+      restore.type = "button"; restore.disabled = !!state.task || state.loading;
+      restore.addEventListener("click", () => {
+        if (state.task || state.loading || !confirmReplacement("Replace your open theory with this recovery copy?")) return;
+        openCustomSource(copy.draft.source, "Recovered draft", copy.draft);
+        // Restoring a recovery copy must retain the other tab's main draft.
+        state.draftBase = JSON.stringify(copy.draft);
+      });
+      const button = el("button", "text-button", `Save recovery theory ${index + 1}`);
+      button.type = "button";
+      button.addEventListener("click", () => download(`muql-recovery-${index + 1}.md`, copy.draft.source, "text/markdown"));
+      actions.append(restore, button, el("span", "small-text", `Saved ${copy.savedAt || "in another tab"}`));
+    }
+    recovery.hidden = copies.length === 0;
+    if (state.draftConflict) recovery.open = true;
+  } catch { recovery.hidden = true; }
 }
 function confirmReplacement(message, protectSaved = false) {
   const source = $("theory-editor").value;
@@ -206,6 +284,7 @@ function invalidateTheory() {
   state.metadata = null; state.metadataSource = null;
   const curated = state.editingCurated && state.lastCurated;
   const restored = curated && $("theory-editor").value === curated.source;
+  if (!state.draftReady && !restored) beginDraft();
   state.draftReady = !restored;
   if (restored) {
     // Source identity is independent of the last download. Undo can return to
@@ -276,6 +355,7 @@ function updateControls() {
   $("run-controls").disabled = busy;
   $("theory-editor").readOnly = busy;
   for (const id of ["import-button", "load-source", "create-theory", "restore-draft"]) $(id).disabled = busy;
+  for (const button of $("draft-recovery-actions").querySelectorAll("button")) if (button.textContent.startsWith("Restore")) button.disabled = busy;
   for (const id of ["save-source", "custom-save-source"]) $(id).disabled = state.loading || empty;
   for (const id of ["return-examples", "reset-custom"]) {
     $(id).disabled = busy || !state.lastCurated;
@@ -460,10 +540,10 @@ function scopeText(scope) {
 function scopeBox(scope) {
   const box = el("div", "scope-box");
   box.append(el("p", "", scopeText(scope)));
-  if (scope.points) box.append(el("p", "", `Participants: ${scope.points.join(", ")}`));
-  if (scope.values) box.append(el("p", "", `Values: ${scope.values.join(", ")}`));
+  if (scope.points) box.append(el("p", "", `Participants: ${scope.points.map(nameLabel).join(", ")}`));
+  if (scope.values) box.append(el("p", "", `Values: ${scope.values.map(nameLabel).join(", ")}`));
   const quorums = scope.quorums || scope.quorum_generators;
-  if (quorums) box.append(el("p", "", `${scope.quorums ? "Quorums" : "Quorum generators"}: ${quorums.map((q) => `{${q.join(", ")}}`).join(" ")}`));
+  if (quorums) box.append(el("p", "", `${scope.quorums ? "Quorums" : "Quorum generators"}: ${quorums.map((q) => `{${q.map(nameLabel).join(", ")}}`).join(" ")}`));
   return box;
 }
 function valuationTable(rows) {
@@ -483,7 +563,7 @@ function valuationTable(rows) {
     body.replaceChildren();
     for (const row of rows.slice(page * pageSize, (page + 1) * pageSize)) {
       const tr = el("tr");
-      tr.append(el("td", "", row.time), el("td", "", row.point), el("td", "formula", `${row.predicate}${row.args.length ? `(${row.args.join(", ")})` : ""}`));
+      tr.append(el("td", "", row.time), el("td", "", nameLabel(row.point)), el("td", "formula", atomLabel(row.predicate, row.args)));
       const value = el("td"); value.append(el("span", `truth truth-${row.value}`, row.value), document.createTextNode(` ${({ t: "true", b: "broken", f: "false" })[row.value] || ""}`)); tr.append(value); body.append(tr);
     }
     previous.disabled = page === 0; next.disabled = (page + 1) * pageSize >= rows.length;
@@ -574,7 +654,7 @@ function renderResults(result, request) {
     if (property.reason) card.append(el("p", "", property.reason));
     if (property.countermodel) {
       const model = property.countermodel; const f = model.failure;
-      card.append(el("p", "", `False at stage ${f.time}, participant ${f.point}, quorum {${f.quorum.join(", ")}}. Every retained axiom is satisfied.`));
+      card.append(el("p", "", `False at stage ${f.time}, participant ${nameLabel(f.point)}, quorum {${f.quorum.map(nameLabel).join(", ")}}. Every retained axiom is satisfied.`));
       const details = el("details", "witness"); details.open = property === cex[0];
       details.append(el("summary", "", "Inspect the counterexample"));
       modelEvidence(details, model, property.name);
@@ -705,6 +785,7 @@ for (const id of ["save-source", "custom-save-source"]) $(id).addEventListener("
 for (const id of ["import-button", "load-source"]) $(id).addEventListener("click", () => $("import-file").click());
 for (const id of ["return-examples", "reset-custom"]) $(id).addEventListener("click", () => loadExample(state.lastCurated?.example));
 function openCustomSource(source, origin, draft = {}, modified = false) {
+  beginDraft();
   state.editingCurated = false;
   $("theory-editor").value = source; $("theory-editor").scrollTop = 0;
   state.sourceAtLoad = modified ? "" : $("theory-editor").value; state.metadata = null; state.metadataSource = null;
@@ -739,6 +820,7 @@ $("import-file").addEventListener("change", async () => {
   try {
     const source = await file.text();
     if (source.length > MAX_SOURCE) { showError("This demo accepts theories up to 250,000 characters."); return; }
+    beginDraft();
     $("theory-editor").value = source; state.sourceAtLoad = $("theory-editor").value; state.example = null; state.editingCurated = false;
     // A different file starts a new investigation; edits to this file will
     // preserve its own choices once it has been read.
@@ -752,7 +834,12 @@ $("import-file").addEventListener("change", async () => {
 });
 $("forget-draft").addEventListener("click", () => {
   clearTimeout(state.draftTimer); state.draftEnabled = false;
-  try { localStorage.removeItem(DRAFT_KEY); updateDraftOffer(); $("draft-status").textContent = "Draft saving off for this visit"; setStatus("Saved draft removed. The open theory is unchanged."); }
+  try {
+    const keys = Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index));
+    for (const key of keys) if (key?.startsWith(DRAFT_COPY_PREFIX)) localStorage.removeItem(key);
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({ forgotten: true }));
+    updateDraftOffer(); $("draft-status").textContent = "Draft saving off for this visit"; setStatus("Saved draft and recovery copies for this page removed. The open theory is unchanged.");
+  }
   catch { setStatus("This browser does not allow access to saved drafts."); }
 });
 const symbolButtons = [...$("symbol-buttons").querySelectorAll("button[data-symbol]")];
@@ -805,6 +892,9 @@ function flushDraft() { if (!state.loading) saveDraft(); }
 window.addEventListener("beforeunload", flushDraft);
 window.addEventListener("pagehide", flushDraft);
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushDraft(); });
+window.addEventListener("storage", (event) => {
+  if (event.key === DRAFT_KEY || event.key?.startsWith(DRAFT_COPY_PREFIX)) updateDraftOffer();
+});
 
 async function initialize() {
   if (location.protocol === "file:") throw new Error("From the package directory, run bash serve.sh (or bash serve.sh --python python if that is your Python 3 command), then open the printed address, normally http://127.0.0.1:8000/.");

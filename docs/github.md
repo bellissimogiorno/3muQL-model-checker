@@ -1,77 +1,133 @@
-# GitHub setup and the browser demo
+# GitHub setup and online explorer
 
-## Upload the repository
+Version **0.7.1** includes everything needed to serve the model checker from
+GitHub Pages. Visitors use the browser; no Python installation or solver server
+is required. Python executes in a Web Worker through the pinned Pyodide runtime.
+The built-in solver is the default; MiniSat is an optional additional download.
 
-The source archive expands into **`3muql-explorer/`**. That directory is the
-repository root: it contains `README.md`, `VERSION`, `pyproject.toml`, the
-`muql/` Python package, examples, tests, documentation, and reference reports.
-Build products and virtual environments are excluded. The GitHub Actions test
-workflow is included in `.github/workflows/tests.yml`.
+The target repository is
+[`bellissimogiorno/3muQL-model-checker`](https://github.com/bellissimogiorno/3muQL-model-checker)
+and its Pages address is
+[`https://bellissimogiorno.github.io/3muQL-model-checker/`](https://bellissimogiorno.github.io/3muQL-model-checker/).
+Unpacking this release does not update either one. The steps below publish it.
 
-Create an empty GitHub repository named `3muql-explorer`. Leave GitHub's options
-to add a README, license, and gitignore unchecked, because these files are
-already included. From the extracted directory, run the following commands,
-replacing `YOUR-USERNAME` with your GitHub username or organization:
+## Update the repository
+
+The source archive expands into **`3muql-explorer/`**. Put its **contents** at
+the Git repository root: `README.md`, `VERSION`, `pyproject.toml`, `index.html`,
+`.nojekyll`, `.github/`, `site/`, `muql/`, and the other supplied directories must
+be alongside one another. Do not put the handover directory or another
+`3muql-explorer/` wrapper at the repository root.
+
+For the existing repository, first clone it or use your existing clean
+checkout:
 
 ```sh
-cd 3muql-explorer
-python tools/check_version.py
-python demo.py --search-only --brief
-git init -b main
-git add .
-git commit -m "Release 3μQL Explorer 0.6.4"
-git remote add origin https://github.com/YOUR-USERNAME/3muql-explorer.git
-git push -u origin main
+git clone https://github.com/bellissimogiorno/3muQL-model-checker.git
+cd 3muQL-model-checker
+git switch main
 ```
 
-Use the contents of `3muql-explorer/` as the repository root, rather than
-placing that directory inside another repository directory. `git add .`
-includes the supplied GitHub Actions workflow and gitignore file. If uploading
-through GitHub's web interface instead, include those files too; some file
-managers conceal names beginning with a dot.
+Copy the extracted source directory's contents into that checkout, including
+names beginning with a dot. Preserve the checkout's `.git` directory. Then run:
 
-The CI workflow checks version agreement, runs the test suite and demonstration,
-and tests the optional native SAT backend separately. Its configuration is
-included; no repository has been created or pushed on your behalf.
+```sh
+python tools/check_version.py
+python tools/build_release.py --check
+git status --short
+git diff --stat
+git add .
+git commit -m "Release 3muQL Explorer 0.7.1: canonical command and verified fixes"
+git push origin main
+```
+
+Review the changes before committing. If using GitHub's upload interface,
+include `.github/` and `.nojekyll` too; some file managers hide them. The
+prebuilt `site/` and `muql/_site.zip` are intentionally tracked release files,
+even though temporary `dist/` products and virtual environments are excluded.
+
+For a new empty repository instead, initialize the extracted source with
+`git init -b main`, add and commit the files, add your new repository URL with
+`git remote add origin URL`, then use `git push -u origin main`. Do not initialize
+an unrelated history when updating the existing repository.
+
+## Recommended: build and deploy with Actions
+
+1. Open **Settings → Pages → Build and deployment → Source** and select
+   **GitHub Actions**.
+2. Open **Actions → Deploy explorer → Run workflow**, choose `main`, and run
+   it. Later relevant pushes to `main` trigger it automatically.
+3. Wait for the build, validation, and deployment jobs to succeed. Open the
+   deployment URL shown by the workflow or in **Settings → Pages**.
+
+This workflow builds the application directly into the artifact published at
+the Pages root. Opening the existing Pages URL therefore displays the checker,
+without a README page or an intermediate navigation choice. The build checks
+release consistency, the engine, and browser behavior. Real Chromium/Pyodide
+checks run under a project URL prefix and cover both the built-in and optional
+native solver before deployment is allowed. Browser diagnostics are retained
+as an Actions artifact. Only the deployment job requests Pages and
+identity-token write permissions.
+
+The real-browser gate remains required even when local browser validation
+cannot run. Consult [release validation](validation.md) for the actual evidence
+from this release; a workflow definition is not itself a successful deployment.
+Repository permissions and GitHub's Pages availability still apply.
+
+## Alternative: deploy the supplied files from a branch
+
+For a repository already configured to publish a branch:
+
+1. Select **Settings → Pages → Build and deployment → Source → Deploy from a
+   branch**.
+2. Select **main** and **/ (root)**, then save.
+3. Wait for GitHub's Pages deployment and open the existing Pages URL.
+
+The root `index.html` automatically forwards to `./site/`, where the complete
+interactive application is already built. A visible link also permits manual
+navigation. The final URL in this mode ends in `/3muQL-model-checker/site/`.
+The root `.nojekyll` preserves the static files without a Jekyll build. Do not
+select `/docs`: that is documentation, not the application.
+
+This route publishes the checked-in snapshot; it does not run the custom
+**Deploy explorer** browser-validation gate before publishing. Regenerate the
+snapshot after source changes and run the available tests before committing.
+Use the Actions route when you want deployment conditional on those checks.
+
+If a published page still displays a README, check the selected Pages source
+and the most recent successful deployment. Make sure `index.html` and `site/`
+are present at the published root and are from 0.7.1. A README landing page is
+consistent with a different publication source; this package does not claim to
+have inspected your live repository settings.
+
+## Local use and release updates
+
+From the extracted source, or after installing the supplied wheel:
+
+```sh
+python -m muql serve --port 0 --open
+```
+
+The launcher prints a loopback address and stops with Ctrl+C. The installed
+short form is `3muql serve --port 0 --open`; `muql` remains a compatibility
+alias. The browser's default first load needs internet access for Pyodide; command-line checks are fully offline.
+For source development, `bash serve.sh` rebuilds the site before serving it.
 
 `VERSION`, `[project].version` in `pyproject.toml`, and `muql.__version__` must
-agree. Run `python tools/check_version.py` after a version change. The check
-uses only the standard library and supports Python 3.10 and later.
-
-## Publish the browser explorer
-
-The interactive demo is implemented in `web/`, sharing the Python engine via
-`muql/web.py`. It includes an example selector, theory editor, optional axiom
-removal, property selection, bounded search and fixed-frame checking,
-cancellation, counterexample tables, and replayable downloads.
-
-After uploading the repository:
-
-1. Choose **Settings → Pages → GitHub Actions**.
-2. Run **Actions → Browser demo → Run workflow**.
-3. Follow the deployment URL when the workflow succeeds.
-
-The workflow builds the static site and tests it with the real Python runtime
-in Chromium at a project path before publishing. Those browser checks must
-pass; they were not run locally during release preparation because browser
-binaries and runtime downloads were unavailable.
-
-For a local preview, run:
+agree. After edits, regenerate and check the distributed snapshots:
 
 ```sh
-bash serve.sh
+python tools/build_release.py --prepare-only
+python tools/build_release.py --check
 ```
 
-The Bash launcher defaults to `python3`; use `bash serve.sh --python python`
-if that is your Python 3.10+ command. The script builds
-the site and serves it at `http://127.0.0.1:8000/`; press **Ctrl+C** to stop.
-Add `--open` to open your browser or `--port 0` to choose a free port.
-The site fetches a pinned Pyodide runtime on
-first use. Python runs in a module worker, so a search does not block page
-interaction. Stop terminates that worker; the next run starts a new one.
-The built-in solver is the default, with MiniSat available as an optional
-additional download. No Python server or solver service is required.
+To build all four release products under `dist/releases/`, run
+`python tools/build_release.py`; this additionally requires `setuptools>=61`
+and `wheel` in the active Python environment. See [CONTRIBUTING.md](../CONTRIBUTING.md)
+for validation and [the browser guide](browser.md) for runtime mirroring,
+offline deployment, data handling, and the user workflow.
 
-See [the browser guide](browser.md) for the user workflow, data handling,
-solver choices, limitations, and details of the Pages deployment. The release
-is ready to upload; no GitHub repository or live site has been created here.
+## Platform references
+
+- [GitHub: configuring a publishing source](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
+- [GitHub: custom Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)

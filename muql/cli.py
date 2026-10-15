@@ -46,15 +46,30 @@ def _positive_seconds(text: str) -> float:
     return value
 
 
+def _port_number(text: str) -> int:
+    try:
+        value = int(text)
+    except ValueError as error:
+        raise argparse.ArgumentTypeError("must be an integer from 0 to 65535") from error
+    if not 0 <= value <= 65535:
+        raise argparse.ArgumentTypeError("must be an integer from 0 to 65535")
+    return value
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="muql",
+        prog="3muql",
         description="Check three-valued literate theories in a finite scope or search across bounded finite models.",
         epilog="Successful bounded checks are not unbounded proofs. See docs/semantics.md.",
     )
     from . import __version__
-    parser.add_argument("--version", action="version", version=f"muql-explorer {__version__}")
+    parser.add_argument("--version", action="version", version=f"3muql {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
+    serve = commands.add_parser("serve", help="open the installed browser application on your computer")
+    serve.add_argument("--port", type=_port_number, default=8000, metavar="PORT",
+                       help="local HTTP port (default: 8000; 0 chooses a free port)")
+    serve.add_argument("--open", action="store_true", dest="open_browser",
+                       help="also open the application in your default browser")
     inspect = commands.add_parser("list", help="show a theory's scope, axioms, and properties")
     inspect.add_argument("file", type=Path, help="UTF-8 Markdown containing fenced muql blocks")
     inspect.add_argument("--notation", choices=("unicode", "ascii"),
@@ -249,6 +264,9 @@ def _formula_lines(text: str, width: int = 88) -> list[str]:
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the CLI and return a process exit code; normal errors have no traceback."""
     args = _parser().parse_args(argv)
+    if args.command == "serve":
+        from .server import serve
+        return serve(port=args.port, open_browser=args.open_browser)
     # Imported here so --help and --version remain fast and self-contained.
     from . import check, load, replay
     from .evaluate import FixedPointLimitError
@@ -326,13 +344,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                 _print(f"Countermodel saved to {path}")
         return _exit_code(report)
     except (FixedPointLimitError, FrameLimit) as error:
-        _print(f"muql: {args.command} incomplete: {error}", file=sys.stderr)
+        _print(f"3muql: {args.command} incomplete: {error}", file=sys.stderr)
         return 3
     except (OSError, ValueError, KeyError, TypeError) as error:
-        _print(f"muql: {error}", file=sys.stderr)
+        _print(f"3muql: {error}", file=sys.stderr)
         return 2
     except KeyboardInterrupt:
-        _print("muql: interrupted; no complete result", file=sys.stderr)
+        _print("3muql: interrupted; no complete result", file=sys.stderr)
         return 3
 
 

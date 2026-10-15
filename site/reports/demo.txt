@@ -1,0 +1,466 @@
+3μQL Explorer — executable paper tour
+Automatic searches choose frames within bounds; fixed checks use their displayed scopes.
+Stutter frames are not natural-number-time encodings. See docs/semantics.md.
+The tour includes deliberate failures, axiom experiments, and complete countermodels.
+
+[1/30] Three values and the meaning of uniqueness
+Truth-value and quantifier experiments. Intentionally false conjectures expose three-valued distinctions.
+Scope: points=1, values=2, stages=1, time=finite; axioms=1.
+  BrokenIsDesignated: holds in scope
+  BrokenIsTrue: counterexample
+    False at stage 0, point alice, quorum {alice}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   P          f
+     0  alice   Q          f
+     0  alice   R          f
+     0  alice   choice     red=b, blue=b
+  ExcludedMiddle: holds in scope
+  CrispExcludedMiddle: counterexample
+    False at stage 0, point alice, quorum {alice}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   P          b
+     0  alice   Q          b
+     0  alice   R          f
+     0  alice   choice     red=b, blue=b
+  WeakDefinition: holds in scope
+  StrongDefinition: holds in scope
+  WeakCurrying: holds in scope
+  StrongCurrying: counterexample
+    False at stage 0, point alice, quorum {alice}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   P          t
+     0  alice   Q          b
+     0  alice   R          b
+     0  alice   choice     red=b, blue=b
+  DesignatedUnique: holds in scope
+  UniqueIsCrisp: counterexample
+    False at stage 0, point alice, quorum {alice}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   P          f
+     0  alice   Q          f
+     0  alice   R          f
+     0  alice   choice     red=b, blue=b
+  TrueWitness: counterexample
+    False at stage 0, point alice, quorum {alice}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   P          f
+     0  alice   Q          f
+     0  alice   R          f
+     0  alice   choice     red=b, blue=b
+  AtMostOneActuallyTrue: holds in scope
+  Expected outcomes confirmed.
+
+[2/30] Fixed points on a finite context lattice
+Monotone recurrences and a nonpositive mu. A pre-fixed meet need not satisfy an unfolding equality.
+Scope: points=1, values=1, stages=3, time=stutter; axioms=0.
+  InclusivePast: holds in scope
+  StrictPast: holds in scope
+  StrictFuture: holds in scope
+  FutureGreatest: holds in scope
+  EmptyPastRecurrence: holds in scope
+  NonmonotoneMeet: holds in scope
+  UnfoldingRequiresMonotonicity: counterexample
+    False at stage 0, point alice, quorum {alice}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   pulse      t
+     1  alice   pulse      f
+     2  alice   pulse      f
+  NegationMeet: holds in scope
+  Expected outcomes confirmed.
+
+[3/30] Current quorums and a non-upward-closed semitopology
+Quorum generators are union-closed, not upward-closed. Current-quorum box differs from ∀Q□.
+Scope: points=3, values=1, stages=1, time=finite; axioms=0.
+  SomewhereDefinition: holds in scope
+  EverywhereDefinition: holds in scope
+  QuorumDefinition: holds in scope
+  ContraDefinition: holds in scope
+  LocalJoinBelowGlobalJoin: holds in scope
+  GlobalMeetBelowLocalMeet: holds in scope
+  PairwiseIntersection: holds in scope
+  TripleIntersection: holds in scope
+  CurrentBoxIsGlobal: counterexample
+    False at stage 0, point a, quorum {a}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  a       live       b
+     0  b       live       f
+     0  c       live       t
+  SharedPointAgreement: holds in scope
+  Expected outcomes confirmed.
+
+[4/30] Voting
+All original voting axioms; four participants and three-person quorums.
+Scope: points=4, values=1, stages=1, time=finite; axioms=6.
+  Agreement: holds in scope
+  UnanimousTrueDelivery: holds in scope
+  UnanimousFalseDelivery: holds in scope
+  Expected outcomes confirmed.
+
+[5/30] Bracha Broadcast
+All original Bracha broadcast axioms; two payloads.
+Scope: points=4, values=2, stages=1, time=finite; axioms=14.
+  BrValidity: holds in scope
+  BrNoDup: holds in scope
+  BrIntegrity: holds in scope
+  BrConsistency: holds in scope
+  BrTotality: holds in scope
+  Expected outcomes confirmed.
+
+[6/30] Crusader Agreement
+All original Crusader axioms; zero, half and one are distinct payloads.
+Scope: points=4, values=3, stages=1, time=finite; axioms=16.
+  CaAgree: holds in scope
+  CaValid1: holds in scope
+  CaValid2: holds in scope
+  CaLive: holds in scope
+  Expected outcomes confirmed.
+
+[7/30] Simple: reliable delivery, no crashes
+Scope: points=3, values=1, stages=1, time=finite; axioms=5.
+  NoInventedDecision: holds in scope
+  ProposerDecides: holds in scope
+  Expected outcomes confirmed.
+
+[8/30] Simple: reliable delivery, crashes allowed
+Scope: points=3, values=1, stages=1, time=finite; axioms=7.
+  NoInventedDecision: holds in scope
+  ProposerDecidesOrCrashes: holds in scope
+  Expected outcomes confirmed.
+
+[9/30] Simple: eventual delivery, no crashes
+Scope: points=3, values=1, stages=3, time=stutter; axioms=5.
+  NoInventedDecision: holds in scope
+  EventualProgressRule: holds in scope
+  Expected outcomes confirmed.
+
+[10/30] Simple: eventual delivery, crashes allowed
+Scope: points=3, values=1, stages=3, time=stutter; axioms=7.
+  NoInventedDecision: holds in scope
+  EventualProgressRule: holds in scope
+  Expected outcomes confirmed.
+
+[11/30] Declarative Paxos (Figure 11)
+All 20 Figure 11 axioms. Temporal results concern the displayed finite stutter frame.
+Scope: points=3, values=3, stages=3, time=stutter; axioms=20.
+  Validity: holds in scope
+  Agreement: holds in scope
+  Termination: holds in scope
+  DecidingQuorum: holds in scope
+  Expected outcomes confirmed.
+
+[12/30] Simpler Declarative Paxos (Figure 12)
+All 12 Figure 12 axioms. Agreement combines its decision premises with conjunction. All three correctness properties hold in scope. See docs/spax-agreement.md.
+Scope: points=3, values=2, stages=3, time=stutter; axioms=12.
+  Validity: holds in scope
+  Agreement: holds in scope
+  Termination: holds in scope
+  Expected outcomes confirmed.
+
+[13/30] Bracha with existential delivery
+The companion paper's Section 4.3 existential delivery weakening admits a wrong-payload crashed witness. This contradicts the weakening claim, not the original Bracha theorem.
+Scope: points=1, values=2, stages=1, time=finite; axioms=14.
+  OriginalDeliverForward: counterexample
+    False at stage 0, point alice, quorum {alice}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   bcst       red=f, blue=t
+     0  alice   dlvr       red=b, blue=f
+     0  alice   echo       red=f, blue=t
+     0  alice   ready      red=f, blue=t
+  BrValidity: counterexample
+    False at stage 0, point alice, quorum {alice}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   bcst       red=f, blue=t
+     0  alice   dlvr       red=b, blue=f
+     0  alice   echo       red=f, blue=t
+     0  alice   ready      red=f, blue=t
+  Expected outcomes confirmed.
+
+[14/30] Voting: remove the correct quorum
+Change: drop Correct. Faulty votes can support opposite observations.
+Scope: points=4, values=1, stages=1, time=finite; axioms=5.
+  Agreement: counterexample
+    False at stage 0, point alice, quorum {alice,bob,carol}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   observe    t
+     0  alice   vote       f
+     0  bob     observe    t
+     0  bob     vote       b
+     0  carol   observe    t
+     0  carol   vote       b
+     0  dave    observe    f
+     0  dave    vote       b
+  Expected outcomes confirmed.
+
+[15/30] Voting: weaken both delivery arrows
+Change: weaken ⇀ to → in ObserveForward and ObserveNotForward. Agreement survives, but guaranteed true delivery does not.
+Scope: points=4, values=1, stages=1, time=finite; axioms=6.
+  Agreement: holds in scope
+  UnanimousTrueDelivery: counterexample
+    False at stage 0, point alice, quorum {alice,bob,carol}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   observe    b
+     0  alice   vote       t
+     0  bob     observe    b
+     0  bob     vote       f
+     0  carol   observe    b
+     0  carol   vote       t
+     0  dave    observe    b
+     0  dave    vote       t
+  Expected outcomes confirmed.
+
+[16/30] Bracha: remove echo uniqueness
+Change: drop BrEchoAffine. Different values can become delivered.
+Scope: points=4, values=2, stages=1, time=finite; axioms=13.
+  BrConsistency: counterexample
+    False at stage 0, point alice, quorum {alice,bob,carol}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   bcst       red=b, blue=b
+     0  alice   dlvr       red=b, blue=b
+     0  alice   echo       red=t, blue=f
+     0  alice   ready      red=t, blue=t
+     0  bob     bcst       red=b, blue=b
+     0  bob     dlvr       red=b, blue=b
+     0  bob     echo       red=b, blue=b
+     0  bob     ready      red=t, blue=t
+     0  carol   bcst       red=b, blue=b
+     0  carol   dlvr       red=b, blue=b
+     0  carol   echo       red=t, blue=t
+     0  carol   ready      red=b, blue=b
+     0  dave    bcst       red=b, blue=b
+     0  dave    dlvr       red=t, blue=t
+     0  dave    echo       red=f, blue=t
+     0  dave    ready      red=t, blue=t
+  Expected outcomes confirmed.
+
+[17/30] Bracha: remove the ready relay
+Change: drop BrReadyRelay. Delivery at one participant need not spread to everyone.
+Scope: points=4, values=2, stages=1, time=finite; axioms=13.
+  BrTotality: counterexample
+    False at stage 0, point alice, quorum {alice,bob,carol}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   bcst       red=b, blue=b
+     0  alice   dlvr       red=b, blue=b
+     0  alice   echo       red=b, blue=b
+     0  alice   ready      red=b, blue=b
+     0  bob     bcst       red=b, blue=b
+     0  bob     dlvr       red=b, blue=b
+     0  bob     echo       red=t, blue=f
+     0  bob     ready      red=f, blue=f
+     0  carol   bcst       red=b, blue=b
+     0  carol   dlvr       red=t, blue=b
+     0  carol   echo       red=t, blue=f
+     0  carol   ready      red=t, blue=f
+     0  dave    bcst       red=b, blue=b
+     0  dave    dlvr       red=f, blue=f
+     0  dave    echo       red=f, blue=f
+     0  dave    ready      red=t, blue=f
+  Expected outcomes confirmed.
+
+[18/30] Crusader: weaken echo justification
+Change: replace strong echo1 justification by weak implication. A crashed input can support a true echo.
+Scope: points=4, values=3, stages=1, time=finite; axioms=16.
+  CaValid2: counterexample
+    False at stage 0, point alice, quorum {alice,bob,carol}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   echo1      zero=t, half=f, one=t
+     0  alice   echo2      zero=f, half=f, one=t
+     0  alice   input      zero=t, half=f, one=f
+     0  alice   output     zero=f, half=t, one=t
+     0  bob     echo1      zero=t, half=t, one=t
+     0  bob     echo2      zero=f, half=f, one=t
+     0  bob     input      zero=t, half=f, one=f
+     0  bob     output     zero=f, half=t, one=t
+     0  carol   echo1      zero=b, half=b, one=b
+     0  carol   echo2      zero=b, half=b, one=b
+     0  carol   input      zero=b, half=b, one=b
+     0  carol   output     zero=b, half=b, one=b
+     0  dave    echo1      zero=t, half=f, one=t
+     0  dave    echo2      zero=f, half=f, one=t
+     0  dave    input      zero=t, half=f, one=f
+     0  dave    output     zero=f, half=t, one=t
+  Expected outcomes confirmed.
+
+[19/30] Crusader: remove second-echo uniqueness
+Change: drop CaEcho2Affine. Opposite binary outputs become possible.
+Scope: points=4, values=3, stages=1, time=finite; axioms=15.
+  CaAgree: counterexample
+    False at stage 0, point alice, quorum {alice,bob,carol}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   echo1      zero=t, half=f, one=t
+     0  alice   echo2      zero=f, half=f, one=t
+     0  alice   input      zero=f, half=f, one=t
+     0  alice   output     zero=f, half=t, one=f
+     0  bob     echo1      zero=t, half=f, one=t
+     0  bob     echo2      zero=t, half=f, one=t
+     0  bob     input      zero=f, half=f, one=t
+     0  bob     output     zero=f, half=t, one=f
+     0  carol   echo1      zero=t, half=f, one=t
+     0  carol   echo2      zero=t, half=f, one=f
+     0  carol   input      zero=f, half=f, one=t
+     0  carol   output     zero=t, half=t, one=t
+     0  dave    echo1      zero=b, half=b, one=b
+     0  dave    echo2      zero=b, half=b, one=b
+     0  dave    input      zero=t, half=f, one=f
+     0  dave    output     zero=b, half=b, one=b
+  Expected outcomes confirmed.
+
+[20/30] Simple: remove decision progress
+Change: drop SimpDecide_forward. A valid proposal and acceptance need not lead to a decision.
+Scope: points=3, values=1, stages=1, time=finite; axioms=4.
+  ProposerDecides: counterexample
+    False at stage 0, point c, quorum {a,b}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  a       accept     t
+     0  a       decide     f
+     0  a       propose    f
+     0  b       accept     t
+     0  b       decide     f
+     0  b       propose    f
+     0  c       accept     t
+     0  c       decide     f
+     0  c       propose    t
+  Expected outcomes confirmed.
+
+[21/30] Paxos: remove two proof-unused axioms
+Change: drop PaxSend_back and PaxPropose01 (paper Section 8.1.1). All selected properties still hold in scope.
+Scope: points=3, values=3, stages=3, time=stutter; axioms=18.
+  Validity: holds in scope
+  Agreement: holds in scope
+  Termination: holds in scope
+  DecidingQuorum: holds in scope
+  Expected outcomes confirmed.
+
+[22/30] Simpler Paxos: remove write uniqueness
+Scope: one participant, two values, one stutter stage. Change: drop SPaxWrite01. Agreement now fails: two true decisions can disagree.
+Scope: points=1, values=2, stages=1, time=stutter; axioms=11.
+  Agreement: counterexample
+    False at stage 0, point a, quorum {a}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  a       accept     red=t, blue=t
+     0  a       decide     red=t, blue=t
+     0  a       leader     t
+     0  a       propose    red=t, blue=t
+     0  a       write      red=t, blue=t
+  Expected outcomes confirmed.
+
+[23/30] Simpler Paxos: remove acceptance justification
+Scope: one participant, two values, one stutter stage. Change: drop SPaxAccept_back. A value can be decided without a proposal.
+Scope: points=1, values=2, stages=1, time=stutter; axioms=11.
+  Validity: counterexample
+    False at stage 0, point a, quorum {a}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  a       accept     red=t, blue=f
+     0  a       decide     red=t, blue=f
+     0  a       leader     t
+     0  a       propose    red=f, blue=t
+     0  a       write      red=f, blue=t
+  Expected outcomes confirmed.
+
+[24/30] Crusader: test output uniqueness
+No axiom is removed. Add the tutorial conjecture affine v. output(v). The paper intentionally allows a binary output together with half.
+Scope: points=4, values=3, stages=1, time=finite; axioms=16.
+  OutputAffine: counterexample
+    False at stage 0, point carol, quorum {alice,bob,carol}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  alice   echo1      zero=t, half=f, one=t
+     0  alice   echo2      zero=t, half=f, one=f
+     0  alice   input      zero=f, half=f, one=t
+     0  alice   output     zero=f, half=t, one=f
+     0  bob     echo1      zero=t, half=f, one=t
+     0  bob     echo2      zero=f, half=f, one=t
+     0  bob     input      zero=f, half=f, one=t
+     0  bob     output     zero=f, half=t, one=f
+     0  carol   echo1      zero=t, half=f, one=t
+     0  carol   echo2      zero=t, half=f, one=f
+     0  carol   input      zero=f, half=f, one=t
+     0  carol   output     zero=t, half=t, one=f
+     0  dave    echo1      zero=b, half=b, one=b
+     0  dave    echo2      zero=b, half=b, one=b
+     0  dave    input      zero=t, half=f, one=f
+     0  dave    output     zero=b, half=b, one=b
+  Expected outcomes confirmed.
+
+[25/30] Paxos: expose the terminal boundary
+Change only time stutter to time finite. Strict temporal progress makes the terminal frame inconsistent. This is a boundary artifact, not a paper counterexample.
+Scope: points=3, values=3, stages=3, time=finite; axioms=20.
+  INCONSISTENT: No valuation satisfies every axiom in this scope. No properties are reported as proved. Check the frame, truth requirements, and temporal boundary.
+  Expected outcomes confirmed.
+
+[26/30] Search: start with just the logic
+No frame is supplied. Two-valued choices need not be unique: search discovers a two-value countermodel.
+Bounds: 1..1 points; 1..2 values; 1..1 stages; at most 8 quorums; time=finite.
+Budget: 30 seconds total; 1000 frames. Solver: builtin.
+Command (from the package root):
+  python -m muql search examples/search/choices.md --max-points 1 --max-values 2 --max-stages 1 --solver builtin --timeout 30
+  Frames checked: 2; with axiom models: 2; incomplete checks: 0.
+  Found an independently replayed counterexample for every selected property.
+  AtMostOne: counterexample
+    Found scope: 1 point(s), 2 value(s), 1 stage(s); quorums {p0}.
+    False at stage 0, point p0, quorum {p0}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  p0      chosen     v0=t, value0=t
+  Expected outcomes confirmed.
+
+[27/30] Search: Voting across a bounded frame class
+Keep every axiom. Search all permitted quorum families and domain sizes; all three properties hold within these bounds.
+Bounds: 1..3 points; 1..2 values; 1..2 stages; at most 8 quorums; time=finite.
+Budget: 30 seconds total; 1000 frames. Solver: builtin.
+Command (from the package root):
+  python -m muql search examples/voting.md --max-points 3 --max-values 2 --max-stages 2 --solver builtin --timeout 30
+  Frames checked: 72; with axiom models: 36; incomplete checks: 0.
+  Exhausted the bounded frame class. Results apply only within these bounds.
+  Agreement: holds within search bounds
+  UnanimousTrueDelivery: holds within search bounds
+  UnanimousFalseDelivery: holds within search bounds
+  Expected outcomes confirmed.
+
+[28/30] Search: discover a Voting countermodel
+Drop Correct. Search chooses the participants, quorum family and valuation that falsify agreement.
+Bounds: 1..3 points; 1..2 values; 1..2 stages; at most 8 quorums; time=finite.
+Budget: 30 seconds total; 1000 frames. Solver: builtin.
+Command (from the package root):
+  python -m muql search examples/voting.md --drop Correct --property Agreement --max-points 3 --max-values 2 --max-stages 2 --solver builtin --timeout 30
+  Frames checked: 4; with axiom models: 4; incomplete checks: 0.
+  Found an independently replayed counterexample for every selected property.
+  Agreement: counterexample
+    Found scope: 2 point(s), 1 value(s), 1 stage(s); quorums {p0,p1}.
+    False at stage 0, point p0, quorum {p0,p1}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  p0      observe    f
+     0  p0      vote       b
+     0  p1      observe    t
+     0  p1      vote       b
+  Expected outcomes confirmed.
+
+[29/30] Search: Simpler Paxos agreement
+Keep all twelve axioms. Agreement holds throughout the bounded class, using the theory's stutter convention.
+Bounds: 1..2 points; 2..2 values; 1..3 stages; at most 8 quorums; time=stutter.
+Budget: 30 seconds total; 1000 frames. Solver: builtin.
+Command (from the package root):
+  python -m muql search examples/paxos_simpler.md --property Agreement --max-points 2 --max-values 2 --max-stages 3 --solver builtin --timeout 30
+  Frames checked: 12; with axiom models: 12; incomplete checks: 0.
+  Exhausted the bounded frame class. Results apply only within these bounds.
+  Agreement: holds within search bounds
+  Expected outcomes confirmed.
+
+[30/30] Search: remove Simpler Paxos write uniqueness
+Drop SPaxWrite01. Search supplies a frame and two disagreeing decisions; every retained axiom is valid.
+Bounds: 1..2 points; 2..2 values; 1..3 stages; at most 8 quorums; time=stutter.
+Budget: 30 seconds total; 1000 frames. Solver: builtin.
+Command (from the package root):
+  python -m muql search examples/paxos_simpler.md --drop SPaxWrite01 --property Agreement --max-points 2 --max-values 2 --max-stages 3 --solver builtin --timeout 30
+  Frames checked: 1; with axiom models: 1; incomplete checks: 0.
+  Found an independently replayed counterexample for every selected property.
+  Agreement: counterexample
+    Found scope: 1 point(s), 2 value(s), 1 stage(s); quorums {p0}.
+    False at stage 0, point p0, quorum {p0}.
+    Every retained axiom is valid; this complete valuation was independently replayed.
+     0  p0      accept     red=t, blue=t
+     0  p0      decide     red=t, blue=t
+     0  p0      leader     t
+     0  p0      propose    red=t, blue=t
+     0  p0      write      red=t, blue=t
+  Expected outcomes confirmed.
+
+30 scenarios, 81 property results, 22 countermodels; 4.50s.
+All expected outcomes confirmed. Edit a theory or use --drop/--replace to continue exploring.
