@@ -1,0 +1,8 @@
+# Keep tracked source and generated text consistent with the bundled site.
+* text=auto eol=lf
+
+# Archive and font bytes must never undergo line-ending conversion.
+*.zip binary
+*.whl binary
+*.gz binary
+*.woff binary
