@@ -1,6 +1,6 @@
 # GitHub setup and online explorer
 
-Version **0.7.5** includes everything needed to serve the model checker from
+Version **0.7.6** includes everything needed to serve the model checker from
 GitHub Pages. Visitors use the browser; no Python installation or solver server
 is required. Python executes in a Web Worker through the pinned Pyodide runtime.
 The built-in solver is the default; MiniSat is an optional additional download.
@@ -38,7 +38,7 @@ python tools/build_release.py --check
 git status --short
 git diff --stat
 git add .
-git commit -m "Update 3muQL Explorer 0.7.5"
+git commit -m "Update 3muQL Explorer 0.7.6"
 git push origin main
 ```
 
@@ -101,7 +101,7 @@ Use the Actions route when you want deployment conditional on those checks.
 
 If a published page still displays a README, check the selected Pages source
 and the most recent successful deployment. Make sure `index.html` and `site/`
-are present at the published root and are from 0.7.5. A README landing page is
+are present at the published root and are from 0.7.6. A README landing page is
 consistent with a different publication source; this package does not claim to
 have inspected your live repository settings.
 

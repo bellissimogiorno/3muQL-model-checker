@@ -35,12 +35,12 @@ class SiteBuildTests(unittest.TestCase):
             "examples/search/choice.md": "# Choice\n",
             "docs/theories.html": '<!doctype html><title>Theories</title><a href="../examples/search/choice.md">Source</a><a href="language.md">Guide</a><a href="#formula">Formula</a>',
             "docs/language.md": "# Language\n",
-            "docs/validation.md": "[Tests](../reports/tests.txt) [Browser](../reports/browser-tests.txt) [Demo](../reports/demo.txt) [Benchmarks](../reports/audit-benchmarks.json) [Fresh benchmarks](../reports/audit-0.6.4-benchmarks.json)\n",
+            "docs/validation.md": "[Tests](../reports/tests.txt) [Browser](../reports/browser-tests.txt) [Demo](../reports/demo.txt)\n",
             "reports/tests.txt": "Python tests\n",
             "reports/browser-tests.txt": "JavaScript tests\n",
             "reports/demo.txt": "Demo checks\n",
             "reports/audit-benchmarks.json": "{}\n",
-            "reports/audit-0.6.4-benchmarks.json": "{}\n",
+            "reports/sample-benchmarks.json": "{}\n",
         }
         for name, contents in files.items():
             path = self.root / name

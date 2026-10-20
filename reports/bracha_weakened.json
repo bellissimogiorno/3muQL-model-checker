@@ -405,7 +405,7 @@
     }
   ],
   "stats": {
-    "seconds": 0.004883,
+    "seconds": 0.004474,
     "backend": "builtin",
     "decisions": 11,
     "variables": 94,

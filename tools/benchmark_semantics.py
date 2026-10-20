@@ -1,6 +1,6 @@
 """Compare the audited closure/cache changes: python3 tools/benchmark_semantics.py.
 
-The reference methods reproduce 0.6.3's closure loop and evaluator cache rule.
+The reference methods use an uncached closure loop and evaluator cache rule.
 Every timing constructs a fresh frame/evaluator. Medians exclude theory parsing.
 These timings are audit evidence, not timing-dependent regression tests.
 """

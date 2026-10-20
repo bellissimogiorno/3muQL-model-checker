@@ -5,6 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
+<meta name="author" content="Vibe-coded following prompts by Murdoch J. Gabbay">
 <title>Theory guide · 3μQL Explorer</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20role%3D%22img%22%20aria-label%3D%223%CE%BCQL%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22%232457d6%22%2F%3E%3Ctext%20x%3D%2232%22%20y%3D%2244%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2238%22%20fill%3D%22%23ffffff%22%3E3%CE%BC%3C%2Ftext%3E%3C%2Fsvg%3E%0A">
 <style>
@@ -82,6 +83,9 @@ h1 { font-size: var(--text-title); font-weight: 600; line-height: 1.2; letter-sp
 .nav-count { flex-shrink: 0; font-size: var(--text-small); font-variant-numeric: tabular-nums; }
 .sidebar-footer { border-top: 1px solid var(--line); padding: 16px 10px; font-size: var(--text-small); color: var(--muted); }
 .sidebar-footer a { display: inline-flex; align-items: center; min-height: 44px; }
+.explore-link { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 12px 20px; margin-top: 16px; background: var(--blue); color: #fff; border-radius: 7px; font-size: var(--text-body); font-weight: 600; text-decoration: none; }
+.explore-link:hover { background: #1c45ae; color: #fff; text-decoration: none; }
+.masthead p.authorship { font-size: var(--text-small); margin-top: 16px; }
 main { min-width: 0; padding: 30px 0 48px; }
 .toolbar { display: flex; align-items: flex-start; flex-wrap: wrap; justify-content: space-between; gap: 16px; padding-bottom: 26px; border-bottom: 1px solid var(--line); margin-bottom: 30px; }
 .view-note { flex: 1 1 300px; font-size: var(--text-body); color: var(--muted); margin: 0; max-width: 580px; }
@@ -194,7 +198,7 @@ td code { font-size: var(--text-body); }
 <body>
 <a class="skip-link" href="#main">Skip to the theory</a>
 <header class="site-header"><div class="brand"><span class="brand-mark" aria-hidden="true">3μ</span><span>3μQL <strong>Explorer</strong></span></div><nav aria-label="Resources"><a href="docs/language.md">Syntax reference</a><a href="README.md">Package guide</a></nav></header>
-<div class="masthead"><div class="masthead-inner"><div><h1>Theory guide</h1><p>Explore the axioms, inspect their scope, and read each property in the paper’s notation. Every formula comes from an executable literate theory.</p></div><div class="truth-key" aria-label="Three truth values"><span><b>t</b> true</span><span><b>b</b> broken</span><span><b>f</b> false</span><div class="truth-note">Both t and b are designated (valid).</div></div></div></div>
+<div class="masthead"><div class="masthead-inner"><div><h1>Theory guide</h1><p>Explore the axioms, inspect their scope, and read each property in the paper’s notation. Every formula comes from an executable literate theory.</p><a class="explore-link" href="https://bellissimogiorno.github.io/3muQL-model-checker/">Open the GitHub Pages explorer <span aria-hidden="true">↗</span></a><p class="authorship">This package was vibe-coded following prompts by Murdoch J. Gabbay.</p></div><div class="truth-key" aria-label="Three truth values"><span><b>t</b> true</span><span><b>b</b> broken</span><span><b>f</b> false</span><div class="truth-note">Both t and b are designated (valid).</div></div></div></div>
 <div class="layout">
 <aside class="sidebar" aria-label="Choose a theory">
 <div class="js-only"><label for="search" class="search-label">Find a theory or formula</label><input id="search" class="search" type="search" placeholder="Try Agreement or quorum…" autocomplete="off"><p id="search-status" class="search-status" role="status">13 theories</p></div>

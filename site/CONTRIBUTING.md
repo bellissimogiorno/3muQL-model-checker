@@ -5,7 +5,7 @@ Browser integration tests additionally require Node, Playwright, and Chromium.
 Real engine integration needs the pinned Pyodide runtime (normally downloaded
 from the CDN); the diagram browser tests run locally without Pyodide.
 See [release validation](docs/validation.md) for completed checks and limitations
-of the 0.7.3 release environment.
+of the 0.7.6 release environment.
 
 ```sh
 python tools/check_version.py
@@ -54,9 +54,9 @@ The release products appear in `dist/releases/`:
 
 | Product | Purpose |
 | --- | --- |
-| `3muql-explorer-0.7.3.zip` | Complete portable source tree, including generated browser snapshots |
-| `3muql-explorer-site-0.7.3.zip` | Static website; `index.html` is at the ZIP root |
-| `muql_explorer-0.7.3-py3-none-any.whl` | Offline installation without build tools |
+| `3muql-explorer-0.7.6.zip` | Complete portable source tree, including generated browser snapshots |
+| `3muql-explorer-site-0.7.6.zip` | Static website; `index.html` is at the ZIP root |
+| `muql_explorer-0.7.6-py3-none-any.whl` | Offline installation without build tools |
 | Python source distribution (`.tar.gz`) | Installation or rebuilding with setuptools |
 
 Keep private files, virtual environments, temporary build outputs, and report
@@ -75,7 +75,7 @@ checking/search/replay, and the bundled HTTP app from an unrelated working
 directory:
 
 ```sh
-python tools/test_install.py dist/releases/muql_explorer-0.7.3-py3-none-any.whl
+python tools/test_install.py dist/releases/muql_explorer-0.7.6-py3-none-any.whl
 ```
 
 This covers packaging and serving; the real browser commands below separately

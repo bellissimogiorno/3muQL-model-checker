@@ -465,6 +465,6 @@ Command (from the package root):
   Expected outcomes confirmed.
   Replay: python -m muql replay /workspace/scratch/ef33a48ae19b/work/3muql-explorer-handover/3muql-explorer/reports/search_paxos_simpler_without_write_affine--Agreement.md /workspace/scratch/ef33a48ae19b/work/3muql-explorer-handover/3muql-explorer/reports/search_paxos_simpler_without_write_affine--Agreement.countermodel.json
 
-30 scenarios, 81 property results, 22 countermodels; 4.03s.
+30 scenarios, 81 property results, 22 countermodels; 4.01s.
 Complete reports and witnesses saved to /workspace/scratch/ef33a48ae19b/work/3muql-explorer-handover/3muql-explorer/reports
 All expected outcomes confirmed. Edit a theory or use --drop/--replace to continue exploring.

@@ -100,7 +100,7 @@
     "unknown_frames": 0,
     "decisions": 3,
     "solver": "builtin",
-    "seconds": 0.000664
+    "seconds": 0.000709
   },
   "consistency_scope": {
     "points": [

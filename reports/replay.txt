@@ -1,1 +1,1 @@
-All 19 saved countermodels replayed against the exact 0.3.2 demo scenarios.
+All 22 saved countermodels independently replayed against the supplied demo theories and their concrete scopes.

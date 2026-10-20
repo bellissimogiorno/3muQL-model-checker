@@ -46,7 +46,6 @@ PUBLIC_FILES = (
     "README.md", "CONTRIBUTING.md", "SOURCES.md", "LICENSE",
     "docs/theories.html",
     "reports/tests.txt", "reports/browser-tests.txt", "reports/demo.txt",
-    "reports/audit-benchmarks.json", "reports/audit-0.6.4-benchmarks.json",
 )
 
 

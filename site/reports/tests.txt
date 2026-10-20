@@ -207,24 +207,24 @@ test_busy_port_reports_a_free_port_option_and_cleans_up (test_installed_server.B
 test_duplicate_case_alias_and_file_directory_conflict_are_rejected (test_installed_server.BundledSiteTests.test_duplicate_case_alias_and_file_directory_conflict_are_rejected) ... ok
 test_invalid_archive_is_reported_without_traceback (test_installed_server.BundledSiteTests.test_invalid_archive_is_reported_without_traceback) ... ok
 test_missing_archive_has_actionable_error_without_server_start (test_installed_server.BundledSiteTests.test_missing_archive_has_actionable_error_without_server_start) ... ok
-test_real_http_serves_public_assets_and_never_exposes_source (test_installed_server.BundledSiteTests.test_real_http_serves_public_assets_and_never_exposes_source) ... 127.0.0.1 - - [20/Oct/2026 08:52:21] "GET / HTTP/1.1" 200 -
-127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /app.js HTTP/1.1" 200 -
-127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /engine.zip HTTP/1.1" 200 -
-127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /examples/demo.md HTTP/1.1" 200 -
-127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message File not found
-127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /secret.txt HTTP/1.1" 404 -
-127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message File not found
-127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /server.py HTTP/1.1" 404 -
-127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message File not found
-127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /muql/server.py HTTP/1.1" 404 -
-127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message File not found
-127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /../secret.txt HTTP/1.1" 404 -
-127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message File not found
-127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /%2e%2e/secret.txt HTTP/1.1" 404 -
-127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message No page at this address
-127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /examples/ HTTP/1.1" 404 -
-127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message File not found
-127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /_site.zip HTTP/1.1" 404 -
+test_real_http_serves_public_assets_and_never_exposes_source (test_installed_server.BundledSiteTests.test_real_http_serves_public_assets_and_never_exposes_source) ... 127.0.0.1 - - [20/Oct/2026 09:11:36] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [20/Oct/2026 09:11:36] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Oct/2026 09:11:36] "GET /engine.zip HTTP/1.1" 200 -
+127.0.0.1 - - [20/Oct/2026 09:11:36] "GET /examples/demo.md HTTP/1.1" 200 -
+127.0.0.1 - - [20/Oct/2026 09:11:36] code 404, message File not found
+127.0.0.1 - - [20/Oct/2026 09:11:36] "GET /secret.txt HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 09:11:36] code 404, message File not found
+127.0.0.1 - - [20/Oct/2026 09:11:36] "GET /server.py HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 09:11:36] code 404, message File not found
+127.0.0.1 - - [20/Oct/2026 09:11:36] "GET /muql/server.py HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 09:11:36] code 404, message File not found
+127.0.0.1 - - [20/Oct/2026 09:11:36] "GET /../secret.txt HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 09:11:36] code 404, message File not found
+127.0.0.1 - - [20/Oct/2026 09:11:36] "GET /%2e%2e/secret.txt HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 09:11:36] code 404, message No page at this address
+127.0.0.1 - - [20/Oct/2026 09:11:36] "GET /examples/ HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 09:11:36] code 404, message File not found
+127.0.0.1 - - [20/Oct/2026 09:11:36] "GET /_site.zip HTTP/1.1" 404 -
 ok
 test_resources_are_extracted_and_removed_on_normal_and_exceptional_exit (test_installed_server.BundledSiteTests.test_resources_are_extracted_and_removed_on_normal_and_exceptional_exit) ... ok
 test_symlinks_and_special_files_are_rejected (test_installed_server.BundledSiteTests.test_symlinks_and_special_files_are_rejected) ... ok
@@ -456,6 +456,6 @@ test_run_progress_uses_json_strings_and_inspection_never_calls_observer (test_we
 test_search_template_exports_witness_that_replays (test_web.WebBridgeTests.test_search_template_exports_witness_that_replays) ... ok
 
 ----------------------------------------------------------------------
-Ran 437 tests in 25.823s
+Ran 437 tests in 27.103s
 
 OK (skipped=3)

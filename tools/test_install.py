@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Install a wheel offline into a fresh venv and exercise it outside the source.
 
-Usage: python tools/test_install.py dist/releases/muql_explorer-0.7.3-py3-none-any.whl
+Usage: python tools/test_install.py /path/to/release.whl
 Uses only the standard library and the pip bundled with Python's venv module.
 This tests local installation/HTTP, not browser rendering or WebAssembly.
 """

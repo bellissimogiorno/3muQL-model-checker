@@ -1,5 +1,5 @@
 {
-  "source": "Audited example meanings with conjunction-based Paxos agreement (0.3.2).",
+  "source": "Audited example meanings with conjunction-based Paxos agreement.",
   "semantic_sha256": {
     "basics.md": "bd740d947dd1e556f714fa0bca63042d3e9956d3e8bc245c624ecb3f6a78d4ca",
     "bracha.md": "0e3af7502f1c41b4cda9b7d39a828502a768429dd4be51cf1a21e426aa68920d",

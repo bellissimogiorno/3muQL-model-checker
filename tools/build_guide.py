@@ -248,6 +248,7 @@ TEMPLATE = r'''<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
+<meta name="author" content="Vibe-coded following prompts by Murdoch J. Gabbay">
 <title>Theory guide · 3μQL Explorer</title>
 <link rel="icon" type="image/svg+xml" href="@@ICON@@">
 <style>
@@ -313,6 +314,9 @@ h1 { font-size: var(--text-title); font-weight: 600; line-height: 1.2; letter-sp
 .nav-count { flex-shrink: 0; font-size: var(--text-small); font-variant-numeric: tabular-nums; }
 .sidebar-footer { border-top: 1px solid var(--line); padding: 16px 10px; font-size: var(--text-small); color: var(--muted); }
 .sidebar-footer a { display: inline-flex; align-items: center; min-height: 44px; }
+.explore-link { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 12px 20px; margin-top: 16px; background: var(--blue); color: #fff; border-radius: 7px; font-size: var(--text-body); font-weight: 600; text-decoration: none; }
+.explore-link:hover { background: #1c45ae; color: #fff; text-decoration: none; }
+.masthead p.authorship { font-size: var(--text-small); margin-top: 16px; }
 main { min-width: 0; padding: 30px 0 48px; }
 .toolbar { display: flex; align-items: flex-start; flex-wrap: wrap; justify-content: space-between; gap: 16px; padding-bottom: 26px; border-bottom: 1px solid var(--line); margin-bottom: 30px; }
 .view-note { flex: 1 1 300px; font-size: var(--text-body); color: var(--muted); margin: 0; max-width: 580px; }
@@ -425,7 +429,7 @@ td code { font-size: var(--text-body); }
 <body>
 <a class="skip-link" href="#main">Skip to the theory</a>
 <header class="site-header"><div class="brand"><span class="brand-mark" aria-hidden="true">3μ</span><span>3μQL <strong>Explorer</strong></span></div><nav aria-label="Resources"><a href="language.md">Syntax reference</a><a href="../README.md">Package guide</a></nav></header>
-<div class="masthead"><div class="masthead-inner"><div><h1>Theory guide</h1><p>Explore the axioms, inspect their scope, and read each property in the paper’s notation. Every formula comes from an executable literate theory.</p></div><div class="truth-key" aria-label="Three truth values"><span><b>t</b> true</span><span><b>b</b> broken</span><span><b>f</b> false</span><div class="truth-note">Both t and b are designated (valid).</div></div></div></div>
+<div class="masthead"><div class="masthead-inner"><div><h1>Theory guide</h1><p>Explore the axioms, inspect their scope, and read each property in the paper’s notation. Every formula comes from an executable literate theory.</p><a class="explore-link" href="https://bellissimogiorno.github.io/3muQL-model-checker/">Open the GitHub Pages explorer <span aria-hidden="true">↗</span></a><p class="authorship">This package was vibe-coded following prompts by Murdoch J. Gabbay.</p></div><div class="truth-key" aria-label="Three truth values"><span><b>t</b> true</span><span><b>b</b> broken</span><span><b>f</b> false</span><div class="truth-note">Both t and b are designated (valid).</div></div></div></div>
 <div class="layout">
 <aside class="sidebar" aria-label="Choose a theory">
 <div class="js-only"><label for="search" class="search-label">Find a theory or formula</label><input id="search" class="search" type="search" placeholder="Try Agreement or quorum…" autocomplete="off"><p id="search-status" class="search-status" role="status">@@COUNT@@ theories</p></div>

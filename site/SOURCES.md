@@ -1,5 +1,7 @@
 # Source provenance
 
+This package was vibe-coded following prompts by Murdoch J. Gabbay.
+
 The package implements mathematical definitions in Unicode and ASCII and adds
 explicit finite scopes, an engine, examples, and tests. The original papers
 are not redistributed inside this release.
@@ -20,9 +22,7 @@ ab5759a7c0982e72ae94939a053b420da66e97e766a3245853c72a6aa85f3664
 The source defines 3muQL in Figures 3 and 5, derived operators in Figure 6,
 four Simple theories in Section 6.1, full Declarative Paxos in Figure 11,
 and Simpler Declarative Paxos in Figure 12. Theorem and page references throughout
-the examples refer to this exact attachment. A related earlier public preprint
-is [arXiv:2502.00892](https://arxiv.org/abs/2502.00892), under a different title;
-we do not substitute that version for the supplied source.
+the examples refer to this exact attachment. 
 
 Both Paxos examples express `Agreement` with a conjunctive premise: a true
 decision now or earlier and a true decision now must agree on their value.

@@ -7,7 +7,7 @@ installed on the visitor's computer.
 
 ## Open the application
 
-After deploying 0.7.5, open
+After deploying 0.7.6, open
 [the GitHub Pages explorer](https://bellissimogiorno.github.io/3muQL-model-checker/).
 The recommended Actions deployment opens the application at that address;
 the supplied branch-deployment landing page forwards automatically to `site/`.
@@ -500,7 +500,7 @@ directories or its own marked output, and removes obsolete generated assets.
 in `site/` and `muql/_site.zip`, plus the root landing page. Its `--check` option
 checks that these agree with the current source.
 
-The standalone `3muql-explorer-site-0.7.5.zip` contains the deployable static
+The standalone `3muql-explorer-site-0.7.6.zip` contains the deployable static
 application. Extract it, then serve the directory containing `index.html`:
 
 ```sh

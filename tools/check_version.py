@@ -21,7 +21,7 @@ _RELEASE = re.compile(r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)"
 
 def _release(value: object, source: str) -> str:
     if not isinstance(value, str) or _RELEASE.fullmatch(value) is None:
-        raise ValueError(f"{source}: expected a release version such as 0.4.2 (MAJOR.MINOR.PATCH)")
+        raise ValueError(f"{source}: expected a release version in the form MAJOR.MINOR.PATCH")
     return value
 
 

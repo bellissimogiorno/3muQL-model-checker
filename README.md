@@ -1,5 +1,11 @@
 # 3μQL Explorer
 
+## [Open the GitHub Pages explorer →](https://bellissimogiorno.github.io/3muQL-model-checker/)
+
+**Explore the implementation in your browser. No local installation needed.**
+
+This package was vibe-coded following prompts by Murdoch J. Gabbay.
+
 **Play with distributed algorithms as three-valued logical theories.** Put
 axioms and correctness properties in a Markdown document, then ask the checker
 to find a finite model that satisfies the axioms while falsifying a property.
@@ -20,12 +26,11 @@ In particular, the terminal self-loop of `time stutter` does not encode the
 paper's full natural-number time with past history. See
 [semantics](docs/semantics.md) before interpreting temporal results.
 
-**Release 0.7.5 · Paper-style labels in the bundled theories.**
-Backward and forward axioms now use `?` and `!`, including `PaxWrite?`,
-`PaxWrite!`, `PaxDecide-not-L!`, and Bracha's `BrReady!!` relay. Formula meanings
-are unchanged. Axiom and property names accept these marks and hyphens. See the
+**Current release: 0.7.6.**
+Backward and forward axioms use `?` and `!`, including `PaxWrite?`,
+`PaxWrite!`, `PaxDecide-not-L!`, and Bracha's `BrReady!!` relay. Axiom and property names accept these marks and hyphens. See the
 [language guide](docs/language.md#declarations) and [release validation](docs/validation.md).
-The [0.7.3 audit](docs/audit.md) records the preceding correctness review and refactor.
+See [correctness and design](docs/audit.md) for the implementation invariants.
 
 **Follow the search as it runs.**
 While an experiment runs, the page shows elapsed time, real phases, the current
@@ -108,7 +113,7 @@ python -m venv .venv
 # Linux/macOS:
 . .venv/bin/activate
 # Windows PowerShell: .venv\Scripts\Activate.ps1
-python -m pip install /path/to/muql_explorer-0.7.5-py3-none-any.whl
+python -m pip install /path/to/muql_explorer-0.7.6-py3-none-any.whl
 3muql serve --port 0 --open
 ```
 

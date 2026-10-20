@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Compare the bundled rule-label migration with an earlier source checkout.
+"""Compare the bundled rule-label migration with a reference source checkout.
 
-python tools/audit_rule_labels.py --reference /path/to/0.7.4 --output audit.json
+python tools/audit_rule_labels.py --reference /path/to/reference-source --output audit.json
 
 Compare scopes, ordered labels, macros and complete formula trees, followed by
 the existing CNF/report/progress/export/replay comparison. Only the explicit,
