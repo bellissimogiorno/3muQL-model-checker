@@ -28,21 +28,21 @@ predicate accept/1
 predicate decide/1
 
 # Backward rules: the evidence required to justify an event.
-axiom SPaxPropose_back: ∀ v. propose(v) ⇀ leader
-axiom SPaxWrite_back:
+axiom SPaxPropose?: ∀ v. propose(v) ⇀ leader
+axiom SPaxWrite?:
   ∀ v. write(v) ⇀ (
     leader ∧ ∃ꟴ(
       (latest x = v. ◇(accept(x)))
       ∨ (propose(v) ∧ ¬T(once(∃ x. ◇(accept(x)))))
     )
   )
-axiom SPaxAccept_back: ∀ v. accept(v) ⇀ ∃ꟴ◇(write(v))
-axiom SPaxDecide_back: ∀ v. decide(v) ⇀ ∃ꟴ□(accept(v))
+axiom SPaxAccept?: ∀ v. accept(v) ⇀ ∃ꟴ◇(write(v))
+axiom SPaxDecide?: ∀ v. decide(v) ⇀ ∃ꟴ□(accept(v))
 
 # Forward rules: progress, subject to the eventual-delivery assumption.
-axiom SPaxWrite_forward: ultimately(leader → (∃ v. write(v)))
-axiom SPaxAccept_forward: ultimately((∃ v. ∃ꟴ◇(write(v))) → (∃ v. accept(v)))
-axiom SPaxDecide_forward: ultimately((∃ v. ∃ꟴ□(accept(v))) → (∃ v. decide(v)))
+axiom SPaxWrite!: ultimately(leader → (∃ v. write(v)))
+axiom SPaxAccept!: ultimately((∃ v. ∃ꟴ◇(write(v))) → (∃ v. accept(v)))
+axiom SPaxDecide!: ultimately((∃ v. ∃ꟴ□(accept(v))) → (∃ v. decide(v)))
 
 # Leadership and recurring correct leaders.
 axiom SLdrExist: TF(leader) ∧ T(∃ꟴ◇(leader))
@@ -78,7 +78,7 @@ stronger deciding-quorum observation is not silently imported here. Distinct
 predicates and distinct stages may have different sets of crashed participants.
 
 Useful experiments are removing `SPaxWrite01` (simultaneous disagreement),
-`SPaxAccept_back` (decisions without a proposal), or a progress axiom (stalled
+`SPaxAccept?` (decisions without a proposal), or a progress axiom (stalled
 computation). To expose a missing intersection requirement, change the quorums
 to `{a} {b} {c}` and remove `SPax2Twined`; the default majority frame itself
 already guarantees that rule.

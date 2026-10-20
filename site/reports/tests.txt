@@ -113,6 +113,9 @@ test_value_environment_is_part_of_cache_key (test_compile.CompiledSemanticsTests
 test_contexts_include_points_outside_the_quorum (test_compile.FrameTests.test_contexts_include_points_outside_the_quorum) ... ok
 test_twined_is_n_way_intersection_with_repetition (test_compile.FrameTests.test_twined_is_n_way_intersection_with_repetition) ... ok
 test_union_closure_does_not_invent_intersections_or_supersets (test_compile.FrameTests.test_union_closure_does_not_invent_intersections_or_supersets) ... ok
+test_active_outer_bindings_are_never_reused_as_closed_results (test_compiler_bindings.CompilerBindingTests.test_active_outer_bindings_are_never_reused_as_closed_results) ... ok
+test_nested_recurrences_match_full_context_definition (test_compiler_bindings.CompilerBindingTests.test_nested_recurrences_match_full_context_definition) ... ok
+test_value_bindings_remain_distinct_inside_the_same_recurrence (test_compiler_bindings.CompilerBindingTests.test_value_bindings_remain_distinct_inside_the_same_recurrence) ... ok
 test_brief_output_still_exposes_search_commands_and_discovered_scopes (test_demo_search.DemoSearchTests.test_brief_output_still_exposes_search_commands_and_discovered_scopes) ... ok
 test_generated_theories_replay_without_reapplying_mutations (test_demo_search.DemoSearchTests.test_generated_theories_replay_without_reapplying_mutations) ... ok
 test_printed_choices_command_reproduces_the_countermodel (test_demo_search.DemoSearchTests.test_printed_choices_command_reproduces_the_countermodel) ... ok
@@ -204,24 +207,24 @@ test_busy_port_reports_a_free_port_option_and_cleans_up (test_installed_server.B
 test_duplicate_case_alias_and_file_directory_conflict_are_rejected (test_installed_server.BundledSiteTests.test_duplicate_case_alias_and_file_directory_conflict_are_rejected) ... ok
 test_invalid_archive_is_reported_without_traceback (test_installed_server.BundledSiteTests.test_invalid_archive_is_reported_without_traceback) ... ok
 test_missing_archive_has_actionable_error_without_server_start (test_installed_server.BundledSiteTests.test_missing_archive_has_actionable_error_without_server_start) ... ok
-test_real_http_serves_public_assets_and_never_exposes_source (test_installed_server.BundledSiteTests.test_real_http_serves_public_assets_and_never_exposes_source) ... 127.0.0.1 - - [15/Oct/2026 18:15:38] "GET / HTTP/1.1" 200 -
-127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /app.js HTTP/1.1" 200 -
-127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /engine.zip HTTP/1.1" 200 -
-127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /examples/demo.md HTTP/1.1" 200 -
-127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message File not found
-127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /secret.txt HTTP/1.1" 404 -
-127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message File not found
-127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /server.py HTTP/1.1" 404 -
-127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message File not found
-127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /muql/server.py HTTP/1.1" 404 -
-127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message File not found
-127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /../secret.txt HTTP/1.1" 404 -
-127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message File not found
-127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /%2e%2e/secret.txt HTTP/1.1" 404 -
-127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message No page at this address
-127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /examples/ HTTP/1.1" 404 -
-127.0.0.1 - - [15/Oct/2026 18:15:38] code 404, message File not found
-127.0.0.1 - - [15/Oct/2026 18:15:38] "GET /_site.zip HTTP/1.1" 404 -
+test_real_http_serves_public_assets_and_never_exposes_source (test_installed_server.BundledSiteTests.test_real_http_serves_public_assets_and_never_exposes_source) ... 127.0.0.1 - - [20/Oct/2026 08:52:21] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /engine.zip HTTP/1.1" 200 -
+127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /examples/demo.md HTTP/1.1" 200 -
+127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message File not found
+127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /secret.txt HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message File not found
+127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /server.py HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message File not found
+127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /muql/server.py HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message File not found
+127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /../secret.txt HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message File not found
+127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /%2e%2e/secret.txt HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message No page at this address
+127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /examples/ HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 08:52:21] code 404, message File not found
+127.0.0.1 - - [20/Oct/2026 08:52:21] "GET /_site.zip HTTP/1.1" 404 -
 ok
 test_resources_are_extracted_and_removed_on_normal_and_exceptional_exit (test_installed_server.BundledSiteTests.test_resources_are_extracted_and_removed_on_normal_and_exceptional_exit) ... ok
 test_symlinks_and_special_files_are_rejected (test_installed_server.BundledSiteTests.test_symlinks_and_special_files_are_rejected) ... ok
@@ -268,6 +271,15 @@ test_all_six_original_theories_have_expected_scoped_results (test_paxos.Original
 test_original_eventual_theories_are_inconsistent_on_finite_dead_ends (test_paxos.OriginalPaxosExamplesTests.test_original_eventual_theories_are_inconsistent_on_finite_dead_ends) ... ok
 test_removing_accept_provenance_permits_an_unproposed_true_decision (test_paxos.PaxosMutationTests.test_removing_accept_provenance_permits_an_unproposed_true_decision) ... ok
 test_removing_write_uniqueness_permits_two_true_conflicting_decisions (test_paxos.PaxosMutationTests.test_removing_write_uniqueness_permits_two_true_conflicting_decisions) ... ok
+test_candidate_dimensions_are_announced_before_family_enumeration (test_progress.ProgressTests.test_candidate_dimensions_are_announced_before_family_enumeration) ... ok
+test_fixed_frame_events_precede_solver_and_replay_and_count_verified_witnesses (test_progress.ProgressTests.test_fixed_frame_events_precede_solver_and_replay_and_count_verified_witnesses) ... ok
+test_inconsistent_and_limited_frames_are_counted_without_success_claims (test_progress.ProgressTests.test_inconsistent_and_limited_frames_are_counted_without_success_claims) ... ok
+test_late_replay_never_emits_a_verified_counterexample (test_progress.ProgressTests.test_late_replay_never_emits_a_verified_counterexample) ... ok
+test_observer_mutation_and_errors_do_not_modify_input_or_result (test_progress.ProgressTests.test_observer_mutation_and_errors_do_not_modify_input_or_result) ... ok
+test_progress_does_not_add_checker_clock_reads (test_progress.ProgressTests.test_progress_does_not_add_checker_clock_reads) ... ok
+test_search_counters_are_cumulative_and_match_final_report (test_progress.ProgressTests.test_search_counters_are_cumulative_and_match_final_report) ... ok
+test_search_observer_failure_preserves_results_and_earlier_snapshots (test_progress.ProgressTests.test_search_observer_failure_preserves_results_and_earlier_snapshots) ... ok
+test_zero_budget_reports_no_completed_frame_or_counterexample (test_progress.ProgressTests.test_zero_budget_reports_no_completed_frame_or_counterexample) ... ok
 test_check_accepts_current_release_and_changes_no_files (test_release_package.PortableReleaseTests.test_check_accepts_current_release_and_changes_no_files) ... ok
 test_check_detects_stale_source_site_and_install_bundle_without_repairing_them (test_release_package.PortableReleaseTests.test_check_detects_stale_source_site_and_install_bundle_without_repairing_them) ... ok
 test_redirected_generated_file_is_rejected_before_preparing_assets (test_release_package.PortableReleaseTests.test_redirected_generated_file_is_rejected_before_preparing_assets) ... ok
@@ -286,6 +298,17 @@ test_generator_expansion_checks_the_deadline_during_work (test_release_semantics
 test_closed_recurrence_cache_retains_context_and_value_environment (test_release_semantics.RecurrenceMemoTests.test_closed_recurrence_cache_retains_context_and_value_environment) ... ok
 test_independent_nested_recurrences_do_not_repeat_exponentially (test_release_semantics.RecurrenceMemoTests.test_independent_nested_recurrences_do_not_repeat_exponentially) ... ok
 test_outer_dependent_nested_recurrences_match_direct_enumeration (test_release_semantics.RecurrenceMemoTests.test_outer_dependent_nested_recurrences_match_direct_enumeration) ... ok
+test_cli_list_drop_replacement_and_selected_property (test_rule_labels.RuleLabelTests.test_cli_list_drop_replacement_and_selected_property) ... ok
+test_cli_search_exports_both_colliding_filenames_and_replays (test_rule_labels.RuleLabelTests.test_cli_search_exports_both_colliding_filenames_and_replays) ... ok
+test_direction_marks_distinguish_rules_and_keep_formula_negation (test_rule_labels.RuleLabelTests.test_direction_marks_distinguish_rules_and_keep_formula_negation) ... ok
+test_duplicate_labels_still_share_one_namespace (test_rule_labels.RuleLabelTests.test_duplicate_labels_still_share_one_namespace) ... ok
+test_exact_label_drop_and_replacement_preserve_the_original (test_rule_labels.RuleLabelTests.test_exact_label_drop_and_replacement_preserve_the_original) ... ok
+test_formula_error_coordinates_include_the_whole_symbolic_label (test_rule_labels.RuleLabelTests.test_formula_error_coordinates_include_the_whole_symbolic_label) ... ok
+test_invalid_labels_are_rejected_by_loader_and_public_api (test_rule_labels.RuleLabelTests.test_invalid_labels_are_rejected_by_loader_and_public_api) ... ok
+test_public_theory_validation_and_both_export_notations_agree (test_rule_labels.RuleLabelTests.test_public_theory_validation_and_both_export_notations_agree) ... ok
+test_rule_punctuation_does_not_extend_formula_identifiers (test_rule_labels.RuleLabelTests.test_rule_punctuation_does_not_extend_formula_identifiers) ... ok
+test_web_inspection_selection_and_retained_exports_preserve_labels (test_rule_labels.RuleLabelTests.test_web_inspection_selection_and_retained_exports_preserve_labels) ... ok
+test_web_witness_names_are_portable_distinct_and_replayable (test_rule_labels.RuleLabelTests.test_web_witness_names_are_portable_distinct_and_replayable) ... ok
 test_bundled_runtime_uses_project_relative_path_and_keeps_optional_packages (test_runtime_build.RuntimeBuildTests.test_bundled_runtime_uses_project_relative_path_and_keeps_optional_packages) ... ok
 test_default_cdn_and_safe_mirror_urls (test_runtime_build.RuntimeBuildTests.test_default_cdn_and_safe_mirror_urls) ... ok
 test_missing_empty_wrong_version_and_malformed_runtime_preserve_output (test_runtime_build.RuntimeBuildTests.test_missing_empty_wrong_version_and_malformed_runtime_preserve_output) ... ok
@@ -382,6 +405,7 @@ test_unlisted_repository_and_report_files_are_not_published (test_site_build.Sit
 test_unrelated_output_is_preserved (test_site_build.SiteBuildTests.test_unrelated_output_is_preserved) ... ok
 test_all_example_meanings_match_reference (test_unicode_integration.UnicodeIntegrationTests.test_all_example_meanings_match_reference) ... ok
 test_all_examples_are_also_executable_pure_ascii (test_unicode_integration.UnicodeIntegrationTests.test_all_examples_are_also_executable_pure_ascii) ... ok
+test_bundled_rules_use_the_paper_direction_marks (test_unicode_integration.UnicodeIntegrationTests.test_bundled_rules_use_the_paper_direction_marks) ... ok
 test_clashing_implication_is_rejected_in_theories_and_cli (test_unicode_integration.UnicodeIntegrationTests.test_clashing_implication_is_rejected_in_theories_and_cli) ... ok
 test_cli_replacement_both_arrow_spellings_have_identical_results (test_unicode_integration.UnicodeIntegrationTests.test_cli_replacement_both_arrow_spellings_have_identical_results) ... ok
 test_display_wrapping_preserves_literals_and_ast (test_unicode_integration.UnicodeIntegrationTests.test_display_wrapping_preserves_literals_and_ast) ... ok
@@ -419,15 +443,19 @@ test_dropped_axiom_is_absent_from_all_theory_exports (test_web.WebBridgeTests.te
 test_empty_property_list_only_finds_axiom_model (test_web.WebBridgeTests.test_empty_property_list_only_finds_axiom_model) ... ok
 test_error_locations_count_unicode_characters_and_loader_line_endings (test_web.WebBridgeTests.test_error_locations_count_unicode_characters_and_loader_line_endings) ... ok
 test_exhausted_time_and_node_limits_are_unknown_never_holds (test_web.WebBridgeTests.test_exhausted_time_and_node_limits_are_unknown_never_holds) ... ok
+test_export_preparation_retains_search_counts_before_witness_download_replay (test_web.WebBridgeTests.test_export_preparation_retains_search_counts_before_witness_download_replay) ... ok
 test_inspect_expands_to_readable_unicode_and_marks_templates (test_web.WebBridgeTests.test_inspect_expands_to_readable_unicode_and_marks_templates) ... ok
 test_invalid_bounds_and_booleans_are_rejected_before_engine (test_web.WebBridgeTests.test_invalid_bounds_and_booleans_are_rejected_before_engine) ... ok
 test_invalid_request_shapes_and_names_are_readable_errors (test_web.WebBridgeTests.test_invalid_request_shapes_and_names_are_readable_errors) ... ok
 test_json_malformed_nonfinite_duplicate_and_wrong_root_are_errors (test_web.WebBridgeTests.test_json_malformed_nonfinite_duplicate_and_wrong_root_are_errors) ... ok
+test_large_finite_time_budgets_reach_the_checker_without_a_browser_cap (test_web.WebBridgeTests.test_large_finite_time_budgets_reach_the_checker_without_a_browser_cap) ... ok
 test_missing_acceleration_offers_browser_fallback (test_web.WebBridgeTests.test_missing_acceleration_offers_browser_fallback) ... ok
 test_oversized_sources_and_declared_scopes_are_rejected (test_web.WebBridgeTests.test_oversized_sources_and_declared_scopes_are_rejected) ... ok
+test_progress_callback_failure_does_not_replace_a_valid_response (test_web.WebBridgeTests.test_progress_callback_failure_does_not_replace_a_valid_response) ... ok
+test_run_progress_uses_json_strings_and_inspection_never_calls_observer (test_web.WebBridgeTests.test_run_progress_uses_json_strings_and_inspection_never_calls_observer) ... ok
 test_search_template_exports_witness_that_replays (test_web.WebBridgeTests.test_search_template_exports_witness_that_replays) ... ok
 
 ----------------------------------------------------------------------
-Ran 409 tests in 25.544s
+Ran 437 tests in 25.823s
 
 OK (skipped=3)

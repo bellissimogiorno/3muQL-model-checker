@@ -53,6 +53,11 @@ class Compiler:
         self.cells = {}
         self.cache = {}
         self.mu_cache = {}
+        # Syntax is immutable. Cache free recurrence names for this compiler,
+        # rather than traversing the same body once per active binding on
+        # every iteration. No truth values or binding-dependent results live
+        # here, and the cache is released with the compilation.
+        self._references = {}
         self.deadline = monotonic() + timeout
         self.max_nodes = max_nodes
         self.max_mu_contexts = max_mu_contexts
@@ -102,15 +107,35 @@ class Compiler:
             return node.value
         return env.get(node.value, node.value)
 
+    def _free_references(self, node):
+        """Free fixed-point names, respecting nested recurrence binders.
+
+        This is compiler-local structural analysis. The concrete evaluator
+        retains its separate implementation and does not use this cache.
+        """
+        references = self._references.get(node)
+        if references is not None:
+            return references
+        if node.op == 'var':
+            references = frozenset({node.value})
+        else:
+            references = frozenset().union(*(self._free_references(a) for a in node.args))
+            if node.op in ('mu', 'nu'):
+                references = references - {node.value}
+        self._references[node] = references
+        return references
+
     def eval(self, node, ctx, env=None, fix=None):
         self.budget()
         env = {} if env is None else env
         fix = {} if fix is None else fix
         # Only cache formulas independent of the current recurrence interpretation.
-        cacheable = not any(free_fix(node, v) for v in fix)
+        cacheable = not fix or self._free_references(node).isdisjoint(fix)
         key = (node, ctx, tuple(sorted(env.items())))
-        if cacheable and key in self.cache:
-            return self.cache[key]
+        if cacheable:
+            cached = self.cache.get(key)
+            if cached is not None:
+                return cached
         answer = self._eval(node, ctx, env, fix)
         if cacheable:
             self.cache[key] = answer
@@ -206,7 +231,7 @@ class Compiler:
 
     def dependencies(self, node, ctx, variable):
         """Conservative context dependency graph for one bound variable."""
-        if not free_fix(node, variable): return set()
+        if variable not in self._free_references(node): return set()
         if node.op == 'var': return {ctx}
         t, p, q = ctx
         op = node.op
@@ -235,14 +260,14 @@ class Compiler:
 
     def fixed(self, node, ctx, env, outer_fix):
         variable, body = node.value, node.args[0]
-        if not free_fix(body, variable): return self.eval(body, ctx, env, outer_fix)
+        if variable not in self._free_references(body): return self.eval(body, ctx, env, outer_fix)
         # Exact closed form for the paper's nonmonotone leader test.
         if node.op == 'mu' and body.op == 'not' and body.args[0].op == 'diamond':
             inner = body.args[0].args[0]
             if inner.op == 'and':
                 a, b = inner.args
                 if a.op == 'var' and a.value == variable: a, b = b, a
-                if b.op == 'var' and b.value == variable and not free_fix(a, variable):
+                if b.op == 'var' and b.value == variable and variable not in self._free_references(a):
                     t, p, q = ctx
                     others = [(x, self.eval(a,(t,x,q),env,outer_fix)) for x in self.frame.quorums[q]]
                     if p not in self.frame.quorums[q]:
@@ -259,8 +284,11 @@ class Compiler:
                 todo.append(dep)
         contexts = tuple(sorted(closure))
         key = (node, contexts, tuple(sorted(env.items())))
-        can_cache = not any(free_fix(node, v) for v in outer_fix)
-        if can_cache and key in self.mu_cache: return self.mu_cache[key][ctx]
+        can_cache = not outer_fix or self._free_references(node).isdisjoint(outer_fix)
+        if can_cache:
+            cached = self.mu_cache.get(key)
+            if cached is not None:
+                return cached[ctx]
         if positive(body, variable):
             current = {at: self.f if node.op == 'mu' else self.t for at in contexts}
             # Product lattice 3^K has height 2K+1. Iterating from bottom/top

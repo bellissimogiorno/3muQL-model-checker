@@ -136,25 +136,25 @@
           }
         ],
         "axiom_values": {
-          "SPaxPropose_back": [
+          "SPaxPropose?": [
             "t"
           ],
-          "SPaxWrite_back": [
+          "SPaxWrite?": [
             "t"
           ],
-          "SPaxAccept_back": [
+          "SPaxAccept?": [
             "t"
           ],
-          "SPaxDecide_back": [
+          "SPaxDecide?": [
             "t"
           ],
-          "SPaxWrite_forward": [
+          "SPaxWrite!": [
             "t"
           ],
-          "SPaxAccept_forward": [
+          "SPaxAccept!": [
             "t"
           ],
-          "SPaxDecide_forward": [
+          "SPaxDecide!": [
             "t"
           ],
           "SLdrExist": [
@@ -256,7 +256,7 @@
     }
   ],
   "stats": {
-    "seconds": 0.002892,
+    "seconds": 0.002937,
     "backend": "builtin",
     "decisions": 2,
     "variables": 81,

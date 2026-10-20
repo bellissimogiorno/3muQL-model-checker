@@ -1,6 +1,6 @@
 # GitHub setup and online explorer
 
-Version **0.7.1** includes everything needed to serve the model checker from
+Version **0.7.5** includes everything needed to serve the model checker from
 GitHub Pages. Visitors use the browser; no Python installation or solver server
 is required. Python executes in a Web Worker through the pinned Pyodide runtime.
 The built-in solver is the default; MiniSat is an optional additional download.
@@ -15,7 +15,8 @@ Unpacking this release does not update either one. The steps below publish it.
 
 The source archive expands into **`3muql-explorer/`**. Put its **contents** at
 the Git repository root: `README.md`, `VERSION`, `pyproject.toml`, `index.html`,
-`.nojekyll`, `.github/`, `site/`, `muql/`, and the other supplied directories must
+`.nojekyll`, `.gitattributes`, `.gitignore`, `.github/`, `site/`, `muql/`,
+and the other supplied directories must
 be alongside one another. Do not put the handover directory or another
 `3muql-explorer/` wrapper at the repository root.
 
@@ -37,12 +38,16 @@ python tools/build_release.py --check
 git status --short
 git diff --stat
 git add .
-git commit -m "Release 3muQL Explorer 0.7.1: canonical command and verified fixes"
+git commit -m "Update 3muQL Explorer 0.7.5"
 git push origin main
 ```
 
 Review the changes before committing. If using GitHub's upload interface,
-include `.github/` and `.nojekyll` too; some file managers hide them. The
+include `.github/`, `.gitattributes`, `.gitignore` and `.nojekyll` too; some
+file managers hide them. Check these explicitly because a visible-file
+selection may omit them.
+The `.github/` directory supplies the workflows; `.gitattributes` preserves
+text line endings needed for generated-asset consistency checks. The
 prebuilt `site/` and `muql/_site.zip` are intentionally tracked release files,
 even though temporary `dist/` products and virtual environments are excluded.
 
@@ -96,7 +101,7 @@ Use the Actions route when you want deployment conditional on those checks.
 
 If a published page still displays a README, check the selected Pages source
 and the most recent successful deployment. Make sure `index.html` and `site/`
-are present at the published root and are from 0.7.1. A README landing page is
+are present at the published root and are from 0.7.5. A README landing page is
 consistent with a different publication source; this package does not claim to
 have inspected your live repository settings.
 

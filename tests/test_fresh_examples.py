@@ -44,8 +44,8 @@ class FreshExampleTests(unittest.TestCase):
         variations = (
             (original, {}),
             (original.without("Correct"), {"drop_correct": True}),
-            (original.replace("ObserveForward", "quorum(vote()) -> observe()")
-             .replace("ObserveNotForward", "quorum(!vote()) -> !observe()"),
+            (original.replace("Observe!", "quorum(vote()) -> observe()")
+             .replace("ObserveNot!", "quorum(!vote()) -> !observe()"),
              {"weak_forward": True}),
         )
         for theory, options in variations:

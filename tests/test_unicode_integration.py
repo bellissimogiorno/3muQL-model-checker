@@ -44,13 +44,29 @@ def ascii_document(theory):
 class UnicodeIntegrationTests(unittest.TestCase):
     def test_all_example_meanings_match_reference(self):
         expected = json.loads((ROOT/'tests/data/notation-baseline.json').read_text())['semantic_sha256']
+        renames = json.loads((ROOT/'tests/data/rule-label-renames.json').read_text())['renames']
+        original_labels = {new: old for old, new in renames.items()}
         actual = {}
         for path in sorted((ROOT/'examples').glob('*.md')):
             theory = load(path)
             data = meaning(theory)
+            # Keep the original audited hashes. Only the explicit label migration
+            # is normalized; every formula, scope and other label must still match.
+            data['axioms'] = {original_labels.get(name, name): node
+                              for name, node in data['axioms'].items()}
             actual[path.name] = hashlib.sha256(
                 json.dumps(data, sort_keys=True, ensure_ascii=True).encode()).hexdigest()
         self.assertEqual(actual, expected)
+
+    def test_bundled_rules_use_the_paper_direction_marks(self):
+        examples = json.loads((ROOT/'tests/data/rule-label-renames.json').read_text())['examples']
+        for filename, renames in examples.items():
+            with self.subTest(example=filename):
+                axioms = load(ROOT/'examples'/filename).axioms
+                self.assertTrue(set(renames.values()) <= axioms.keys())
+                self.assertFalse(set(renames) & axioms.keys())
+                self.assertFalse(any(name.endswith(('_back', '_forward', 'Back', 'Forward', 'Relay'))
+                                     for name in axioms))
 
     def test_all_examples_are_also_executable_pure_ascii(self):
         for path in sorted((ROOT/'examples').glob('*.md')):
@@ -89,7 +105,7 @@ class UnicodeIntegrationTests(unittest.TestCase):
         for formula in ('∃Q□vote ⇀ observe', '∃ꟴ□vote ⇀ observe', r'quorum(vote) -\ observe',
                         r'someQuorumEveryPoint(vote) -\ observe'):
             result = self.run_cli('check', 'examples/voting.md', '--replace',
-                                  'ObserveForward='+formula, '--json', '-')
+                                  'Observe!='+formula, '--json', '-')
             self.assertEqual(result.returncode, 0, result.stderr)
             outputs.append(json.loads(result.stdout)['properties'])
         for output in outputs[1:]:
@@ -100,7 +116,7 @@ class UnicodeIntegrationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "'=>' is not supported"):
             loads(source.replace('-\\', '=>'))
         result = self.run_cli('check', 'examples/voting.md', '--replace',
-                              'ObserveForward=quorum(vote) => observe', '--json', '-')
+                              'Observe!=quorum(vote) => observe', '--json', '-')
         self.assertEqual(result.returncode, 2, result.stderr)
         self.assertIn("'=>' is not supported", result.stderr)
         self.assertNotIn('Traceback', result.stderr)

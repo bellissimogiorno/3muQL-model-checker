@@ -26,9 +26,9 @@ five axioms are needed:
 
 | Paper axiom | Package name | Use |
 |---|---|---|
-| `(SPaxWrite?)` | `SPaxWrite_back` | A true write follows the latest true acceptance within its selected quorum, or a proposal when that quorum has no earlier true acceptance. |
-| `(SPaxAccept?)` | `SPaxAccept_back` | A true acceptance has a true write of the same value at that stage. |
-| `(SPaxDecide?)` | `SPaxDecide_back` | A true decision has a true accepting quorum at that stage. |
+| `(SPaxWrite?)` | `SPaxWrite?` | A true write follows the latest true acceptance within its selected quorum, or a proposal when that quorum has no earlier true acceptance. |
+| `(SPaxAccept?)` | `SPaxAccept?` | A true acceptance has a true write of the same value at that stage. |
+| `(SPaxDecide?)` | `SPaxDecide?` | A true decision has a true accepting quorum at that stage. |
 | `(SPaxWrite01)` | `SPaxWrite01` | At each stage at most one value is truly written anywhere. |
 | `(SPax2Twined)` | `SPax2Twined` | A true accepting quorum for a value gives a true acceptance of that value in every nonempty open. |
 

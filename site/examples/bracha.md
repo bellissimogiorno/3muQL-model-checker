@@ -7,8 +7,8 @@ sequence of message arrivals.
 The axioms below transcribe Figure 10 of
 [Gabbay, arXiv:2512.21137v3](https://arxiv.org/pdf/2512.21137v3). The properties
 are Figure 11. The three-way intersection assumption from Remark 4.2.1 is
-explicit. Names ending `Back` correspond to the paper's `?`, names ending
-`Forward` to `!`, and `Relay` to `!!`.
+explicit. Backward rule names end in `?`, forward rule names in `!`, and the
+ready relay is `BrReady!!`, following the paper's direction convention.
 
 Read `∃ꟴ□` as “some quorum, every point”, `∃ꟴ◇` as “some quorum, some point”,
 and `∀ꟴ□` as “every quorum, every point”. The [notation guide](../docs/notation.md) lists their ASCII
@@ -37,19 +37,19 @@ let BroadcastFaulty(): ∀ v. B(bcst(v))
 axiom Intersection: twined(3)
 
 # Backward rules: justify delivery, readiness, and echo.
-axiom BrDeliverBack: ∀ v. dlvr(v) → ∃ꟴ□(ready(v))
-axiom BrReadyBack: ∀ v. ready(v) → ∃ꟴ□(echo(v))
-axiom BrEchoBack: ∀ v. echo(v) → ∃ꟴ◇(bcst(v))
+axiom BrDeliver?: ∀ v. dlvr(v) → ∃ꟴ□(ready(v))
+axiom BrReady?: ∀ v. ready(v) → ∃ꟴ□(echo(v))
+axiom BrEcho?: ∀ v. echo(v) → ∃ꟴ◇(bcst(v))
 
 # Uniqueness of echoes and of the broadcast value.
 axiom BrEchoAffine: ∃⁰¹ v. echo(v)
 axiom BrBroadcastUnique: ∃¹ v. ∃ꟴ◇(bcst(v))
 
 # Forward rules and the ready relay.
-axiom BrDeliverForward: ∀ v. ∃ꟴ□(ready(v)) → dlvr(v)
-axiom BrReadyForward: ∀ v. ∃ꟴ□(echo(v)) → ready(v)
-axiom BrEchoForward: ∀ v. ∃ꟴ◇(bcst(v)) → (∃ w. echo(w))
-axiom BrReadyRelay: ∀ v. ∀ꟴ◇(ready(v)) → ready(v)
+axiom BrDeliver!: ∀ v. ∃ꟴ□(ready(v)) → dlvr(v)
+axiom BrReady!: ∀ v. ∃ꟴ□(echo(v)) → ready(v)
+axiom BrEcho!: ∀ v. ∃ꟴ◇(bcst(v)) → (∃ w. echo(w))
+axiom BrReady!!: ∀ v. ∀ꟴ◇(ready(v)) → ready(v)
 
 # Correctness quorums and predicate-by-predicate uniformity.
 axiom BrCorrect: ∃ꟴ□(ReadyCorrect()) ∧ ∃ꟴ□(EchoCorrect())
@@ -74,6 +74,6 @@ apply separately to each predicate. The paper does not impose uniformity on
 `dlvr`; that detail matters in [the weakening example](bracha_weakened.md).
 
 Try removing `BrEchoAffine` to see why echo uniqueness matters. Removing
-`BrReadyRelay` illustrates how totality can fail even though integrity and
+`BrReady!!` illustrates how totality can fail even though integrity and
 consistency remain constrained. The checker reports only the selected finite
 scope; absence of a countermodel is not an unbounded proof.

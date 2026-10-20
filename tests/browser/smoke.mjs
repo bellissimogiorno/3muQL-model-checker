@@ -342,6 +342,26 @@ async function namedControls(page) {
 try {
   browser = await playwright.chromium.launch({ headless: true });
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
+  // Observe actual worker messages before the controller handles them. This
+  // wraps the real Worker; it supplies no replacement runtime or result.
+  await context.addInitScript(() => {
+    window.muqlProgressEvidence = [];
+    const NativeWorker = window.Worker;
+    window.Worker = class extends NativeWorker {
+      constructor(...args) {
+        super(...args);
+        this.addEventListener('message', ({ data }) => {
+          if (data?.type !== 'progress') return;
+          const stop = document.querySelector('#stop-button');
+          window.muqlProgressEvidence.push({
+            id: data.id, progress: data.progress,
+            running: !!stop && !stop.hidden && !stop.disabled,
+          });
+          if (window.muqlProgressEvidence.length > 1000) window.muqlProgressEvidence.shift();
+        });
+      }
+    };
+  });
   const page = await context.newPage();
   observe(page);
   let replayTheory;
@@ -418,10 +438,23 @@ try {
   });
 
   await test('Search for a counterexample and download independently replayed evidence', async () => {
+    await page.locator('#timeout').fill('600');
+    assert.equal(await page.locator('#timeout').evaluate(node => node.checkValidity()), true,
+      'A finite budget above the former 120-second ceiling must be accepted');
+    await page.evaluate(() => { window.muqlProgressEvidence = []; });
     await run(page, 'Counterexample found');
     const data = await report(page, 'choices');
     assert.equal(data.schema, 'muql-search-report-v1');
     assert.equal(data.stats.solver, 'builtin');
+    const progress = await page.evaluate(() => window.muqlProgressEvidence);
+    assert.ok(progress.length > 1, 'The actual Python bridge must deliver live progress');
+    assert.ok(progress.every(item => item.running), 'Progress must arrive before the terminal result');
+    assert.ok(progress.some(item => item.progress.phase === 'compiling'), 'Show actual compilation');
+    assert.ok(progress.some(item => item.progress.phase === 'consistency'), 'Show actual axiom solving');
+    assert.ok(progress.some(item => item.progress.phase === 'replaying'), 'Show independent witness verification');
+    assert.equal(Math.max(...progress.map(item => item.progress.frames_completed || 0)), data.stats.frames,
+      'Completed-frame progress must agree with the final search report');
+    await writeFile(path.join(artifacts, 'real-search-progress.json'), JSON.stringify(progress, null, 2));
     const result = property(data, 'AtMostOne', 'counterexample');
     assert.equal(result.countermodel.replayed, true);
     assert.equal(result.countermodel.scope.values.length, 2);
@@ -503,8 +536,14 @@ try {
     assert.notEqual(disabledBackground, enabledBackground, 'Inactive numeric fields must look inactive');
     assert.deepEqual(await Promise.all(bounds.map(id => page.locator('#' + id).inputValue())), retained);
     await page.locator('#mode-check').check();
+    await page.evaluate(() => { window.muqlProgressEvidence = []; });
     await run(page, 'Counterexample found');
     property(await report(page, 'replay'), 'AtMostOne', 'counterexample');
+    const progress = await page.evaluate(() => window.muqlProgressEvidence);
+    assert.ok(progress.some(item => item.progress.phase === 'compiling'));
+    assert.ok(progress.some(item => item.progress.phase === 'replaying'));
+    assert.ok(progress.every(item => !Object.hasOwn(item.progress, 'frames_completed')),
+      'A fixed-frame check must not invent search enumeration counters');
   });
 
   await test('Voting holds within the stated search bounds', async () => {
@@ -902,10 +941,19 @@ try {
     await page.locator('#max-points').fill('6');
     await page.locator('#max-values').fill('4');
     await page.locator('#max-stages').fill('6');
-    await page.locator('#timeout').fill('30');
+    await page.locator('#timeout').fill('600');
+    await page.evaluate(() => { window.muqlProgressEvidence = []; });
     await page.locator('#run-button').click();
+    await page.waitForFunction(() => window.muqlProgressEvidence.some(item => item.progress.frame >= 1));
+    assert.equal(await page.locator('#run-progress').isVisible(), true);
+    assert.match(await page.locator('#progress-timing').innerText(), /chosen limit 600s/);
+    await page.screenshot({ path: path.join(artifacts, 'live-search-progress.png'), fullPage: true });
     await page.locator('#stop-button').click();
-    await page.waitForFunction(() => document.querySelector('#results')?.textContent.includes('Stopped'));
+    await page.waitForFunction(() => /Incomplete.*stopped/i.test(document.querySelector('#results')?.textContent || ''));
+    assert.equal(await page.locator('#result-progress').isVisible(), true);
+    assert.match(await page.locator('#result-progress .progress-note').innerText(), /last progress update, not a completed result/);
+    assert.match(await page.locator('#result-progress .progress-phase').innerText(), /^Last phase:/);
+    assert.match(await page.locator('#result-progress .progress-counts').innerText(), /frames? completed/);
     assert.equal(await page.locator('#stop-button').evaluate(node => node.disabled || node.hidden), true);
     await loadExample(page, 'choices');
     await run(page, 'Counterexample found');
@@ -1045,7 +1093,7 @@ try {
       'The mobile Stop button must stay in the viewport while scrolling');
     await mobile.screenshot({ path: path.join(artifacts, 'mobile-stop-control.png') });
     await mobile.locator('#floating-stop').click();
-    await mobile.waitForFunction(() => document.querySelector('#results')?.textContent.includes('Stopped'));
+    await mobile.waitForFunction(() => /Incomplete.*stopped/i.test(document.querySelector('#results')?.textContent || ''));
     await mobileContext.close();
     activePage = page;
   });

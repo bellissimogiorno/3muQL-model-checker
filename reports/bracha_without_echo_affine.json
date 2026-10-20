@@ -402,31 +402,31 @@
           "Intersection": [
             "t"
           ],
-          "BrDeliverBack": [
+          "BrDeliver?": [
             "t"
           ],
-          "BrReadyBack": [
+          "BrReady?": [
             "b"
           ],
-          "BrEchoBack": [
+          "BrEcho?": [
             "b"
           ],
           "BrBroadcastUnique": [
             "b"
           ],
-          "BrDeliverForward": [
+          "BrDeliver!": [
             "b",
             "t"
           ],
-          "BrReadyForward": [
+          "BrReady!": [
             "b",
             "t"
           ],
-          "BrEchoForward": [
+          "BrEcho!": [
             "b",
             "t"
           ],
-          "BrReadyRelay": [
+          "BrReady!!": [
             "b",
             "t"
           ],
@@ -738,7 +738,7 @@
     }
   ],
   "stats": {
-    "seconds": 0.057445,
+    "seconds": 0.053471,
     "backend": "builtin",
     "decisions": 154,
     "variables": 451,

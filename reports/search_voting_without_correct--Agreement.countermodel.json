@@ -63,19 +63,19 @@
     "Intersection": [
       "t"
     ],
-    "ObserveBack": [
+    "Observe?": [
       "b",
       "t"
     ],
-    "ObserveNotBack": [
+    "ObserveNot?": [
       "b",
       "t"
     ],
-    "ObserveForward": [
+    "Observe!": [
       "b",
       "t"
     ],
-    "ObserveNotForward": [
+    "ObserveNot!": [
       "b",
       "t"
     ]

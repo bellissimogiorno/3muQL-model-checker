@@ -50,7 +50,7 @@ class CompanionExamplesTests(unittest.TestCase):
         for context in frame.contexts:
             for name, axiom in theory.axioms.items():
                 with self.subTest(axiom=name, context=context):
-                    expected = 1 if name in {"BrDeliverBack", "BrDeliverExistential"} else 2
+                    expected = 1 if name in {"BrDeliver?", "BrDeliverExistential!"} else 2
                     self.assertEqual(evaluator.eval(axiom, context), expected)
             for name, prop in theory.properties.items():
                 with self.subTest(property=name, context=context):
@@ -59,8 +59,8 @@ class CompanionExamplesTests(unittest.TestCase):
     def test_weak_delivery_preserves_agreement_but_loses_guaranteed_observation(self):
         theory = (
             load(EXAMPLES / "voting.md")
-            .replace("ObserveForward", "quorum(vote()) -> observe()")
-            .replace("ObserveNotForward", "quorum(!vote()) -> !observe()")
+            .replace("Observe!", "quorum(vote()) -> observe()")
+            .replace("ObserveNot!", "quorum(!vote()) -> !observe()")
         )
         report = check(theory, properties=["Agreement", "UnanimousTrueDelivery"])
         self.assertEqual(report.status, "checked")

@@ -12,6 +12,8 @@ const DECLARATIONS = new Set([
   "predicate", "axiom", "property", "let",
 ]);
 const NAMED_DECLARATIONS = new Set(["predicate", "axiom", "property", "let"]);
+const LABEL_DECLARATIONS = new Set(["axiom", "property"]);
+const LABEL_TOKEN = /[A-Za-z_][A-Za-z_0-9!?-]*/y;
 const WORD_OPERATORS = new Set(["not", "and", "or", "xor", "forall", "exists", "affine", "unique", "mu", "nu"]);
 const BUILTINS = new Set([
   "T", "F", "B", "TB", "TF", "FB", "diamond", "box", "somewhere", "everywhere",
@@ -56,7 +58,7 @@ function lineWriter(text) {
 
 function highlightLogic(line) {
   const output = lineWriter(line);
-  let offset = 0, firstToken = true, expectName = false;
+  let offset = 0, firstToken = true, expectName = false, expectLabel = false;
   while (offset < line.length) {
     const character = line[offset];
     if (character === "#" || (character === "/" && line[offset + 1] === "/")) {
@@ -73,7 +75,19 @@ function highlightLogic(line) {
       offset = end;
       firstToken = false;
       expectName = false;
+      expectLabel = false;
       continue;
+    }
+    if (expectLabel && !/\s/.test(character)) {
+      LABEL_TOKEN.lastIndex = offset;
+      const label = LABEL_TOKEN.exec(line);
+      expectLabel = false;
+      if (label) {
+        output.mark(offset, LABEL_TOKEN.lastIndex, "name");
+        offset = LABEL_TOKEN.lastIndex;
+        expectName = false;
+        continue;
+      }
     }
     LOGIC_TOKEN.lastIndex = offset;
     const token = LOGIC_TOKEN.exec(line);
@@ -98,6 +112,7 @@ function highlightLogic(line) {
       else if (WORD_OPERATORS.has(name)) kind = "operator";
       else if (BUILTINS.has(name)) kind = "builtin";
       expectName = firstToken && NAMED_DECLARATIONS.has(name);
+      expectLabel = firstToken && LABEL_DECLARATIONS.has(name);
     } else {
       kind = groups.invalid ? "invalid" : groups.operator ? "operator" : "number";
       expectName = false;

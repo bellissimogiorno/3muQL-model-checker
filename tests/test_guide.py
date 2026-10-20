@@ -79,6 +79,8 @@ class GuideTypesettingTests(unittest.TestCase):
         document, count = build()
         self.assertEqual(count, 13)
         self.assertEqual(build(), (document, count))
+        self.assertEqual((ROOT / "docs" / "theories.html").read_text(encoding="utf-8"), document,
+                         "Regenerate the offline reader with python tools/build_guide.py")
         metadata_match = re.search(r'<script id="guide-data" type="application/json">(.*?)</script>', document, re.S)
         self.assertIsNotNone(metadata_match)
         data = json.loads(metadata_match[1])

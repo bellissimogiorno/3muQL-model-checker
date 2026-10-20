@@ -82,6 +82,9 @@ class Theory:
 
 
 _NAME = r"[A-Za-z_][A-Za-z_0-9]*"
+# Labels identify whole rules; they are not identifiers in formula expressions.
+# Keep the paper's direction marks and hyphenated names out of the formula lexer.
+_LABEL = r"[A-Za-z_][A-Za-z_0-9!?-]*"
 _DECLARATION = re.compile(r"^(theory|points|values|stages|time|quorums|predicate|axiom|property|let)\b")
 _FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 _ITEM = re.compile(r"(\"(?:[^\"\\\n]|\\.)*\"|'(?:[^'\\\n]|\\.)*'|[A-Za-z_][A-Za-z_0-9]*|[0-9]+)")
@@ -343,7 +346,7 @@ def _loads(markdown: str, source: str, *, for_search: bool) -> Theory:
             except ValueError as error:
                 raise TheoryError("predicate arity integer is too large", source, line) from error
         else:
-            pattern = rf"({_NAME})(?:\s*\(([^()]*)\))?\s*:[ \t]*(.*)" if kind == "let" else rf"({_NAME})\s*:[ \t]*(.*)"
+            pattern = rf"({_NAME})(?:\s*\(([^()]*)\))?\s*:[ \t]*(.*)" if kind == "let" else rf"({_LABEL})\s*:[ \t]*(.*)"
             match = re.fullmatch(pattern, rest, re.DOTALL)
             if not match:
                 raise TheoryError(f"{kind} expects a name, colon, and formula", source, line)
@@ -659,11 +662,15 @@ def validate_theory(theory: Theory, *, require_scope: bool = True) -> None:
         if frozenset(quorum) in seen:
             fail("duplicate quorum")
         seen.add(frozenset(quorum))
-    for label, mapping in (("predicates", theory.predicates), ("axioms", theory.axioms), ("properties", theory.properties)):
+    for label, mapping, pattern in (
+        ("predicates", theory.predicates, _NAME),
+        ("axioms", theory.axioms, _LABEL),
+        ("properties", theory.properties, _LABEL),
+    ):
         if not isinstance(mapping, dict):
             fail(f"{label} must be a name-to-definition dictionary")
         for name in mapping:
-            if not isinstance(name, str) or not re.fullmatch(_NAME, name):
+            if not isinstance(name, str) or not re.fullmatch(pattern, name):
                 fail(f"invalid {label} name {name!r}")
     for name, arity in theory.predicates.items():
         if name in RESERVED:

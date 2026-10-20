@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Install a wheel offline into a fresh venv and exercise it outside the source.
 
-Usage: python tools/test_install.py dist/releases/muql_explorer-0.7.1-py3-none-any.whl
+Usage: python tools/test_install.py dist/releases/muql_explorer-0.7.3-py3-none-any.whl
 Uses only the standard library and the pip bundled with Python's venv module.
 This tests local installation/HTTP, not browser rendering or WebAssembly.
 """
@@ -106,11 +106,14 @@ def verify(wheel: Path) -> None:
             config = json.loads(get("config.json"))
             assert config["version"] == version
             assert b"loadPyodide" in get("worker.js")
+            assert b'from "./progress.js"' in get("app.js")
+            assert b"export function readProgress" in get("progress.js")
             assert b"property" in get("examples/voting.md")
             assert get("quorum-superscript.woff")[:4] == b"wOFF"
             assert b"<html" in get("theories.html")
             with zipfile.ZipFile(io.BytesIO(get(config["engine"]))) as engine:
                 assert version.encode() in engine.read("muql/__init__.py")
+                assert b"def notify(" in engine.read("muql/progress.py")
             for name in ("pyproject.toml", "muql/server.py", "../pyproject.toml"):
                 try:
                     client.open(url + name, timeout=10)

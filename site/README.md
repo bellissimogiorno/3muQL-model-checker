@@ -20,8 +20,26 @@ In particular, the terminal self-loop of `time stutter` does not encode the
 paper's full natural-number time with past history. See
 [semantics](docs/semantics.md) before interpreting temporal results.
 
-**Release 0.7.1 · Install locally or open the explorer on GitHub Pages.**
-The same Python engine supports both routes, with the existing four-step blue
+**Release 0.7.5 · Paper-style labels in the bundled theories.**
+Backward and forward axioms now use `?` and `!`, including `PaxWrite?`,
+`PaxWrite!`, `PaxDecide-not-L!`, and Bracha's `BrReady!!` relay. Formula meanings
+are unchanged. Axiom and property names accept these marks and hyphens. See the
+[language guide](docs/language.md#declarations) and [release validation](docs/validation.md).
+The [0.7.3 audit](docs/audit.md) records the preceding correctness review and refactor.
+
+**Follow the search as it runs.**
+While an experiment runs, the page shows elapsed time, real phases, the current
+frame and its dimensions, and completed-frame counts. Verified counterexamples
+and available encoding/solver counts are shown as work proceeds. Progress is
+not a percentage estimate, a count of every possible model or a proof.
+
+The browser uses a **10-second default** and accepts any finite positive time
+budget, such as 600 seconds for ten minutes. The work runs on your device.
+**Stop** remains available and runtime loading has a separate 90-second limit.
+See [progress and budgets](docs/browser.md#follow-a-running-experiment).
+
+**Install locally or open the explorer on GitHub Pages.**
+The same Python engine supports both routes, with a four-step blue
 interface, eleven curated examples, editor, and replayable countermodels.
 The source release includes a ready-built `site/`, a root landing page, and
 an automatic Pages deployment workflow. Installable wheels include the browser
@@ -32,7 +50,9 @@ the default browser application downloads pinned Pyodide on first use.
 [Open the GitHub Pages explorer](https://bellissimogiorno.github.io/3muQL-model-checker/)
 after deploying this release. The supplied package does not change the live
 repository or site by itself. See [GitHub setup](docs/github.md) for the exact
-update and Pages settings, [the browser guide](docs/browser.md) for runtime and
+update and Pages settings. Copy the complete repository contents, including
+`.github/`, `.gitattributes`, `.gitignore` and `.nojekyll`; file managers may
+hide these files. See [the browser guide](docs/browser.md) for runtime and
 offline options, and [release validation](docs/validation.md) for the checks
 actually completed and the remaining browser-validation gate.
 
@@ -40,13 +60,10 @@ The archive expands into `3muql-explorer/`, with the version in `VERSION`.
 Strong implication is `⇀`, written `-\` in ASCII. The bundled theories use
 Unicode, including superscript-Q modalities such as `∃ꟴ◇`; plain-Q and ASCII
 spellings remain accepted. See the [notation guide](docs/notation.md).
-Earlier release audits remain available as historical evidence:
-[0.6.4](docs/audit-0.6.4.md), [0.5.7](docs/audit-0.5.7.md), and
-[the original audit](docs/audit.md).
 
 ## Explore in the browser
 
-The new web interface runs the same Python engine on your device. Start with
+The web interface runs the same Python engine on your device. Start with
 an example, edit a theory, select properties, and keep or remove individual
 axioms. Search can supply the model. Counterexamples open at the recorded
 failing context. **Whole model** gives the total numbers of participants,
@@ -91,7 +108,7 @@ python -m venv .venv
 # Linux/macOS:
 . .venv/bin/activate
 # Windows PowerShell: .venv\Scripts\Activate.ps1
-python -m pip install /path/to/muql_explorer-0.7.1-py3-none-any.whl
+python -m pip install /path/to/muql_explorer-0.7.5-py3-none-any.whl
 3muql serve --port 0 --open
 ```
 
@@ -337,8 +354,8 @@ python -m muql list examples/voting.md --notation ascii
 
 # Weaken two rules without changing the source file.
 python -m muql check examples/voting.md \
-  --replace 'ObserveForward=quorum(vote()) -> observe()' \
-  --replace 'ObserveNotForward=quorum(!vote()) -> !observe()'
+  --replace 'Observe!=quorum(vote()) -> observe()' \
+  --replace 'ObserveNot!=quorum(!vote()) -> !observe()'
 
 # JSON only on stdout, suitable for another program.
 python -m muql check examples/voting.md --json -
@@ -358,17 +375,14 @@ cannot encode the symbols. Its `--notation unicode|ascii` option chooses an
 explicit output style. Both input styles always remain available. When typing
 strong implication in a POSIX shell, single-quote the whole replacement to
 preserve its backslash, for example
-`--replace 'ObserveForward=quorum(vote()) -\ observe()'`.
+`--replace 'Observe!=quorum(vote()) -\ observe()'`.
 `=>` is rejected because that spelling clashes with another implication in
-the paper. In older package inputs, change strong-implication operators from
-`=>` to `-\` or `⇀`; keep the truth-value equality operator `<=>` unchanged.
-See [notation, escaping, and migration](docs/notation.md).
+the paper. Use `-\` or `⇀` for strong implication; `<=>` means truth-value
+equality. See [notation and escaping](docs/notation.md).
 
-**Migrating from 0.2.x:** `somewhere(P)` now means `◇(P)` and
-`everywhere(P)` now means `□(P)`: both range only over the current quorum.
-For their former compound meanings, use `someQuorumSomePoint(P)` and
-`everyQuorumEveryPoint(P)` respectively. This is a scope change for existing
-ASCII input; the bundled Unicode theories retain their original formulas.
+`somewhere(P)` means `◇(P)` and `everywhere(P)` means `□(P)`: both range only
+over the current quorum. To quantify over quorums as well, use
+`someQuorumSomePoint(P)` and `everyQuorumEveryPoint(P)` respectively.
 
 The following outcomes describe `check`; the
 [search guide](docs/search.md#results-and-completeness) explains results over

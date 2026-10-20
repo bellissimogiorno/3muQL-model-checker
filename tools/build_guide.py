@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from muql.syntax import format_formula, parse_formula  # noqa: E402
-from muql.theory import _blocks, _checked_expand, load  # noqa: E402
+from muql.theory import _blocks, _checked_expand, _DECLARATION, _LABEL, load  # noqa: E402
 
 
 GROUPS = (
@@ -138,11 +138,10 @@ def source_formulas(markdown: str, theory) -> dict[str, dict]:
     """
     declarations = []
     pending = []
-    starts = re.compile(r"^(theory|points|values|stages|time|quorums|predicate|axiom|property|let)\b")
     for row, _ in _blocks(markdown, theory.source):
         if not row.strip():
             continue
-        if starts.match(row.strip()):
+        if _DECLARATION.match(row.strip()):
             if pending:
                 declarations.append("\n".join(pending))
             pending = [row.strip()]
@@ -152,7 +151,7 @@ def source_formulas(markdown: str, theory) -> dict[str, dict]:
         declarations.append("\n".join(pending))
     result = {"axiom": {}, "property": {}}
     for declaration in declarations:
-        match = re.fullmatch(r"(axiom|property)\s+([A-Za-z_][A-Za-z_0-9]*)\s*:\s*(.*)", declaration, re.S)
+        match = re.fullmatch(rf"(axiom|property)\s+({_LABEL})\s*:\s*(.*)", declaration, re.S)
         if match:
             kind, label, text = match.groups()
             node = parse_formula(text)

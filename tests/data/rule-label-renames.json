@@ -1,0 +1,131 @@
+{
+  "source": "Paper direction labels; formulas and unchanged labels remain anchored to notation-baseline.json.",
+  "renames": {
+    "BrDeliverBack": "BrDeliver?",
+    "BrDeliverExistential": "BrDeliverExistential!",
+    "BrDeliverForward": "BrDeliver!",
+    "BrEchoBack": "BrEcho?",
+    "BrEchoForward": "BrEcho!",
+    "BrReadyBack": "BrReady?",
+    "BrReadyForward": "BrReady!",
+    "BrReadyRelay": "BrReady!!",
+    "CaEcho1Back": "CaEcho1?",
+    "CaEcho1Forward": "CaEcho1!",
+    "CaEcho2Back": "CaEcho2?",
+    "CaEcho2Forward": "CaEcho2!",
+    "CaOutputBack": "CaOutput?",
+    "CaOutputForward": "CaOutput!",
+    "CaOutputHalfBack": "CaOutputHalf?",
+    "CaOutputHalfForward": "CaOutputHalf!",
+    "ObserveBack": "Observe?",
+    "ObserveForward": "Observe!",
+    "ObserveNotBack": "ObserveNot?",
+    "ObserveNotForward": "ObserveNot!",
+    "PaxAccept_back": "PaxAccept?",
+    "PaxAccept_forward": "PaxAccept!",
+    "PaxDecideL_back": "PaxDecideL?",
+    "PaxDecideL_forward": "PaxDecideL!",
+    "PaxDecideNotL_back": "PaxDecide-not-L?",
+    "PaxDecideNotL_forward": "PaxDecide-not-L!",
+    "PaxPropose_back": "PaxPropose?",
+    "PaxPropose_forward": "PaxPropose!",
+    "PaxSend_back": "PaxSend?",
+    "PaxSend_forward": "PaxSend!",
+    "PaxWrite_back": "PaxWrite?",
+    "PaxWrite_forward": "PaxWrite!",
+    "SPaxAccept_back": "SPaxAccept?",
+    "SPaxAccept_forward": "SPaxAccept!",
+    "SPaxDecide_back": "SPaxDecide?",
+    "SPaxDecide_forward": "SPaxDecide!",
+    "SPaxPropose_back": "SPaxPropose?",
+    "SPaxWrite_back": "SPaxWrite?",
+    "SPaxWrite_forward": "SPaxWrite!",
+    "SimpAccept_back": "SimpAccept?",
+    "SimpAccept_forward": "SimpAccept!",
+    "SimpDecide_back": "SimpDecide?",
+    "SimpDecide_forward": "SimpDecide!"
+  },
+  "examples": {
+    "bracha.md": {
+      "BrDeliverBack": "BrDeliver?",
+      "BrReadyBack": "BrReady?",
+      "BrEchoBack": "BrEcho?",
+      "BrDeliverForward": "BrDeliver!",
+      "BrReadyForward": "BrReady!",
+      "BrEchoForward": "BrEcho!",
+      "BrReadyRelay": "BrReady!!"
+    },
+    "bracha_weakened.md": {
+      "BrDeliverBack": "BrDeliver?",
+      "BrReadyBack": "BrReady?",
+      "BrEchoBack": "BrEcho?",
+      "BrDeliverExistential": "BrDeliverExistential!",
+      "BrReadyForward": "BrReady!",
+      "BrEchoForward": "BrEcho!",
+      "BrReadyRelay": "BrReady!!"
+    },
+    "crusader.md": {
+      "CaEcho1Back": "CaEcho1?",
+      "CaEcho2Back": "CaEcho2?",
+      "CaOutputBack": "CaOutput?",
+      "CaOutputHalfBack": "CaOutputHalf?",
+      "CaEcho1Forward": "CaEcho1!",
+      "CaEcho2Forward": "CaEcho2!",
+      "CaOutputForward": "CaOutput!",
+      "CaOutputHalfForward": "CaOutputHalf!"
+    },
+    "paxos.md": {
+      "PaxPropose_back": "PaxPropose?",
+      "PaxSend_back": "PaxSend?",
+      "PaxWrite_back": "PaxWrite?",
+      "PaxAccept_back": "PaxAccept?",
+      "PaxDecideL_back": "PaxDecideL?",
+      "PaxDecideNotL_back": "PaxDecide-not-L?",
+      "PaxPropose_forward": "PaxPropose!",
+      "PaxSend_forward": "PaxSend!",
+      "PaxWrite_forward": "PaxWrite!",
+      "PaxAccept_forward": "PaxAccept!",
+      "PaxDecideL_forward": "PaxDecideL!",
+      "PaxDecideNotL_forward": "PaxDecide-not-L!"
+    },
+    "paxos_simpler.md": {
+      "SPaxPropose_back": "SPaxPropose?",
+      "SPaxWrite_back": "SPaxWrite?",
+      "SPaxAccept_back": "SPaxAccept?",
+      "SPaxDecide_back": "SPaxDecide?",
+      "SPaxWrite_forward": "SPaxWrite!",
+      "SPaxAccept_forward": "SPaxAccept!",
+      "SPaxDecide_forward": "SPaxDecide!"
+    },
+    "simple_crashes.md": {
+      "SimpAccept_back": "SimpAccept?",
+      "SimpDecide_back": "SimpDecide?",
+      "SimpAccept_forward": "SimpAccept!",
+      "SimpDecide_forward": "SimpDecide!"
+    },
+    "simple_eventual.md": {
+      "SimpAccept_back": "SimpAccept?",
+      "SimpDecide_back": "SimpDecide?",
+      "SimpAccept_forward": "SimpAccept!",
+      "SimpDecide_forward": "SimpDecide!"
+    },
+    "simple_eventual_crashes.md": {
+      "SimpAccept_back": "SimpAccept?",
+      "SimpDecide_back": "SimpDecide?",
+      "SimpAccept_forward": "SimpAccept!",
+      "SimpDecide_forward": "SimpDecide!"
+    },
+    "simple_reliable.md": {
+      "SimpAccept_back": "SimpAccept?",
+      "SimpDecide_back": "SimpDecide?",
+      "SimpAccept_forward": "SimpAccept!",
+      "SimpDecide_forward": "SimpDecide!"
+    },
+    "voting.md": {
+      "ObserveBack": "Observe?",
+      "ObserveNotBack": "ObserveNot?",
+      "ObserveForward": "Observe!",
+      "ObserveNotForward": "ObserveNot!"
+    }
+  }
+}

@@ -23,10 +23,10 @@ predicate observe/0
 
 # Three-way intersection, followed by backward and forward rules.
 axiom Intersection: twined(3)
-axiom ObserveBack: observe() → ∃ꟴ□(vote())
-axiom ObserveNotBack: ¬observe() → ∃ꟴ□(¬vote())
-axiom ObserveForward: ∃ꟴ□(vote()) ⇀ observe()
-axiom ObserveNotForward: ∃ꟴ□(¬vote()) ⇀ ¬observe()
+axiom Observe?: observe() → ∃ꟴ□(vote())
+axiom ObserveNot?: ¬observe() → ∃ꟴ□(¬vote())
+axiom Observe!: ∃ꟴ□(vote()) ⇀ observe()
+axiom ObserveNot!: ∃ꟴ□(¬vote()) ⇀ ¬observe()
 
 # At least one quorum casts unbroken votes.
 axiom Correct: ∃ꟴ□(TF(vote()))

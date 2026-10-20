@@ -58,23 +58,29 @@ nested modalities, even though atomic predicates do not depend on the quorum.
 ## TyPax axiom labels
 
 Question marks in the paper identify backward rules; exclamation marks identify
-forward rules. File labels spell those roles out to make command-line selection
-easy. The special negated-leader label is written `NotL`.
+forward rules. The parser accepts these marks and hyphens directly
+in axiom and property labels, for example `axiom PaxWrite?: ...` and
+`axiom PaxDecide-not-L!: ...`. Quote such labels in shell arguments, as in
+`--drop 'PaxWrite?'`.
+
+The bundled theories use these direction marks directly. The negated-leader
+rules use the hyphenated stem `PaxDecide-not-L`. The following table describes
+the executable labels, which can be used in `--drop` and `--replace`.
 
 | Figure 11 label | File label |
 |---|---|
-| PaxPropose? | `PaxPropose_back` |
-| PaxSend? | `PaxSend_back` |
-| PaxWrite? | `PaxWrite_back` |
-| PaxAccept? | `PaxAccept_back` |
-| PaxDecideL? | `PaxDecideL_back` |
-| PaxDecide-not-L? | `PaxDecideNotL_back` |
-| PaxPropose! | `PaxPropose_forward` |
-| PaxSend! | `PaxSend_forward` |
-| PaxWrite! | `PaxWrite_forward` |
-| PaxAccept! | `PaxAccept_forward` |
-| PaxDecideL! | `PaxDecideL_forward` |
-| PaxDecide-not-L! | `PaxDecideNotL_forward` |
+| PaxPropose? | `PaxPropose?` |
+| PaxSend? | `PaxSend?` |
+| PaxWrite? | `PaxWrite?` |
+| PaxAccept? | `PaxAccept?` |
+| PaxDecideL? | `PaxDecideL?` |
+| PaxDecide-not-L? | `PaxDecide-not-L?` |
+| PaxPropose! | `PaxPropose!` |
+| PaxSend! | `PaxSend!` |
+| PaxWrite! | `PaxWrite!` |
+| PaxAccept! | `PaxAccept!` |
+| PaxDecideL! | `PaxDecideL!` |
+| PaxDecide-not-L! | `PaxDecide-not-L!` |
 | LdrExist, LdrUniq, LdrCorrect | Unchanged |
 | PaxPCorrect, PaxPropose01, PaxWrite01 | Unchanged |
 | Pax2Twined, PaxNontriv | Unchanged |
@@ -84,7 +90,7 @@ correct-quorum requirements, not one shared correct quorum. In the Simple
 examples, the paper's Uncrashed schema is instead expanded into three named
 instances so individual assumptions can be removed.
 
-Figure 12 uses the same `_back`/`_forward` convention for its four backward and
+Figure 12 uses the same `?`/`!` convention for its four backward and
 three forward axioms. The remaining five labels are unchanged. TySPax has 12
 axioms total.
 
@@ -175,7 +181,7 @@ of leaders' writes:
 ∀v. leader ⇀ (∃ꟴ◇(leader ∧ write(v)) ⇀ write(v))
 ```
 
-Combined with `PaxWrite_back` and `PaxWrite01`, this suffices for the proof's use
+Combined with `PaxWrite?` and `PaxWrite01`, this suffices for the proof's use
 of leader uniqueness. The final TySPax theory takes the abstraction further and
 uses `∃⁰¹v. ∃ꟴ◇(write(v))`.
 

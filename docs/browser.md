@@ -7,7 +7,7 @@ installed on the visitor's computer.
 
 ## Open the application
 
-After deploying 0.7.1, open
+After deploying 0.7.5, open
 [the GitHub Pages explorer](https://bellissimogiorno.github.io/3muQL-model-checker/).
 The recommended Actions deployment opens the application at that address;
 the supplied branch-deployment landing page forwards automatically to `site/`.
@@ -300,11 +300,40 @@ upper bound permits larger frames but does not force search to use one; choose
 **Check this frame** to use the points, values, stages, and quorums declared
 in the theory.
 
+## Follow a running experiment
+
+After **Find counterexample**, the page shows what the engine is actually
+working on. Checking a declared frame and finding an axiom model also report
+applicable phases.
+
+| Progress item | What it means |
+| --- | --- |
+| Elapsed time | Startup and run time are labelled separately; the run clock starts after runtime/solver loading. The page also shows time in the current phase, updating between checkpoints. |
+| Current phase | Validating input, enumerating frames, compiling the encoding, checking axiom consistency, testing a named property, replaying a candidate witness, or preparing reports and downloads. |
+| Current frame | The current search frame's number and its participants, values, stages and quorums. During enumeration only participants/values/stages may be known; the frame number and quorum count appear once a concrete candidate is selected. A fixed-frame run shows its declared shape. |
+| Frames completed | Search frames whose checking attempt has ended. Some can have incomplete/unknown checks; completing an attempt does not mean every property was decided. |
+| Frames with an axiom model | Completed search frames in which the retained axioms have a model. Such a frame can also have incomplete property checks, so these counts can overlap. Consistency does not prove the selected properties over the search bounds. |
+| Verified counterexamples reported | Counterexamples independently checked by concrete replay so far. A progress count is not a downloadable completed report. |
+| Encoding and solver counts | Variables, clauses and decisions when the engine has those counts available. They are not a total model count. |
+
+There is no percentage or estimated completion time: the total work is not
+known in advance, and different frames can require very different amounts of
+computation. A synchronous solver or replay can spend time in one phase without
+another checkpoint. Advancing elapsed time with an unchanged phase is therefore
+not, by itself, an error. A fixed-frame run does not invent a multi-frame total.
+
+Progress observations are separate from results. Only the final report says
+whether the requested bounded check completed, found a counterexample, was
+inconsistent or remained unknown. If Stop or a hard deadline prevents that
+report from arriving, the last progress snapshot is labelled incomplete and
+must not be treated as a result or proof.
+
 ## Stop, revise, and run again
 
 **Stop** immediately ends the background worker. Your theory stays in the
 editor, and you can change the bounds or assumptions and run again. Stopping
-does not produce a completed report or prove any property. Starting again
+does not produce a completed report or prove any property. The last progress
+snapshot remains labelled incomplete. Starting again
 after a stop recreates Python; cached downloads may make this faster.
 
 Time budgets and complexity bounds keep experiments manageable. They are
@@ -315,17 +344,27 @@ intentional. A hard browser stop may end the worker before a partial report
 can be returned.
 
 The page allows up to 6 participants, 8 values, 12 stages, 64 quorums per
-frame, 5,000 frames, and 120 seconds per run. Additional compilation and solver
-limits are available under **Advanced limits and solver**. These are browser
-interface caps, not recommended starting sizes; the Python interface supports
-larger experiments. The ordinary exact recurrence limit is eight contexts.
+frame and 5,000 frames. The time budget defaults to **10 seconds** and accepts
+any finite positive number. You can choose, for example, 600 seconds for ten
+minutes. Additional compilation and solver
+limits are available under **Advanced limits and solver**. The size/work caps
+are browser interface limits, not recommended starting sizes; the Python
+interface supports larger experiments. The ordinary exact recurrence limit
+is eight contexts.
 If a declared scope exceeds a browser cap, guidance beside the mode controls
 explains why Run is unavailable. An oversized frame can be searched at smaller
 sizes; a domain with more than eight declared values needs the Python package
 or a smaller declared domain, because search retains those distinct values.
-The timer starts after loading, with one additional second for report
-serialization before a hard worker stop; startup has a separate 90-second
-limit. Browser memory remains limited by the device, not a fixed allocation.
+The computation timer starts after runtime and solver loading, with one
+additional second for report serialization before a hard worker stop. Startup
+has its own **90-second** limit; increasing a search budget does not change
+that separate loading deadline. Long budgets use bounded watchdog intervals
+so a browser timer's maximum delay does not turn a long request into an
+immediate timeout. Stop remains available throughout the run.
+
+The time budget is an application setting for work performed by your device;
+it is not imposed by GitHub Pages or the logic. Memory and sustained execution
+depend on the device and browser. Closing the page ends its worker.
 
 The interface uses labelled native controls, keyboard navigation, visible
 focus, text as well as color for results, and announcements for execution
@@ -461,7 +500,7 @@ directories or its own marked output, and removes obsolete generated assets.
 in `site/` and `muql/_site.zip`, plus the root landing page. Its `--check` option
 checks that these agree with the current source.
 
-The standalone `3muql-explorer-site-0.7.1.zip` contains the deployable static
+The standalone `3muql-explorer-site-0.7.5.zip` contains the deployable static
 application. Extract it, then serve the directory containing `index.html`:
 
 ```sh

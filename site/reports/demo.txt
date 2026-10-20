@@ -192,7 +192,7 @@ Scope: points=4, values=1, stages=1, time=finite; axioms=5.
   Expected outcomes confirmed.
 
 [15/30] Voting: weaken both delivery arrows
-Change: weaken ⇀ to → in ObserveForward and ObserveNotForward. Agreement survives, but guaranteed true delivery does not.
+Change: weaken ⇀ to → in Observe! and ObserveNot!. Agreement survives, but guaranteed true delivery does not.
 Scope: points=4, values=1, stages=1, time=finite; axioms=6.
   Agreement: holds in scope
   UnanimousTrueDelivery: counterexample
@@ -233,7 +233,7 @@ Scope: points=4, values=2, stages=1, time=finite; axioms=13.
   Expected outcomes confirmed.
 
 [17/30] Bracha: remove the ready relay
-Change: drop BrReadyRelay. Delivery at one participant need not spread to everyone.
+Change: drop BrReady!!. Delivery at one participant need not spread to everyone.
 Scope: points=4, values=2, stages=1, time=finite; axioms=13.
   BrTotality: counterexample
     False at stage 0, point alice, quorum {alice,bob,carol}.
@@ -305,7 +305,7 @@ Scope: points=4, values=3, stages=1, time=finite; axioms=15.
   Expected outcomes confirmed.
 
 [20/30] Simple: remove decision progress
-Change: drop SimpDecide_forward. A valid proposal and acceptance need not lead to a decision.
+Change: drop SimpDecide!. A valid proposal and acceptance need not lead to a decision.
 Scope: points=3, values=1, stages=1, time=finite; axioms=4.
   ProposerDecides: counterexample
     False at stage 0, point c, quorum {a,b}.
@@ -322,7 +322,7 @@ Scope: points=3, values=1, stages=1, time=finite; axioms=4.
   Expected outcomes confirmed.
 
 [21/30] Paxos: remove two proof-unused axioms
-Change: drop PaxSend_back and PaxPropose01 (paper Section 8.1.1). All selected properties still hold in scope.
+Change: drop PaxSend? and PaxPropose01 (paper Section 8.1.1). All selected properties still hold in scope.
 Scope: points=3, values=3, stages=3, time=stutter; axioms=18.
   Validity: holds in scope
   Agreement: holds in scope
@@ -344,7 +344,7 @@ Scope: points=1, values=2, stages=1, time=stutter; axioms=11.
   Expected outcomes confirmed.
 
 [23/30] Simpler Paxos: remove acceptance justification
-Scope: one participant, two values, one stutter stage. Change: drop SPaxAccept_back. A value can be decided without a proposal.
+Scope: one participant, two values, one stutter stage. Change: drop SPaxAccept?. A value can be decided without a proposal.
 Scope: points=1, values=2, stages=1, time=stutter; axioms=11.
   Validity: counterexample
     False at stage 0, point a, quorum {a}.
@@ -400,6 +400,7 @@ Command (from the package root):
     Every retained axiom is valid; this complete valuation was independently replayed.
      0  p0      chosen     v0=t, value0=t
   Expected outcomes confirmed.
+  Replay: python -m muql replay /workspace/scratch/ef33a48ae19b/work/3muql-explorer-handover/3muql-explorer/reports/search_choices--AtMostOne.md /workspace/scratch/ef33a48ae19b/work/3muql-explorer-handover/3muql-explorer/reports/search_choices--AtMostOne.countermodel.json
 
 [27/30] Search: Voting across a bounded frame class
 Keep every axiom. Search all permitted quorum families and domain sizes; all three properties hold within these bounds.
@@ -431,6 +432,7 @@ Command (from the package root):
      0  p1      observe    t
      0  p1      vote       b
   Expected outcomes confirmed.
+  Replay: python -m muql replay /workspace/scratch/ef33a48ae19b/work/3muql-explorer-handover/3muql-explorer/reports/search_voting_without_correct--Agreement.md /workspace/scratch/ef33a48ae19b/work/3muql-explorer-handover/3muql-explorer/reports/search_voting_without_correct--Agreement.countermodel.json
 
 [29/30] Search: Simpler Paxos agreement
 Keep all twelve axioms. Agreement holds throughout the bounded class, using the theory's stutter convention.
@@ -461,6 +463,8 @@ Command (from the package root):
      0  p0      propose    red=t, blue=t
      0  p0      write      red=t, blue=t
   Expected outcomes confirmed.
+  Replay: python -m muql replay /workspace/scratch/ef33a48ae19b/work/3muql-explorer-handover/3muql-explorer/reports/search_paxos_simpler_without_write_affine--Agreement.md /workspace/scratch/ef33a48ae19b/work/3muql-explorer-handover/3muql-explorer/reports/search_paxos_simpler_without_write_affine--Agreement.countermodel.json
 
-30 scenarios, 81 property results, 22 countermodels; 4.50s.
+30 scenarios, 81 property results, 22 countermodels; 4.03s.
+Complete reports and witnesses saved to /workspace/scratch/ef33a48ae19b/work/3muql-explorer-handover/3muql-explorer/reports
 All expected outcomes confirmed. Edit a theory or use --drop/--replace to continue exploring.

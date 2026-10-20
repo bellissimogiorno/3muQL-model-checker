@@ -22,6 +22,69 @@ function isRecord(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
+const PROGRESS_PHASES = new Set([
+  "validating", "enumerating", "frame", "compiling", "consistency",
+  "property", "replaying", "frame_done", "preparing_results",
+]);
+const PROGRESS_COUNTS = [
+  "frames_completed", "frames_consistent", "frames_inconsistent", "frames_unknown",
+  "counterexamples_found", "frame", "points", "values", "stages", "quorums",
+  "variables", "clauses", "decisions",
+];
+
+function progressForwarder(id) {
+  let pending = null;
+  let lastSent = -Infinity;
+  let lastIdentity = null;
+  let closed = false;
+
+  function flush() {
+    if (pending === null) return;
+    const progress = pending;
+    pending = null;
+    try {
+      self.postMessage({ id, type: "progress", progress });
+    } catch {
+      // Progress is advisory. A transport failure must not change the result.
+    }
+  }
+
+  return {
+    receive(json) {
+      if (closed) return;
+      try {
+        if (typeof json !== "string") return;
+        const value = JSON.parse(json);
+        if (!isRecord(value) || !PROGRESS_PHASES.has(value.phase)) return;
+        const progress = { phase: value.phase };
+        for (const name of PROGRESS_COUNTS) {
+          if (Number.isSafeInteger(value[name]) && value[name] >= (name === "frame" ? 1 : 0)) {
+            progress[name] = value[name];
+          }
+        }
+        if (typeof value.property === "string") progress.property = value.property;
+        pending = progress;
+        const now = performance.now();
+        const identity = JSON.stringify([progress.phase, progress.frame, progress.property,
+          progress.points, progress.values, progress.stages, progress.quorums]);
+        // Announce new work before Python can block this worker for that phase.
+        // Only repeated snapshots of the same work are rate-limited.
+        if (identity !== lastIdentity || now - lastSent >= 100) {
+          lastSent = now;
+          lastIdentity = identity;
+          flush();
+        }
+      } catch {
+        // Malformed callbacks and observer failures cannot abort Python work.
+      }
+    },
+    finish() {
+      closed = true;
+      flush();
+    },
+  };
+}
+
 async function fetchFile(url, description) {
   let response;
   try {
@@ -162,7 +225,16 @@ self.addEventListener("message", async (event) => {
     const input = JSON.stringify({ ...request.payload, action: request.type });
     // The page starts its calculation deadline here, after downloads and setup.
     if (request.type === "run") self.postMessage({ id, type: "started" });
-    const result = JSON.parse(engine.handleJSON(input));
+    const progress = request.type === "run" ? progressForwarder(id) : null;
+    let output;
+    try {
+      output = progress ? engine.handleJSON(input, progress.receive) : engine.handleJSON(input);
+    } finally {
+      // Python runs synchronously: no timer can flush while its bridge is busy.
+      // Send the newest update before the result, including when Python throws.
+      if (progress) progress.finish();
+    }
+    const result = JSON.parse(output);
     if (!isRecord(result) || typeof result.ok !== "boolean") {
       throw new Error("The engine returned an invalid response");
     }

@@ -151,13 +151,13 @@
           }
         ],
         "axiom_values": {
-          "SimpAccept_back": [
+          "SimpAccept?": [
             "t"
           ],
-          "SimpDecide_back": [
+          "SimpDecide?": [
             "t"
           ],
-          "SimpAccept_forward": [
+          "SimpAccept!": [
             "t"
           ],
           "Correct": [
@@ -234,9 +234,9 @@
     }
   ],
   "stats": {
-    "seconds": 0.00729,
+    "seconds": 0.003272,
     "backend": "builtin",
-    "decisions": 8,
+    "decisions": 5,
     "variables": 85,
     "clauses": 269
   }

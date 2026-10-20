@@ -34,19 +34,19 @@ let BroadcastFaulty(): ∀ v. B(bcst(v))
 axiom Intersection: twined(3)
 
 # Backward rules: justify delivery, readiness, and echo.
-axiom BrDeliverBack: ∀ v. dlvr(v) → ∃ꟴ□(ready(v))
-axiom BrReadyBack: ∀ v. ready(v) → ∃ꟴ□(echo(v))
-axiom BrEchoBack: ∀ v. echo(v) → ∃ꟴ◇(bcst(v))
+axiom BrDeliver?: ∀ v. dlvr(v) → ∃ꟴ□(ready(v))
+axiom BrReady?: ∀ v. ready(v) → ∃ꟴ□(echo(v))
+axiom BrEcho?: ∀ v. echo(v) → ∃ꟴ◇(bcst(v))
 
 # Uniqueness of echoes and of the broadcast value.
 axiom BrEchoAffine: ∃⁰¹ v. echo(v)
 axiom BrBroadcastUnique: ∃¹ v. ∃ꟴ◇(bcst(v))
 
 # The proposed weakening changes only the delivery rule.
-axiom BrDeliverExistential: (∃ v. ∃ꟴ□(ready(v))) → (∃ v. dlvr(v))
-axiom BrReadyForward: ∀ v. ∃ꟴ□(echo(v)) → ready(v)
-axiom BrEchoForward: ∀ v. ∃ꟴ◇(bcst(v)) → (∃ w. echo(w))
-axiom BrReadyRelay: ∀ v. ∀ꟴ◇(ready(v)) → ready(v)
+axiom BrDeliverExistential!: (∃ v. ∃ꟴ□(ready(v))) → (∃ v. dlvr(v))
+axiom BrReady!: ∀ v. ∃ꟴ□(echo(v)) → ready(v)
+axiom BrEcho!: ∀ v. ∃ꟴ◇(bcst(v)) → (∃ w. echo(w))
+axiom BrReady!!: ∀ v. ∀ꟴ◇(ready(v)) → ready(v)
 
 # Correctness quorums and predicate-by-predicate uniformity.
 axiom BrCorrect: ∃ꟴ□(ReadyCorrect()) ∧ ∃ꟴ□(EchoCorrect())

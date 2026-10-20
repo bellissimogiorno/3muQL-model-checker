@@ -35,14 +35,14 @@ predicate accept/1
 predicate decide/1
 
 # Backward rules: the evidence required to justify an event.
-axiom PaxPropose_back: ∀ v. propose(v) ⇀ (leader ∧ v ≠ undef)
-axiom PaxSend_back:
+axiom PaxPropose?: ∀ v. propose(v) ⇀ (leader ∧ v ≠ undef)
+axiom PaxSend?:
   ∀ v. send(v) ⇀ (
     ∃ꟴ◇(∃ x. propose(x))
     ∧ ((latest x = v. accept(x))
        ∨ (¬T(once(∃ x. accept(x))) ∧ v = undef))
   )
-axiom PaxWrite_back:
+axiom PaxWrite?:
   ∀ v. write(v) ⇀ (
     leader ∧ ∃ꟴ(
       □(∃ x. send(x))
@@ -50,21 +50,21 @@ axiom PaxWrite_back:
          ∨ (propose(v) ∧ ¬T(once(∃ x. ◇(accept(x))))))
     )
   )
-axiom PaxAccept_back: ∀ v. accept(v) ⇀ ∃ꟴ◇(write(v))
-axiom PaxDecideL_back: ∀ v. leader ⇀ (decide(v) ⇀ ∃ꟴ□(accept(v)))
-axiom PaxDecideNotL_back: ∀ v. ¬leader ⇀ (decide(v) ⇀ ∃ꟴ◇(leader ∧ decide(v)))
+axiom PaxAccept?: ∀ v. accept(v) ⇀ ∃ꟴ◇(write(v))
+axiom PaxDecideL?: ∀ v. leader ⇀ (decide(v) ⇀ ∃ꟴ□(accept(v)))
+axiom PaxDecide-not-L?: ∀ v. ¬leader ⇀ (decide(v) ⇀ ∃ꟴ◇(leader ∧ decide(v)))
 
 # Forward rules: progress, subject to the eventual-delivery assumption.
-axiom PaxPropose_forward: leader → (∃ v. propose(v))
-axiom PaxSend_forward: ultimately(∃ꟴ◇(∃ v. propose(v)) → (∃ v. send(v)))
-axiom PaxWrite_forward:
+axiom PaxPropose!: leader → (∃ v. propose(v))
+axiom PaxSend!: ultimately(∃ꟴ◇(∃ v. propose(v)) → (∃ v. send(v)))
+axiom PaxWrite!:
   ultimately(
     (leader ∧ ∃ꟴ□(∃ v. send(v)) ∧ (∃ v. propose(v))) → (∃ v. write(v))
   )
-axiom PaxAccept_forward: ultimately((∃ v. ∃ꟴ◇(write(v))) → (∃ v. accept(v)))
-axiom PaxDecideL_forward:
+axiom PaxAccept!: ultimately((∃ v. ∃ꟴ◇(write(v))) → (∃ v. accept(v)))
+axiom PaxDecideL!:
   ultimately((leader ∧ (∃ v. ∃ꟴ□(accept(v)))) → (∃ v. decide(v)))
-axiom PaxDecideNotL_forward:
+axiom PaxDecide-not-L!:
   ultimately(
     (¬leader ∧ ∃ꟴ◇(leader ∧ (∃ v. decide(v)))) → (∃ v. decide(v))
   )
@@ -100,7 +100,7 @@ property DecidingQuorum: infinitely(∃ꟴ□(T(∃ v. decide(v))))
 7.4.8. The package's finite result must be read with the temporal limitations
 reported by the checker.
 
-The `latest` in `PaxWrite_back` encloses `◇`: it finds the latest acceptance
+The `latest` in `PaxWrite?` encloses `◇`: it finds the latest acceptance
 anywhere in the selected quorum. Moving `◇` outside `latest` would choose
 an individual participant's latest acceptance, which may be stale. Section 6.6.1
 explicitly warns about that change.
@@ -113,7 +113,7 @@ intended one-leader model.
 Try removing `PaxWrite01` to permit conflicting writes. For cross-stage quorum
 failures, use a frame with disjoint quorums and remove `Pax2Twined`; deleting that
 axiom on this majority frame has no effect because the frame already implies it.
-The paper also identifies `PaxSend_back` and `PaxPropose01` as unnecessary for
+The paper also identifies `PaxSend?` and `PaxPropose01` as unnecessary for
 its correctness proofs (§8.1.1), a useful positive weakening experiment.
 
 This example explicitly selects `time stutter`: the final stage has a future

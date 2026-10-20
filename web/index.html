@@ -111,7 +111,7 @@
               <p id="scope-note" class="small-text" aria-live="polite"></p>
               <div class="limits-layout">
                 <div id="search-bounds"><p class="field-heading">Search up to</p><div class="bounds-grid"><label for="max-points">Participants<input id="max-points" type="number" min="1" max="6" value="1" aria-describedby="bounds-help" required></label><label for="max-values">Values<input id="max-values" type="number" min="1" max="8" value="2" aria-describedby="bounds-help" required></label><label for="max-stages">Time stages<input id="max-stages" type="number" min="1" max="12" value="1" aria-describedby="bounds-help" required></label></div><p id="bounds-help" class="small-text">Maximum sizes. Smaller frames are tried first.</p></div>
-                <div class="time-limit"><p class="field-heading">Stop after</p><label for="timeout">Seconds<input id="timeout" type="number" min="1" max="120" value="10" required></label></div>
+                <div class="time-limit"><p class="field-heading">Stop after</p><label for="timeout">Seconds<input id="timeout" type="number" min="0" step="any" value="10" aria-describedby="timeout-help" required></label><p id="timeout-help" class="small-text">Any positive number of seconds. Runtime loading has a separate 90-second limit.</p></div>
               </div>
               <details class="advanced"><summary>Advanced limits and solver</summary><div class="advanced-grid">
                 <label for="max-quorums">Quorums per frame<input id="max-quorums" type="number" min="1" max="64" value="8" aria-describedby="bounds-help" required></label>
@@ -123,6 +123,7 @@
             </fieldset>
             <div class="run-strip"><div class="run-context" aria-live="polite"><p id="run-theory" class="context-line"></p><p id="run-summary" class="run-summary">Choose a theory to begin.</p><p id="run-properties" class="small-text"></p><p id="run-omissions" class="assumption-context"></p></div><div class="run-actions"><button id="run-button" class="button primary workflow-action" type="submit" aria-describedby="run-theory scope-note run-summary run-omissions" disabled>Find a counterexample <span aria-hidden="true">→</span></button><button id="stop-button" class="button stop" type="button" hidden>Stop</button></div><p class="small-text">Runs on your device. You can stop at any time.</p></div>
           </form>
+          <div id="run-progress" class="run-progress" aria-label="Run progress" hidden><h3 id="progress-phase" class="progress-phase"></h3><p id="progress-frame" class="progress-frame"></p><p id="progress-counts" class="progress-counts"></p><p id="progress-findings" class="progress-findings"></p><p id="progress-work" class="progress-work"></p><p id="progress-timing" class="progress-timing"></p><p id="progress-note" class="progress-note"></p></div>
           <div class="runtime-status"><span id="status-dot" class="status-dot" aria-hidden="true"></span><p id="status-text" role="status" aria-live="polite">Preparing the example…</p><span id="elapsed" class="elapsed" aria-hidden="true"></span></div>
         </div>
       </section>
@@ -143,7 +144,7 @@
       <details class="help-details"><summary>Truth values, downloads, and privacy</summary><p><strong>t</strong> means true, <strong>b</strong> means broken, and <strong>f</strong> means false. Axioms are satisfied by either <strong>t</strong> or <strong>b</strong>. A counterexample makes a property <strong>f</strong>.</p><p>Save a counterexample’s Markdown theory and JSON valuation together. Replay them with <code>python -m muql replay theory.md countermodel.json</code>.</p><p>Your theory and results stay on your device. Custom theories are saved as a draft in this browser when local storage is available. Each visit starts at First steps; restore your draft in Custom experiment below the results. Browsing the curated examples leaves your saved draft intact. The Python runtime loads when you first use the checker; MiniSat loads an additional package if selected. The standard online build fetches these from jsDelivr; a self-contained build can serve them with the page. There is no account or analytics. Closing the page stops computation. <button id="forget-draft" type="button" class="text-button">Forget saved draft</button></p></details>
     </details>
   </main>
-  <div id="activity-bar" class="activity-bar" role="group" aria-label="Current operation" hidden><span class="activity-indicator" aria-hidden="true"></span><span id="activity-text">Working…</span><button id="floating-stop" class="button stop" type="button">Stop</button></div>
+  <div id="activity-bar" class="activity-bar" role="group" aria-label="Current operation" hidden><span class="activity-indicator" aria-hidden="true"></span><div class="activity-copy"><strong id="activity-text">Working…</strong><span id="activity-detail"></span></div><button id="floating-stop" class="button stop" type="button">Stop</button></div>
   <footer><span>3μQL Explorer <span aria-hidden="true">·</span> Three-valued fixpoint quorum logic</span><span>Local computation. Reproducible evidence.</span></footer>
 </body>
 </html>

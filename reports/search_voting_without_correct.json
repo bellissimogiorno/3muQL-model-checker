@@ -100,19 +100,19 @@
           "Intersection": [
             "t"
           ],
-          "ObserveBack": [
+          "Observe?": [
             "b",
             "t"
           ],
-          "ObserveNotBack": [
+          "ObserveNot?": [
             "b",
             "t"
           ],
-          "ObserveForward": [
+          "Observe!": [
             "b",
             "t"
           ],
-          "ObserveNotForward": [
+          "ObserveNot!": [
             "b",
             "t"
           ]
@@ -128,7 +128,7 @@
     "unknown_frames": 0,
     "decisions": 15,
     "solver": "builtin",
-    "seconds": 0.002757
+    "seconds": 0.00256
   },
   "consistency_scope": {
     "points": [

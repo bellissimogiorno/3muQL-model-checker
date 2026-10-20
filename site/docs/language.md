@@ -65,10 +65,33 @@ quoted strings.
 
 Point and value lists accept whitespace or commas. Quote names containing
 spaces or punctuation; quote such values when using them in formulas too.
-Predicate, macro, axiom, property, and variable names use ASCII letters,
-digits, and underscores and cannot begin with a digit. Predicate and macro
-names cannot be reserved words. Axiom and property labels share one namespace;
-predicate and macro names share another. Names are case-sensitive.
+Predicate, macro, and variable names use ASCII letters, digits, and underscores
+and cannot begin with a digit. Predicate and macro names cannot be reserved
+words. Axiom and property labels start with an ASCII letter or underscore;
+subsequent characters may also include digits, `!`, `?`, and `-`. Thus the
+paper-style labels `PaxWrite?`, `PaxWrite!`, and `PaxDecide-not-L!` can be used
+directly, without quotes:
+
+```muql
+axiom PaxWrite?: T(vote(red))
+axiom PaxWrite!: TF(vote(red))
+```
+
+The direction marks are part of the label; their meaning comes from the
+formula you supply. Inside a formula, `!` still means negation. Axiom and
+property labels share one namespace; predicate and macro names share another.
+Names are case-sensitive. Existing `_back`/`_forward` spellings remain valid.
+In a shell, single-quote labels and replacements to protect punctuation from
+history expansion and wildcard matching:
+
+```sh
+python -m muql check rules.md --drop 'PaxWrite?'
+python -m muql check rules.md --replace 'PaxWrite!=T(vote(red))'
+```
+
+Theory exports, reports and witnesses retain the exact labels. Download
+filenames substitute `_` for punctuation such as `?` and use numbered prefixes
+to distinguish labels that otherwise produce the same filename.
 
 The frame contains the empty set and the whole point set, and closes the
 declared generators under **unions**. The empty set is not a current quorum.
@@ -184,10 +207,9 @@ Evaluation retains a current point and a current nonempty open set `O`.
 Unicode output uses superscript capital Q (`ꟴ`, U+A7F4). Plain-Q spellings such
 as `∃Q□(P)` and `∀Q◇(P)` remain accepted and have exactly the same meaning.
 
-**Scope change in 0.3.0:** `somewhere` and `everywhere` are aliases for the
-current-quorum modalities `diamond` and `box`. In inputs written for earlier
-releases, replace their old compound uses with `someQuorumSomePoint` and
-`everyQuorumEveryPoint` respectively. The Unicode symbols keep their meanings.
+`somewhere` and `everywhere` are aliases for the current-quorum modalities
+`diamond` and `box`. To quantify over quorums as well, use the compounds
+`someQuorumSomePoint` and `everyQuorumEveryPoint` respectively.
 
 `⋄` is also accepted for `◇`. Symbolic modalities allow prefix notation,
 such as `□P`; parentheses in `□(P ∧ Q)` make the intended scope clear.

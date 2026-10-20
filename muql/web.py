@@ -8,11 +8,11 @@ to stop an operation: the engine's ordinary deadlines are cooperative.
 from __future__ import annotations
 
 import json
-import math
 import re
 
 from .backends import BackendUnavailable
-from .checker import check
+from .checker import _finite_nonnegative, check
+from .progress import notify
 from .search import format_theory, search, witness_theory
 from .syntax import FormulaError, format_formula
 from .theory import TheoryError, loads
@@ -96,9 +96,8 @@ def _request(data):
             raise ValueError(f"{name} must be a whole number from {minimum:,} to {maximum:,}.")
         limits[name] = value
     timeout = supplied_limits.get("timeout", 10)
-    if (type(timeout) not in (int, float) or not 0 <= timeout <= 120
-            or not math.isfinite(timeout)):
-        raise ValueError("timeout must be a finite number from 0 to 120 seconds.")
+    if type(timeout) not in (int, float) or not _finite_nonnegative(timeout):
+        raise ValueError("timeout must be a finite nonnegative number of seconds.")
     limits["timeout"] = timeout
     return source, mode, properties, dropped, solver, limits
 
@@ -172,7 +171,10 @@ def _downloads(theory, report, max_mu_contexts):
         if result.countermodel is None:
             continue
         scoped = witness_theory(theory, result.countermodel, max_mu_contexts=max_mu_contexts)
-        witness_stem = f"{stem}--{index:02d}-{result.name}"
+        # Preserve labels in the payload, but keep download paths portable.
+        # The index distinguishes labels such as Goal! and Goal? after escaping.
+        safe_name = re.sub(r"[^A-Za-z0-9_.-]", "_", result.name)
+        witness_stem = f"{stem}--{index:02d}-{safe_name}"
         downloads.extend([
             item("witness-" + result.name + "-theory", f"{result.name}: replay theory (.md)",
                  witness_stem + ".md", "text/markdown", format_theory(scoped)),
@@ -183,8 +185,17 @@ def _downloads(theory, report, max_mu_contexts):
     return downloads
 
 
-def _handle(data):
+def _handle(data, progress=None):
     source, mode, properties, dropped, solver, limits = _request(data)
+    last_snapshot = {}
+
+    def observe(snapshot):
+        nonlocal last_snapshot
+        last_snapshot = dict(snapshot)
+        progress(snapshot)
+
+    observer = observe if data['action'] == 'run' and progress is not None else None
+    notify(observer, 'validating')
     theory = loads(source, for_search=data["action"] == "inspect" or mode == "search")
     if data["action"] == "inspect":
         return {"ok": True, "metadata": _metadata(theory)}
@@ -193,17 +204,19 @@ def _handle(data):
     if "max_values" not in data.get("limits", {}):
         limits["max_values"] = max(2, len(theory.values))
     if mode == "search":
-        report = search(theory, properties, solver=solver, **limits)
+        report = search(theory, properties, solver=solver, progress=observer, **limits)
     else:
         options = {name: limits[name] for name in
                    ("timeout", "max_decisions", "max_nodes", "max_mu_contexts")}
         report = check(theory, properties, solver=solver,
-                       total_timeout=limits["timeout"], **options)
+                       total_timeout=limits["timeout"], progress=observer, **options)
+    if observer is not None:
+        notify(observer, 'preparing_results', **{key: value for key, value in last_snapshot.items() if key != 'phase'})
     return {"ok": True, "report": report.to_dict(), "metadata": _metadata(theory),
             "downloads": _downloads(theory, report, limits["max_mu_contexts"])}
 
 
-def handle_json(request: str) -> str:
+def handle_json(request: str, progress=None) -> str:
     """Return an inspection or bounded run as JSON, including readable errors.
 
     ``properties: null`` selects all declared properties. An explicit empty
@@ -211,6 +224,8 @@ def handle_json(request: str) -> str:
     Error line and column numbers, when present, refer to the user's Markdown.
     ``ok`` means a request was handled, not that a property holds: callers must
     display the report's separate statuses and its finite-scope qualification.
+    Optional ``progress(json_snapshot)`` receives JSON strings for run requests
+    only, keeping browser callbacks independent of Python proxy lifetimes.
     """
     try:
         if not isinstance(request, str):
@@ -218,7 +233,10 @@ def handle_json(request: str) -> str:
         if len(request) > MAX_REQUEST_CHARS:
             raise ValueError("The request is too large for this browser demo.")
         data = json.loads(request, object_pairs_hook=_object, parse_constant=_finite_json)
-        result = _handle(data)
+        # The core observers receive detached dictionaries; the browser boundary
+        # sends serialized snapshots so JavaScript never retains Python objects.
+        observer = (lambda snapshot: progress(_json(snapshot))) if progress is not None else None
+        result = _handle(data, observer)
     except json.JSONDecodeError:
         result = {"ok": False, "error": {"message": "The request is not valid JSON."}}
     except (TheoryError, FormulaError) as error:

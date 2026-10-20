@@ -195,7 +195,7 @@ class FreshWitnessTests(unittest.TestCase):
         data = deepcopy(self.data)
         # This declared signature has at least 2**(10**20) cells. Its submitted
         # handful of rows already proves incompleteness without enumeration.
-        with patch('muql.checker.product', side_effect=AssertionError('atomic signature materialized')):
+        with patch('muql.witness.product', side_effect=AssertionError('atomic signature materialized')):
             with self.assertRaisesRegex(ValueError, 'exactly every atomic cell'):
                 replay(theory, data)
 

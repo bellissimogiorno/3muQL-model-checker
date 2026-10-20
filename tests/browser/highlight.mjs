@@ -43,6 +43,21 @@ test("recognises Unicode and ASCII logic, including unique and affine existence"
   for (const operator of ["¬", "∧", "∨", "⊕", "→", "⇀", "≡", "≤", "≠", "∀", "∃", "∃¹", "∃1", "∃!", "∃⁰¹", "∃01", "μ", "µ", "ν", "□", "◇", "⋄", "∃Q", "∀Q", "∃Q□", "∀Q◇", "∀Q⋄", "∃Q◇", "∃Q⋄", "∀Q□", "<=>", "-\\", "->", "<=", "==", "!=", "&&", "||", "!", "&", "|", "^", "=", "not", "and", "or", "xor", "forall", "exists", "affine", "unique", "mu", "nu"]) highlights(logic(`property P: ${operator} x`), "operator", operator);
 });
 
+test("paper-style labels are whole names while formula punctuation keeps its meaning", () => {
+  for (const declaration of ["axiom", "property"]) {
+    for (const label of ["PaxWrite?", "PaxWrite!", "PaxDecide-not-L!", "_Rule!?-2"]) {
+      const text = logic(`  ${declaration} ${label}:!P # direction marks`);
+      highlights(text, "name", label);
+      highlights(text, "operator", "!");
+      highlights(text, "comment", "# direction marks");
+      assert.equal(visible(highlightSource(text)), text);
+    }
+  }
+  for (const text of [logic("predicate P!/0"), logic("let P!(): t"), logic("property Goal: P!")]) {
+    assert.ok(!highlightSource(text).includes('class="syntax-name">P!</span>'));
+  }
+});
+
 test("superscript quorum Q is one operator and preserves literal source and spacing", () => {
   for (const operator of ["∃ꟴ", "∀ꟴ", "∃ꟴ□", "∀ꟴ◇", "∀ꟴ⋄", "∃ꟴ◇", "∃ꟴ⋄", "∀ꟴ□"]) {
     const text = logic(`property P: ${operator}(p) ∧ ∀ Q. Q = Q`);

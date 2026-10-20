@@ -40,7 +40,7 @@
   "properties": [],
   "consistency_model": null,
   "stats": {
-    "seconds": 0.163866,
+    "seconds": 0.15054,
     "backend": "builtin",
     "decisions": 0,
     "variables": 3135,

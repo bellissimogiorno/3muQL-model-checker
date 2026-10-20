@@ -31,8 +31,8 @@ is `→` / `->`, and strong implication is `⇀` / `-\`.
 
 The compound operators `∃ꟴ◇` and `∀ꟴ□` have the ASCII names
 `someQuorumSomePoint` and `everyQuorumEveryPoint`. The shorter names
-`somewhere` and `everywhere` mean current-quorum `◇` and `□` from release
-0.3.0 onward; they are not substitutes for these global compounds.
+`somewhere` and `everywhere` mean current-quorum `◇` and `□`; they are not
+substitutes for these global compounds.
 
 A formula is **valid** when its truth value is `t` or `b`. A theory requires
 every axiom to be valid at every evaluation context. Refuting a property means
@@ -55,16 +55,23 @@ finite frame does **not** quantify over all three-way-intersecting frames.
 
 ## Axiom and property correspondence
 
+Bundled backward and forward axioms use the paper's `?` and `!` direction
+marks, including `BrReady!!`. Descriptive ASCII stems distinguish the negated
+observation (`ObserveNot?`, `ObserveNot!`) and half-output
+(`CaOutputHalf?`, `CaOutputHalf!`) rules; their correspondence to the paper's
+negation and prime notation is explicit below. The weakened delivery axiom is
+`BrDeliverExistential!`, distinguishing it from `BrDeliver!` in the full theory.
+
 ### Voting
 
 [voting.md](../examples/voting.md) uses Figure 3 and Proposition 2.5.7.
 
 | Paper | File declaration |
 |---|---|
-| Observe? | ObserveBack |
-| Observe¬? | ObserveNotBack |
-| Observe! | ObserveForward |
-| Observe¬! | ObserveNotForward |
+| Observe? | Observe? |
+| Observe¬? | ObserveNot? |
+| Observe! | Observe! |
+| Observe¬! | ObserveNot! |
 | Correct | Correct |
 | 3twined semantic schema | Intersection |
 | Agreement, Proposition 2.5.7 | Agreement |
@@ -81,10 +88,10 @@ from Remark 4.2.1.
 
 | Paper | File declaration |
 |---|---|
-| BrDeliver? / BrReady? / BrEcho? | BrDeliverBack / BrReadyBack / BrEchoBack |
+| BrDeliver? / BrReady? / BrEcho? | BrDeliver? / BrReady? / BrEcho? |
 | BrEcho01 / BrBroadcast1 | BrEchoAffine / BrBroadcastUnique |
-| BrDeliver! / BrReady! / BrEcho! | BrDeliverForward / BrReadyForward / BrEchoForward |
-| BrReady!! | BrReadyRelay |
+| BrDeliver! / BrReady! / BrEcho! | BrDeliver! / BrReady! / BrEcho! |
+| BrReady!! | BrReady!! |
 | BrCorrect | BrCorrect |
 | BrCorrect′, separately for ready and echo | BrReadyUniform / BrEchoUniform |
 | BrCorrect′′ | BrBroadcastUniform |
@@ -111,10 +118,10 @@ three payloads 0, 1/2, and 1.
 
 | Paper | File declaration |
 |---|---|
-| CaEcho1? / CaEcho2? | CaEcho1Back / CaEcho2Back |
-| CaOutput? / CaOutput′? | CaOutputBack / CaOutputHalfBack |
-| CaEcho1! / CaEcho2! | CaEcho1Forward / CaEcho2Forward |
-| CaOutput! / CaOutput′! | CaOutputForward / CaOutputHalfForward |
+| CaEcho1? / CaEcho2? | CaEcho1? / CaEcho2? |
+| CaOutput? / CaOutput′? | CaOutput? / CaOutputHalf? |
+| CaEcho1! / CaEcho2! | CaEcho1! / CaEcho2! |
+| CaOutput! / CaOutput′! | CaOutput! / CaOutputHalf! |
 | CaCorrect | CaCorrect |
 | CaCorrect′, for each of the four predicates | Four Ca...Uniform axioms |
 | CaInput / CaEcho201 | CaInput / CaEcho2Affine |
@@ -123,7 +130,7 @@ three payloads 0, 1/2, and 1.
 | CaLive, Proposition 5.3.11 | CaLive |
 
 Here `CaCorrect` requires a **single common quorum** correct across all four
-predicates. `CaEcho1Back` uses strong implication; the other backward rules use
+predicates. `CaEcho1?` uses strong implication; the other backward rules use
 weak implication. `CaValid1` tests `TB(∀ꟴ□(input(v)))`, so it includes
 participants that are faulty at input while requiring all correct input
 participants to share the payload.
@@ -137,7 +144,7 @@ not a bounded execution-time assertion.
 ### Section 4.3: the delivery weakening has a countermodel
 
 [bracha_weakened.md](../examples/bracha_weakened.md) changes only
-`BrDeliverForward`, replacing
+`BrDeliver!`, replacing
 
 ```text
 ∀v. ∃ꟴ□(ready(v)) → dlvr(v)

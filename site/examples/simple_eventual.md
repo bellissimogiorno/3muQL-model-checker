@@ -25,12 +25,12 @@ predicate accept/0
 predicate decide/0
 
 # Backward rules: a true event must be justified.
-axiom SimpAccept_back: accept ⇀ ∃ꟴ◇(propose)
-axiom SimpDecide_back: decide ⇀ (propose ∧ ∃ꟴ◇(accept))
+axiom SimpAccept?: accept ⇀ ∃ꟴ◇(propose)
+axiom SimpDecide?: decide ⇀ (propose ∧ ∃ꟴ◇(accept))
 
 # Forward rules: delivery and progress.
-axiom SimpAccept_forward: ultimately(∃ꟴ◇(propose) ⇀ accept)
-axiom SimpDecide_forward: ultimately((propose ∧ ∃ꟴ◇(accept)) ⇀ decide)
+axiom SimpAccept!: ultimately(∃ꟴ◇(propose) ⇀ accept)
+axiom SimpDecide!: ultimately((propose ∧ ∃ꟴ◇(accept)) ⇀ decide)
 
 # All three predicates are uncrashed.
 axiom Correct: TF(propose) ∧ TF(accept) ∧ TF(decide)

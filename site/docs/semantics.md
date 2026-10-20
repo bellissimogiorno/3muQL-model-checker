@@ -99,10 +99,9 @@ The ASCII names `somewhere` and `everywhere` are aliases for `◇` and `□`,
 so they retain the current quorum. The compounds `∃ꟴ◇` and `∀ꟴ□` are
 `someQuorumSomePoint` and `everyQuorumEveryPoint`. `quorum` and
 `someQuorumEveryPoint` both mean `∃ꟴ□`; `contra` and
-`everyQuorumSomePoint` both mean `∀ꟴ◇`. Earlier releases assigned the
-compound meanings to `somewhere` and `everywhere`; see the
-[migration guide](notation.md#compatibility-and-migration) before reusing
-old ASCII formulas.
+`everyQuorumSomePoint` both mean `∀ꟴ◇`. See the
+[operator scope guide](notation.md#operator-scope-and-accepted-spellings) for
+these distinctions in ASCII formulas.
 
 The compound operators keep the changed quorum while evaluating their bodies.
 Replacing `∃ꟴ◇` with a point-only loop is wrong for a quorum-dependent

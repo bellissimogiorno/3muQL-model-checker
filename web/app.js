@@ -3,6 +3,7 @@ import { createSourceHighlighter, sourceSelection } from "./editor.js";
 import { createModelView } from "./model-view.js";
 import { atomLabel, nameLabel } from "./model-data.js";
 import { formulaHTML } from "./notation.js";
+import { readProgress, phaseIdentity, elapsedSeconds, duration, deadlineDelay, describeProgress } from "./progress.js";
 
 const $ = (id) => document.getElementById(id);
 const LEGACY_DRAFT_KEY = "muql-explorer-draft-v1";
@@ -14,7 +15,7 @@ const NEW_THEORY = '# My theory\n\nDescribe your question here. Edit the predica
 const limitIds = ["max-points", "max-values", "max-stages", "timeout", "max-quorums", "max-frames", "max-nodes", "max-decisions"];
 const searchLimitIds = ["max-points", "max-values", "max-stages", "max-quorums", "max-frames"];
 const state = { examples: [], example: null, lastCurated: null, editingCurated: false, adjusted: false, sourceAtLoad: "", metadata: null, metadataSource: null, desired: null,
-  worker: null, task: null, sequence: 0, timer: null, watchdog: null, results: null, draftTimer: null, draftEnabled: true, draftReady: false,
+  worker: null, task: null, sequence: 0, timer: null, watchdog: null, results: null, interrupted: null, draftTimer: null, draftEnabled: true, draftReady: false,
   draftBase: null, draftContent: null, draftConflict: false, draftCopyKey: null, loading: true };
 const modelViews = new Set();
 function clearModelViews() { for (const view of modelViews) view.dispose(); modelViews.clear(); }
@@ -234,6 +235,12 @@ function showError(error) {
   box.scrollIntoView({ block: "center", behavior: "auto" });
 }
 function markStale() {
+  $("run-progress").hidden = true;
+  if (state.interrupted && !state.interrupted.stale) {
+    state.interrupted.stale = true;
+    $("results").prepend(el("p", "stale-note", "This progress belongs to the previous interrupted run. The theory or settings have changed; run again for the current experiment."));
+    $("result-label").textContent = "Previous interrupted run";
+  }
   if (!state.results) return;
   if (state.results.stale) { $("results").querySelector(".previous-results").open = false; return; }
   state.results.stale = true;
@@ -430,6 +437,53 @@ function renderOptions(metadata, selection) {
   $("assumptions-details").open = optionSelection().drop.length > 0;
   updateControls();
 }
+function progressPanel() {
+  const root = el("div", "run-progress"); root.id = "result-progress";
+  root.setAttribute("aria-label", "Run progress");
+  const nodes = {};
+  for (const field of ["phase", "frame", "counts", "findings", "work", "timing", "note"]) {
+    nodes[field] = el(field === "phase" ? "h3" : "p", `progress-${field}`);
+    root.append(nodes[field]);
+  }
+  return { root, nodes };
+}
+function renderProgress(task, announce = true) {
+  if (task.type !== "run") return;
+  const now = performance.now();
+  task.lastProgressRender = now;
+  const text = describeProgress(task, now);
+  $("run-progress").hidden = false;
+  for (const field of ["phase", "frame", "counts", "findings", "work", "timing", "note"]) {
+    const controls = $("progress-" + field);
+    if (controls.textContent !== text[field]) controls.textContent = text[field];
+    controls.hidden = !text[field];
+    const result = task.progressNodes?.[field];
+    if (result) { if (result.textContent !== text[field]) result.textContent = text[field]; result.hidden = !text[field]; }
+  }
+  if (state.task === task) {
+    $("activity-text").textContent = text.phase;
+    $("activity-detail").textContent = text.activity;
+    // Only this status is live. Visual clocks can update twice per second
+    // without repeatedly interrupting assistive technology.
+    if (announce && now - task.lastAnnouncement >= 5000 && text.announcement !== task.lastAnnouncedText) {
+      $("status-text").textContent = text.announcement;
+      task.lastAnnouncement = now; task.lastAnnouncedText = text.announcement;
+    }
+  }
+}
+function armWatchdog(task, startup) {
+  if (state.task !== task) return;
+  clearTimeout(state.watchdog);
+  const elapsed = elapsedSeconds(startup ? task.created : task.started, performance.now());
+  // The engine owns the chosen budget. Allow one additional second for its
+  // completed report to serialize, but never multiply an unbounded budget.
+  const delay = deadlineDelay(startup ? 90 : task.payload.limits.timeout, elapsed, startup ? 0 : 1);
+  if (!delay) {
+    terminate(startup ? "The browser engine took too long to start. Check your connection and try again." : "The run reached its time limit.", true);
+    return;
+  }
+  state.watchdog = setTimeout(() => armWatchdog(task, startup), delay);
+}
 function endTask() {
   clearInterval(state.timer); clearTimeout(state.watchdog);
   state.timer = null; state.watchdog = null; state.task = null;
@@ -437,16 +491,23 @@ function endTask() {
   document.querySelector(".results-panel").setAttribute("aria-busy", "false");
   updateControls();
 }
+function showInterrupted(task, reason, timeout = false) {
+  task.ended = performance.now();
+  state.results = null; state.interrupted = task;
+  const summary = el("div", "result-summary");
+  summary.append(el("h3", "", timeout ? "Incomplete · time limit reached" : "Incomplete · stopped"), el("p", "", reason), el("p", "", "No conclusion was drawn from this interrupted run. Your theory and settings are unchanged."));
+  const panel = progressPanel(); task.progressNodes = panel.nodes;
+  $("results").replaceChildren(summary, panel.root);
+  $("result-label").textContent = "Incomplete";
+  renderProgress(task, false);
+}
 function terminate(reason, timeout = false) {
   const task = state.task;
+  if (!task) return;
   state.worker?.terminate(); state.worker = null;
   endTask();
   if (task?.type === "run") {
-    state.results = null;
-    $("results").replaceChildren(el("div", "result-summary"));
-    const summary = $("results").firstChild;
-    summary.append(el("h3", "", timeout ? "Incomplete · time limit reached" : "Stopped"), el("p", "", reason), el("p", "", "No conclusion was drawn from this interrupted run. Your theory and settings are unchanged."));
-    $("result-label").textContent = "No result";
+    showInterrupted(task, reason, timeout);
   } else if (task?.type === "inspect") {
     selectionPrompt("Reading stopped. Update the choices to continue.", true);
   }
@@ -457,19 +518,40 @@ function makeWorker() {
   const worker = new Worker(new URL("worker.js", import.meta.url), { type: "module" });
   worker.addEventListener("message", ({ data }) => {
     const task = state.task;
-    if (!task || data.id !== task.id) return;
-    if (data.type === "phase") { setStatus(data.message); return; }
+    if (state.worker !== worker || !task || !data || typeof data !== "object" || data.id !== task.id) return;
+    if (data.type === "phase") {
+      if (typeof data.message !== "string" || task.started !== null) return;
+      if (task.phaseMessage !== data.message) task.phaseStarted = performance.now();
+      task.phaseMessage = data.message;
+      setStatus(data.message);
+      renderProgress(task, false);
+      return;
+    }
     if (data.type === "started") {
+      if (task.type !== "run" || task.started !== null) return;
       task.started = performance.now();
+      task.phaseStarted = task.started;
       setStatus(task.payload.mode === "check" ? "Checking the declared frame…" : "Searching small frames first…");
-      clearTimeout(state.watchdog);
-      // The engine has the requested cooperative budget; allow one second for
-      // final serialization before enforcing a hard worker termination.
-      state.watchdog = setTimeout(() => terminate("The run reached its time limit.", true), (task.payload.limits.timeout + 1) * 1000);
+      task.lastAnnouncement = task.started;
+      renderProgress(task, false);
+      armWatchdog(task, false);
+      return;
+    }
+    if (data.type === "progress") {
+      if (task.type !== "run" || task.started === null) return;
+      const progress = readProgress(data.progress, task.progress);
+      if (!progress) return;
+      const first = task.progress === null;
+      if (!task.progress || phaseIdentity(progress) !== phaseIdentity(task.progress)) task.phaseStarted = performance.now();
+      task.progress = progress;
+      // A fast search can emit thousands of phase changes. Retain every latest
+      // snapshot, but limit DOM work; the clock also paints it within 500ms.
+      if (first || performance.now() - task.lastProgressRender >= 100) renderProgress(task);
       return;
     }
     if (data.type !== "result") return;
     endTask();
+    $("run-progress").hidden = true;
     if (!data.result?.ok) {
       showError(data.result?.error);
       setStatus("The request could not be completed. Check the message beside the theory.");
@@ -498,11 +580,11 @@ function makeWorker() {
   worker.addEventListener("error", (event) => {
     event.preventDefault();
     if (state.worker !== worker) return;
-    const running = state.task?.type === "run";
+    const task = state.task;
     worker.terminate(); state.worker = null; endTask();
     showError("The browser engine stopped unexpectedly. Try a smaller scope, or refresh the page and try again.");
     setStatus("Engine stopped. Your theory is still here.");
-    if (running) { state.results = null; $("result-label").textContent = "No result"; $("results").replaceChildren(el("p", "small-text", "Incomplete. The engine stopped before returning a result.")); }
+    if (task?.type === "run") showInterrupted(task, "The engine stopped before returning a result.");
     else selectionPrompt("Reading stopped. Update the choices to try again.", true);
   });
   return worker;
@@ -511,22 +593,38 @@ function startTask(type, payload) {
   if (state.task || state.loading) return;
   clearError();
   if (payload.source.length > MAX_SOURCE) { showError("This demo accepts theories up to 250,000 characters. Use the Python package for larger files."); return; }
+  if (type === "run" && (!Number.isFinite(payload.limits?.timeout) || payload.limits.timeout <= 0)) {
+    showError("Enter a finite number of seconds greater than zero for Stop after.");
+    $("timeout").focus();
+    return;
+  }
   try { state.worker ||= makeWorker(); }
   catch { showError("This browser could not start a module worker. Try a current browser with WebAssembly support."); return; }
-  const task = { id: ++state.sequence, type, payload, selection: currentSelection(), created: performance.now(), started: null };
+  const created = performance.now();
+  const task = { id: ++state.sequence, type, payload, selection: currentSelection(), created, started: null,
+    phaseStarted: created, progress: null, lastAnnouncement: created, lastAnnouncedText: "" };
   state.task = task;
+  $("run-progress").hidden = true;
+  $("activity-detail").textContent = "";
   if (type === "run") {
     clearModelViews();
-    state.results = null; $("result-label").textContent = "Running";
+    state.results = null; state.interrupted = null; $("result-label").textContent = "Running";
     const pending = el("div", "empty-state");
     pending.append(el("h3", "", "Looking for evidence…"), el("p", "", "You can stop at any time. A limit or interruption is never counted as a proof."));
-    $("results").replaceChildren(pending);
+    const panel = progressPanel(); task.progressNodes = panel.nodes;
+    $("results").replaceChildren(pending, panel.root);
     document.querySelector(".results-panel").setAttribute("aria-busy", "true");
   }
   setStatus(type === "inspect" ? "Reading the theory…" : "Preparing the run…");
   updateControls();
-  state.timer = setInterval(() => { if (state.task === task) $("elapsed").textContent = `${Math.floor((performance.now() - (task.started || task.created)) / 1000)}s`; }, 500);
-  state.watchdog = setTimeout(() => terminate("The browser engine took too long to start. Check your connection and try again.", true), 90000);
+  renderProgress(task, false);
+  state.timer = setInterval(() => {
+    if (state.task !== task) return;
+    $("elapsed").textContent = duration(elapsedSeconds(task.started ?? task.created, performance.now()));
+    renderProgress(task);
+    if (task.type === "inspect") $("activity-detail").textContent = `Reading elapsed ${duration(elapsedSeconds(task.created, performance.now()))} · separate 90s limit`;
+  }, 500);
+  armWatchdog(task, true);
   state.worker.postMessage({ id: task.id, type, payload });
 }
 function inspect(advance = false, returnFocus = null) {
@@ -690,7 +788,8 @@ function applySettings(data) {
   $("mode-search").checked = data.mode !== "check";
   for (const id of limitIds) {
     const value = data.limits?.[id.replaceAll("-", "_")];
-    if (typeof value === "number" && Number.isFinite(value) && value >= Number($(id).min) && value <= Number($(id).max)) $(id).value = value;
+    const maximum = $(id).max === "" ? Infinity : Number($(id).max);
+    if (typeof value === "number" && Number.isFinite(value) && value >= Number($(id).min) && value <= maximum && (id !== "timeout" || value > 0)) $(id).value = value;
   }
   $("solver").value = data.solver === "pysat" ? "pysat" : "builtin";
 }

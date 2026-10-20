@@ -14,12 +14,12 @@ predicate vote/0
 predicate observe/0
 
 axiom Intersection: twined(3)
-axiom ObserveBack: observe → ∃Q□vote
-axiom ObserveNotBack: ¬observe → ∃Q□¬vote
-axiom ObserveForward: ∃Q□vote ⇀ observe
-axiom ObserveNotForward: ∃Q□¬vote ⇀ ¬observe
+axiom Observe?: observe → ∃ꟴ□vote
+axiom ObserveNot?: ¬observe → ∃ꟴ□¬vote
+axiom Observe!: ∃ꟴ□vote ⇀ observe
+axiom ObserveNot!: ∃ꟴ□¬vote ⇀ ¬observe
 
-property Agreement: ¬(∃Q◇T(observe) ∧ ∃Q◇T(¬observe))
-property UnanimousTrueDelivery: ∃Q□vote ⇀ ∀Q□observe
-property UnanimousFalseDelivery: ∃Q□¬vote ⇀ ∀Q□¬observe
+property Agreement: ¬(∃ꟴ◇T(observe) ∧ ∃ꟴ◇T(¬observe))
+property UnanimousTrueDelivery: ∃ꟴ□vote ⇀ ∀ꟴ□observe
+property UnanimousFalseDelivery: ∃ꟴ□¬vote ⇀ ∀ꟴ□¬observe
 ```

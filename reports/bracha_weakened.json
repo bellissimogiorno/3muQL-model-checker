@@ -132,13 +132,13 @@
           "Intersection": [
             "t"
           ],
-          "BrDeliverBack": [
+          "BrDeliver?": [
             "b"
           ],
-          "BrReadyBack": [
+          "BrReady?": [
             "t"
           ],
-          "BrEchoBack": [
+          "BrEcho?": [
             "t"
           ],
           "BrEchoAffine": [
@@ -147,16 +147,16 @@
           "BrBroadcastUnique": [
             "t"
           ],
-          "BrDeliverExistential": [
+          "BrDeliverExistential!": [
             "b"
           ],
-          "BrReadyForward": [
+          "BrReady!": [
             "t"
           ],
-          "BrEchoForward": [
+          "BrEcho!": [
             "t"
           ],
-          "BrReadyRelay": [
+          "BrReady!!": [
             "t"
           ],
           "BrCorrect": [
@@ -286,13 +286,13 @@
           "Intersection": [
             "t"
           ],
-          "BrDeliverBack": [
+          "BrDeliver?": [
             "b"
           ],
-          "BrReadyBack": [
+          "BrReady?": [
             "t"
           ],
-          "BrEchoBack": [
+          "BrEcho?": [
             "t"
           ],
           "BrEchoAffine": [
@@ -301,16 +301,16 @@
           "BrBroadcastUnique": [
             "t"
           ],
-          "BrDeliverExistential": [
+          "BrDeliverExistential!": [
             "b"
           ],
-          "BrReadyForward": [
+          "BrReady!": [
             "t"
           ],
-          "BrEchoForward": [
+          "BrEcho!": [
             "t"
           ],
-          "BrReadyRelay": [
+          "BrReady!!": [
             "t"
           ],
           "BrCorrect": [
@@ -405,7 +405,7 @@
     }
   ],
   "stats": {
-    "seconds": 0.00605,
+    "seconds": 0.004883,
     "backend": "builtin",
     "decisions": 11,
     "variables": 94,

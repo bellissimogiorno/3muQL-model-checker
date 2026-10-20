@@ -509,9 +509,9 @@
     }
   ],
   "stats": {
-    "seconds": 0.006458,
+    "seconds": 0.005192,
     "backend": "builtin",
-    "decisions": 49,
+    "decisions": 31,
     "variables": 41,
     "clauses": 100
   }

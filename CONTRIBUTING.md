@@ -5,7 +5,7 @@ Browser integration tests additionally require Node, Playwright, and Chromium.
 Real engine integration needs the pinned Pyodide runtime (normally downloaded
 from the CDN); the diagram browser tests run locally without Pyodide.
 See [release validation](docs/validation.md) for completed checks and limitations
-of the 0.7.1 release environment.
+of the 0.7.3 release environment.
 
 ```sh
 python tools/check_version.py
@@ -17,8 +17,9 @@ python tools/build_release.py --check
 ```
 
 Run these commands from the repository root. For the installed `3muql` command,
-use a virtual environment and `python -m pip install -e .`. The former `muql`
-command remains an alias; Python imports and `python -m muql` retain their names.
+use a virtual environment and `python -m pip install -e .`. The `muql`
+command is a compatibility alias; Python imports and `python -m muql` use the
+module name `muql`.
 
 The repository release number is recorded in `VERSION`. When making a release,
 update it together with `[project].version` in `pyproject.toml` and
@@ -53,14 +54,14 @@ The release products appear in `dist/releases/`:
 
 | Product | Purpose |
 | --- | --- |
-| `3muql-explorer-0.7.1.zip` | Complete portable source tree, including generated browser snapshots |
-| `3muql-explorer-site-0.7.1.zip` | Static website; `index.html` is at the ZIP root |
-| `muql_explorer-0.7.1-py3-none-any.whl` | Offline installation without build tools |
+| `3muql-explorer-0.7.3.zip` | Complete portable source tree, including generated browser snapshots |
+| `3muql-explorer-site-0.7.3.zip` | Static website; `index.html` is at the ZIP root |
+| `muql_explorer-0.7.3-py3-none-any.whl` | Offline installation without build tools |
 | Python source distribution (`.tar.gz`) | Installation or rebuilding with setuptools |
 
 Keep private files, virtual environments, temporary build outputs, and report
-exports out of releases. Retain the historical pinned archives in the outer
-handover unchanged. The archive filename carries the version; the source ZIP
+exports out of releases. Include all four current distributions and their
+checksums in the outer handover. The archive filename carries the version; the source ZIP
 expands into the stable `3muql-explorer/` directory. The hidden-path allowlist
 retains `.github/` and its ordinary descendants, `.gitattributes`, `.gitignore`, `.nojekyll`,
 `site/.nojekyll`, and `site/.muql-site-build`; other hidden files are excluded.
@@ -74,7 +75,7 @@ checking/search/replay, and the bundled HTTP app from an unrelated working
 directory:
 
 ```sh
-python tools/test_install.py dist/releases/muql_explorer-0.7.1-py3-none-any.whl
+python tools/test_install.py dist/releases/muql_explorer-0.7.3-py3-none-any.whl
 ```
 
 This covers packaging and serving; the real browser commands below separately
@@ -84,6 +85,21 @@ The recommended Pages workflow deploys a fresh generated site at the project
 root only after its real-browser gate passes. The alternative branch route
 uses the tracked root landing page and `site/`. See [GitHub setup](docs/github.md)
 for these distinct publication settings.
+
+## Progress and execution budgets
+
+Progress observers are optional. Their checkpoints describe actual engine
+work; they do not change the requested bounded result or bypass independent
+witness replay. Keep worker messages tied to the active request, ignore old
+messages after Stop/restart, and keep progress snapshots separate from reports.
+Do not derive a completion percentage or model total from frame counts.
+
+The browser UI accepts any finite positive budget with a 10-second default.
+The Python bridge accepts finite nonnegative budgets, including zero for an
+immediate bounded attempt. Preserve
+the separate 90-second startup deadline, bounded watchdog intervals for long
+budgets, serialization allowance and reachable Stop control. Test long-budget
+arithmetic with controlled clocks rather than waiting through long runs.
 
 ## Browser development
 
@@ -185,10 +201,9 @@ separately from view exports.
 
 ## What makes a useful change
 
-The [0.6.4 audit](docs/audit-0.6.4.md) records the earlier mathematical and
-source audit and its limits. The current [release validation](docs/validation.md)
-records the 0.7.1 deployment and packaging evidence. `python tools/benchmark_semantics.py` compares the audited closure and
-recurrence algorithms; `python tools/benchmark_search.py` measures fixed
+The [release validation](docs/validation.md) records completed checks and their
+limits. `python tools/benchmark_semantics.py` compares closure and recurrence
+algorithms; `python tools/benchmark_search.py` measures fixed
 checking workloads. Pass `--package /path/to/another/release` to the latter
 for a baseline comparison. Timings are diagnostic evidence, not test gates.
 
@@ -220,6 +235,15 @@ after changing an example. The semantic fingerprints in
 `tests/data/notation-baseline.json` protect the audited theory meanings; update
 them only with a justified mathematical change and its source correspondence.
 
+## Comparing a refactor
+
+`python tools/audit_equivalence.py --reference /path/to/reference/source --output comparison.json`
+compares deterministic encodings, complete reports/progress and witness exports
+in separate processes. Only report elapsed times and the version are excluded.
+It is a regression comparison, so run independent semantic tests too.
+`python tools/benchmark_compile.py --package /path/to/source` isolates compilation;
+alternate source versions in fresh processes and retain raw measurements.
+
 ## Reporting a problem
 
 Supply the smallest `.md` input that reproduces it, the complete command,
@@ -235,7 +259,8 @@ inspect the finite boundary semantics described in `docs/semantics.md`.
 
 - `muql/syntax.py`, `theory.py`: parsing, names, literate input, immutable edits.
 - `muql/frame.py`, `evaluate.py`: explicit frames and direct semantic evaluation.
-- `muql/compile.py`, `sat.py`, `checker.py`: encoding, SAT, result validation.
+- `muql/compile.py`, `sat.py`, `checker.py`: encoding, SAT and check orchestration.
+- `muql/witness.py`: complete countermodels, SAT decoding and independent saved-model replay.
 - `muql/cli.py`: command-line presentation and file export.
 - `muql/server.py`, `muql/_site.zip`: loopback launcher and packaged browser app.
 - `muql/web.py`: bounded JSON interface for the browser.

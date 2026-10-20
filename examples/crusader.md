@@ -36,16 +36,16 @@ let OutputFaulty(): ∀ v. B(output(v))
 
 # Quorum intersection and backward rules.
 axiom Intersection: twined(3)
-axiom CaEcho1Back: ∀ v. echo1(v) ⇀ ∃ꟴ◇(input(v))
-axiom CaEcho2Back: ∀ v. echo2(v) → ∃ꟴ□(echo1(v))
-axiom CaOutputBack: (output(zero) → ∃ꟴ□(echo2(zero))) ∧ (output(one) → ∃ꟴ□(echo2(one)))
-axiom CaOutputHalfBack: output(half) → (∃ꟴ□(echo1(zero)) ∧ ∃ꟴ□(echo1(one)))
+axiom CaEcho1?: ∀ v. echo1(v) ⇀ ∃ꟴ◇(input(v))
+axiom CaEcho2?: ∀ v. echo2(v) → ∃ꟴ□(echo1(v))
+axiom CaOutput?: (output(zero) → ∃ꟴ□(echo2(zero))) ∧ (output(one) → ∃ꟴ□(echo2(one)))
+axiom CaOutputHalf?: output(half) → (∃ꟴ□(echo1(zero)) ∧ ∃ꟴ□(echo1(one)))
 
 # Forward delivery and relay.
-axiom CaEcho1Forward: ∀ v. (input(v) ∨ ∀ꟴ◇(echo1(v))) → echo1(v)
-axiom CaEcho2Forward: (∃ v. ∃ꟴ□(echo1(v))) → (∃ v. echo2(v))
-axiom CaOutputForward: ∀ v. ∃ꟴ□(echo2(v)) → output(v)
-axiom CaOutputHalfForward: (∃ꟴ□(echo1(zero)) ∧ ∃ꟴ□(echo1(one))) → output(half)
+axiom CaEcho1!: ∀ v. (input(v) ∨ ∀ꟴ◇(echo1(v))) → echo1(v)
+axiom CaEcho2!: (∃ v. ∃ꟴ□(echo1(v))) → (∃ v. echo2(v))
+axiom CaOutput!: ∀ v. ∃ꟴ□(echo2(v)) → output(v)
+axiom CaOutputHalf!: (∃ꟴ□(echo1(zero)) ∧ ∃ꟴ□(echo1(one))) → output(half)
 
 # One shared correctness quorum; separate predicate uniformity.
 axiom CaCorrect: ∃ꟴ□(InputCorrect() ∧ Echo1Correct() ∧ Echo2Correct() ∧ OutputCorrect())
@@ -68,7 +68,7 @@ property CaLive: ∀ꟴ□(∃ v. output(v))
 ```
 
 Unlike Bracha, `CaCorrect` requires one quorum that is correct across **all four
-predicates**. `CaEcho1Back` deliberately uses strong implication: a true first
+predicates**. `CaEcho1?` deliberately uses strong implication: a true first
 echo must have an actually true input at some point in some quorum.
 
 Weak agreement permits a correct participant to output both `one` and `half`.

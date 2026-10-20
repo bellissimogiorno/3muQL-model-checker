@@ -13,6 +13,7 @@ from .frame import FrameLimit
 from .frame_search import iter_quorum_families
 from .syntax import format_formula
 from .theory import Theory, validate_theory
+from .progress import notify
 
 
 @dataclass
@@ -83,7 +84,7 @@ def _sizes(max_points, min_values, max_values, max_stages, deadline):
 def search(theory, properties=None, *, max_points=3, max_values=None,
            max_stages=3, max_quorums=8, max_frames=1000, timeout=30.0,
            max_decisions=100000, max_nodes=500000, max_mu_contexts=8,
-           solver='auto'):
+           solver='auto', progress=None):
     """Find countermodels without a user-supplied frame.
 
     Points and stages range from one to their inclusive maxima. Declared value
@@ -97,8 +98,13 @@ def search(theory, properties=None, *, max_points=3, max_values=None,
     It is cooperative: concrete witness replay and native solver slices can
     overrun until the next checkpoint. Frame/solver/compilation limits leave
     obligations unknown, never proved. With no selected properties, return
-    the first independently checked model of the axioms.
+    the first independently checked model of the axioms. Optional
+    ``progress(snapshot)`` receives cumulative search counts and actual phase
+    checkpoints, never a per-frame validity result presented as a global proof.
     """
+    notify(progress, 'validating', frames_completed=0, frames_consistent=0,
+           frames_inconsistent=0, frames_unknown=0, counterexamples_found=0,
+           decisions=0)
     validate_theory(theory, require_scope=False)
     if max_values is None:
         max_values = max(2, len(theory.values))
@@ -142,8 +148,33 @@ def search(theory, properties=None, *, max_points=3, max_values=None,
     unresolved: dict[str, str] = {}
     stats = {'frames': 0, 'consistent_frames': 0, 'inconsistent_frames': 0,
              'unknown_frames': 0, 'decisions': 0, 'solver': backend}
+    progress_shape = {}
+    counterexamples_found = 0
+
+    def announce(phase, detail=None):
+        if progress is None:
+            return
+        fields = {**progress_shape, 'frames_completed': stats['frames'],
+                  'frames_consistent': stats['consistent_frames'],
+                  'frames_inconsistent': stats['inconsistent_frames'],
+                  'frames_unknown': stats['unknown_frames'],
+                  'counterexamples_found': counterexamples_found,
+                  'decisions': stats['decisions']}
+        if detail is not None:
+            fields.update({key: detail[key] for key in ('property', 'variables', 'clauses') if key in detail})
+            fields['counterexamples_found'] += detail.get('counterexamples_found', 0)
+            fields['decisions'] += detail.get('decisions', 0)
+        notify(progress, phase, **fields)
+
+    def frame_progress(snapshot):
+        # The outer loop counts a completed frame after incorporating its
+        # verified report; do not expose the inner frame_done as that count.
+        if snapshot['phase'] != 'frame_done':
+            announce(snapshot['phase'], snapshot)
+
     exhausted = False
     stop_reason = ''
+    announce('enumerating')
     try:
         for npoints, nvalues, stages in _sizes(max_points, len(theory.values), max_values,
                                                max_stages, deadline):
@@ -153,6 +184,8 @@ def search(theory, properties=None, *, max_points=3, max_values=None,
                 raise FrameLimit('candidate size exceeds the node budget before frame allocation')
             points = tuple(f'p{i}' for i in range(npoints))
             values = _domain(theory, nvalues)
+            progress_shape = {'points': npoints, 'values': nvalues, 'stages': stages}
+            announce('enumerating')
             for family in iter_quorum_families(npoints, max_quorums, deadline=deadline):
                 _checkpoint(deadline)
                 if stats['frames'] >= max_frames:
@@ -162,10 +195,18 @@ def search(theory, properties=None, *, max_points=3, max_values=None,
                                   for mask in family), scope_declared=True)
                 remaining = deadline - monotonic()
                 active = [name for name in names if results[name].countermodel is None]
+                progress_shape = {'frame': stats['frames'] + 1, 'points': npoints,
+                                  'values': nvalues, 'stages': stages, 'quorums': len(family)}
+                announce('frame')
+                observer = {'progress': frame_progress} if progress is not None else {}
+                if progress is not None:
+                    # Synchronous observation consumes the same time budget.
+                    # Keep the established clock path unchanged when disabled.
+                    remaining = deadline - monotonic()
                 checked = check(candidate, active, timeout=max(0.0, remaining),
                                 total_timeout=max(0.0, remaining),
                                 max_decisions=max_decisions, max_nodes=max_nodes,
-                                max_mu_contexts=max_mu_contexts, solver=backend)
+                                max_mu_contexts=max_mu_contexts, solver=backend, **observer)
                 stats['frames'] += 1
                 stats['decisions'] += checked.stats.get('decisions', 0)
                 if checked.status == 'inconsistent':
@@ -182,10 +223,13 @@ def search(theory, properties=None, *, max_points=3, max_values=None,
                     item = by_name.get(name)
                     if item is not None and item.countermodel is not None:
                         results[name] = item
+                        counterexamples_found += 1
                         unresolved.pop(name, None)
                     elif checked.status != 'inconsistent' and (item is None or item.status != 'holds'):
                         unresolved.setdefault(name, (item.reason if item else checked.reason)
                                               or 'a candidate frame was not decided')
+                progress_shape.update({key: checked.stats[key] for key in ('variables', 'clauses') if key in checked.stats})
+                announce('frame_done')
                 if not names and checked.consistency_model is not None:
                     report.status = 'satisfiable'
                     stop_reason = 'Found an independently checked model of the axioms.'
@@ -194,6 +238,8 @@ def search(theory, properties=None, *, max_points=3, max_values=None,
                     report.status = 'counterexample'
                     stop_reason = 'Found an independently replayed counterexample for every selected property.'
                     break
+                progress_shape = {'points': npoints, 'values': nvalues, 'stages': stages}
+                announce('enumerating')
             else:
                 continue
             break

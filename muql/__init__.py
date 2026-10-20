@@ -4,7 +4,7 @@ from .theory import Theory, TheoryError, load, loads
 from .checker import CounterModel, PropertyResult, Report, check, replay
 from .search import SearchReport, search, witness_theory, format_theory
 
-__version__ = '0.7.1'
+__version__ = '0.7.5'
 __all__ = ['Node','FormulaError','parse_formula','format_formula','Theory','TheoryError','load','loads',
            'CounterModel','PropertyResult','Report','check','replay',
            'SearchReport','search','witness_theory','format_theory']

@@ -105,13 +105,13 @@
     "Intersection": [
       "t"
     ],
-    "BrDeliverBack": [
+    "BrDeliver?": [
       "b"
     ],
-    "BrReadyBack": [
+    "BrReady?": [
       "t"
     ],
-    "BrEchoBack": [
+    "BrEcho?": [
       "t"
     ],
     "BrEchoAffine": [
@@ -120,16 +120,16 @@
     "BrBroadcastUnique": [
       "t"
     ],
-    "BrDeliverExistential": [
+    "BrDeliverExistential!": [
       "b"
     ],
-    "BrReadyForward": [
+    "BrReady!": [
       "t"
     ],
-    "BrEchoForward": [
+    "BrEcho!": [
       "t"
     ],
-    "BrReadyRelay": [
+    "BrReady!!": [
       "t"
     ],
     "BrCorrect": [

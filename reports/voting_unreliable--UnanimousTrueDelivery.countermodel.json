@@ -116,16 +116,16 @@
     "Intersection": [
       "t"
     ],
-    "ObserveBack": [
+    "Observe?": [
       "t"
     ],
-    "ObserveNotBack": [
+    "ObserveNot?": [
       "b"
     ],
-    "ObserveForward": [
+    "Observe!": [
       "b"
     ],
-    "ObserveNotForward": [
+    "ObserveNot!": [
       "t"
     ],
     "Correct": [

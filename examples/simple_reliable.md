@@ -21,12 +21,12 @@ predicate accept/0
 predicate decide/0
 
 # Backward rules: a true event must be justified.
-axiom SimpAccept_back: accept ⇀ ∃ꟴ◇(propose)
-axiom SimpDecide_back: decide ⇀ (propose ∧ ∃ꟴ◇(accept))
+axiom SimpAccept?: accept ⇀ ∃ꟴ◇(propose)
+axiom SimpDecide?: decide ⇀ (propose ∧ ∃ꟴ◇(accept))
 
 # Forward rules: delivery and progress.
-axiom SimpAccept_forward: ∃ꟴ◇(propose) ⇀ accept
-axiom SimpDecide_forward: (propose ∧ ∃ꟴ◇(accept)) ⇀ decide
+axiom SimpAccept!: ∃ꟴ◇(propose) ⇀ accept
+axiom SimpDecide!: (propose ∧ ∃ꟴ◇(accept)) ⇀ decide
 
 # All three predicates are uncrashed.
 axiom Correct: TF(propose) ∧ TF(accept) ∧ TF(decide)
@@ -36,6 +36,6 @@ property NoInventedDecision: decide ⇀ propose
 property ProposerDecides: propose ⇀ decide
 ```
 
-Try removing `SimpDecide_forward`: a true proposal can coexist with acceptance
+Try removing `SimpDecide!`: a true proposal can coexist with acceptance
 and a false decision. No axiom requires anyone to propose, so unconditional
 termination is intentionally not asserted.

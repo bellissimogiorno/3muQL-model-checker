@@ -168,19 +168,19 @@
           "Intersection": [
             "t"
           ],
-          "ObserveBack": [
+          "Observe?": [
             "b",
             "t"
           ],
-          "ObserveNotBack": [
+          "ObserveNot?": [
             "b",
             "t"
           ],
-          "ObserveForward": [
+          "Observe!": [
             "b",
             "t"
           ],
-          "ObserveNotForward": [
+          "ObserveNot!": [
             "b",
             "t"
           ]
@@ -248,7 +248,7 @@
     }
   ],
   "stats": {
-    "seconds": 0.015892,
+    "seconds": 0.008914,
     "backend": "builtin",
     "decisions": 26,
     "variables": 86,

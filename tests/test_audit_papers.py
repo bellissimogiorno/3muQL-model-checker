@@ -131,10 +131,10 @@ class SourceModel:
             notvoteq = self.quorum(lambda x: T - self.atom("vote", n, x))
             return {
                 "Intersection": intersection,
-                "ObserveBack": weak(a("observe"), voteq),
-                "ObserveNotBack": weak(T - a("observe"), notvoteq),
-                "ObserveForward": strong(voteq, a("observe")),
-                "ObserveNotForward": strong(notvoteq, T - a("observe")),
+                "Observe?": weak(a("observe"), voteq),
+                "ObserveNot?": weak(T - a("observe"), notvoteq),
+                "Observe!": strong(voteq, a("observe")),
+                "ObserveNot!": strong(notvoteq, T - a("observe")),
                 "Correct": self.quorum(lambda x: crisp(self.atom("vote", n, x) != B)),
                 "Agreement": crisp(not (any(self.atom("observe", n, x) == T for x in self.points)
                                          and any(self.atom("observe", n, x) == F for x in self.points))),
@@ -144,15 +144,15 @@ class SourceModel:
         if name in {"bracha", "bracha_weakened"}:
             result = {
                 "Intersection": intersection,
-                "BrDeliverBack": meet(weak(a("dlvr", v), q("ready", v)) for v in self.values),
-                "BrReadyBack": meet(weak(a("ready", v), q("echo", v)) for v in self.values),
-                "BrEchoBack": meet(weak(a("echo", v), sq("bcst", v)) for v in self.values),
+                "BrDeliver?": meet(weak(a("dlvr", v), q("ready", v)) for v in self.values),
+                "BrReady?": meet(weak(a("ready", v), q("echo", v)) for v in self.values),
+                "BrEcho?": meet(weak(a("echo", v), sq("bcst", v)) for v in self.values),
                 "BrEchoAffine": affine(row("echo")),
                 "BrBroadcastUnique": min(join(sq("bcst", v) for v in self.values),
                                          affine([sq("bcst", v) for v in self.values])),
-                "BrReadyForward": meet(weak(q("echo", v), a("ready", v)) for v in self.values),
-                "BrEchoForward": meet(weak(sq("bcst", v), join(row("echo"))) for v in self.values),
-                "BrReadyRelay": meet(weak(cq("ready", v), a("ready", v)) for v in self.values),
+                "BrReady!": meet(weak(q("echo", v), a("ready", v)) for v in self.values),
+                "BrEcho!": meet(weak(sq("bcst", v), join(row("echo"))) for v in self.values),
+                "BrReady!!": meet(weak(cq("ready", v), a("ready", v)) for v in self.values),
                 "BrCorrect": min(self.quorum(lambda x: self.correct("ready", n, x)),
                                  self.quorum(lambda x: self.correct("echo", n, x))),
                 "BrReadyUniform": max(self.correct("ready", n, p), self.faulty("ready", n, p)),
@@ -163,25 +163,25 @@ class SourceModel:
             }
             delivery = meet(weak(q("ready", v), a("dlvr", v)) for v in self.values)
             if name == "bracha_weakened":
-                result.update(BrDeliverExistential=weak(join(q("ready", v) for v in self.values), join(row("dlvr"))),
-                              OriginalDeliverForward=delivery)
+                result.update({"BrDeliverExistential!": weak(join(q("ready", v) for v in self.values), join(row("dlvr"))),
+                              "OriginalDeliverForward": delivery})
             else:
-                result.update(BrDeliverForward=delivery, BrNoDup=affine(row("dlvr")),
-                              BrIntegrity=meet(weak(a("dlvr", v), sq("bcst", v)) for v in self.values),
-                              BrConsistency=affine([sq("dlvr", v) for v in self.values]),
-                              BrTotality=meet(weak(sq("dlvr", v), every("dlvr", v)) for v in self.values))
+                result.update({"BrDeliver!": delivery, "BrNoDup": affine(row("dlvr")),
+                              "BrIntegrity": meet(weak(a("dlvr", v), sq("bcst", v)) for v in self.values),
+                              "BrConsistency": affine([sq("dlvr", v) for v in self.values]),
+                              "BrTotality": meet(weak(sq("dlvr", v), every("dlvr", v)) for v in self.values)})
             return result
         if name == "crusader":
             result = {
                 "Intersection": intersection,
-                "CaEcho1Back": meet(strong(a("echo1", v), sq("input", v)) for v in self.values),
-                "CaEcho2Back": meet(weak(a("echo2", v), q("echo1", v)) for v in self.values),
-                "CaOutputBack": meet(weak(a("output", v), q("echo2", v)) for v in ("zero", "one")),
-                "CaOutputHalfBack": weak(a("output", "half"), min(q("echo1", "zero"), q("echo1", "one"))),
-                "CaEcho1Forward": meet(weak(max(a("input", v), cq("echo1", v)), a("echo1", v)) for v in self.values),
-                "CaEcho2Forward": weak(join(q("echo1", v) for v in self.values), join(row("echo2"))),
-                "CaOutputForward": meet(weak(q("echo2", v), a("output", v)) for v in self.values),
-                "CaOutputHalfForward": weak(min(q("echo1", "zero"), q("echo1", "one")), a("output", "half")),
+                "CaEcho1?": meet(strong(a("echo1", v), sq("input", v)) for v in self.values),
+                "CaEcho2?": meet(weak(a("echo2", v), q("echo1", v)) for v in self.values),
+                "CaOutput?": meet(weak(a("output", v), q("echo2", v)) for v in ("zero", "one")),
+                "CaOutputHalf?": weak(a("output", "half"), min(q("echo1", "zero"), q("echo1", "one"))),
+                "CaEcho1!": meet(weak(max(a("input", v), cq("echo1", v)), a("echo1", v)) for v in self.values),
+                "CaEcho2!": weak(join(q("echo1", v) for v in self.values), join(row("echo2"))),
+                "CaOutput!": meet(weak(q("echo2", v), a("output", v)) for v in self.values),
+                "CaOutputHalf!": weak(min(q("echo1", "zero"), q("echo1", "one")), a("output", "half")),
                 "CaCorrect": self.quorum(lambda x: meet(self.correct(pred, n, x) for pred in self.theory.predicates)),
                 "CaInput": min(max(min(a("input", "zero"), T-a("input", "one")),
                                    min(T-a("input", "zero"), a("input", "one"))), T-a("input", "half")),
@@ -204,10 +204,10 @@ class SourceModel:
             decide = lambda k, x: arrow(min(self.atom("propose", k, x), self.some(lambda y: self.atom("accept", k, y))),
                                         self.atom("decide", k, x))
             result = {
-                "SimpAccept_back": strong(a("accept"), self.some(lambda x: self.atom("propose", n, x))),
-                "SimpDecide_back": strong(a("decide"), min(a("propose"), self.some(lambda x: self.atom("accept", n, x)))),
-                "SimpAccept_forward": self.ultimately(accept, n) if eventual else accept(n, p),
-                "SimpDecide_forward": self.ultimately(decide, n) if eventual else decide(n, p),
+                "SimpAccept?": strong(a("accept"), self.some(lambda x: self.atom("propose", n, x))),
+                "SimpDecide?": strong(a("decide"), min(a("propose"), self.some(lambda x: self.atom("accept", n, x)))),
+                "SimpAccept!": self.ultimately(accept, n) if eventual else accept(n, p),
+                "SimpDecide!": self.ultimately(decide, n) if eventual else decide(n, p),
                 "NoInventedDecision": strong(a("decide"), a("propose")),
             }
             if crashes:
@@ -236,10 +236,10 @@ class SourceModel:
                 options.append(choice)
             writes.append(strong(a("write", v), min(a("leader"), join(options))))
         result = {
-            prefix + "Propose_back": meet(strong(a("propose", v), min(a("leader"), T if simpler else crisp(v != "undef"))) for v in self.values),
-            prefix + "Write_back": meet(writes),
-            prefix + "Accept_back": meet(strong(a("accept", v), sq("write", v)) for v in self.values),
-            prefix + "Accept_forward": self.ultimately(lambda k, x: weak(join(self.some(lambda y: self.atom("write", k, y, v)) for v in self.values),
+            prefix + "Propose?": meet(strong(a("propose", v), min(a("leader"), T if simpler else crisp(v != "undef"))) for v in self.values),
+            prefix + "Write?": meet(writes),
+            prefix + "Accept?": meet(strong(a("accept", v), sq("write", v)) for v in self.values),
+            prefix + "Accept!": self.ultimately(lambda k, x: weak(join(self.some(lambda y: self.atom("write", k, y, v)) for v in self.values),
                                                                         join(self.atom("accept", k, x, v) for v in self.values)), n),
             ("S" if simpler else "") + "LdrExist": min(crisp(a("leader") != B), crisp(self.some(lambda x: self.atom("leader", n, x)) == T)),
             ("S" if simpler else "") + "LdrCorrect": self.infinitely(lambda k: self.some(lambda x: min(self.atom("leader", k, x),
@@ -252,33 +252,33 @@ class SourceModel:
             "Termination": self.infinitely(lambda k: self.all(lambda x: join(self.atom("decide", k, x, v) for v in self.values)), n),
         }
         if simpler:
-            result.update(
-                SPaxDecide_back=meet(strong(a("decide", v), q("accept", v)) for v in self.values),
-                SPaxWrite_forward=self.ultimately(lambda k, x: weak(self.atom("leader", k, x), join(self.atom("write", k, x, v) for v in self.values)), n),
-                SPaxDecide_forward=self.ultimately(lambda k, x: weak(join(self.quorum(lambda y: self.atom("accept", k, y, v)) for v in self.values),
+            result.update({
+                "SPaxDecide?": meet(strong(a("decide", v), q("accept", v)) for v in self.values),
+                "SPaxWrite!": self.ultimately(lambda k, x: weak(self.atom("leader", k, x), join(self.atom("write", k, x, v) for v in self.values)), n),
+                "SPaxDecide!": self.ultimately(lambda k, x: weak(join(self.quorum(lambda y: self.atom("accept", k, y, v)) for v in self.values),
                                                                    join(self.atom("decide", k, x, v) for v in self.values)), n),
-                SPaxPCorrect=self.quorum(lambda x: self.correct("accept", n, x)),
-                SPaxWrite01=affine([sq("write", v) for v in self.values]),
+                "SPaxPCorrect": self.quorum(lambda x: self.correct("accept", n, x)),
+                "SPaxWrite01": affine([sq("write", v) for v in self.values]),
 
-            )
+            })
         else:
-            result.update(
-                PaxSend_back=meet(strong(a("send", v), min(join(sq("propose", w) for w in self.values),
+            result.update({
+                "PaxSend?": meet(strong(a("send", v), min(join(sq("propose", w) for w in self.values),
                                   max(self.latest(lambda k, w: self.atom("accept", k, p, w), n, v),
                                       min(self.no_previous(lambda k, w: self.atom("accept", k, p, w), n), crisp(v == "undef"))))) for v in self.values),
-                PaxDecideL_back=meet(strong(a("leader"), strong(a("decide", v), q("accept", v))) for v in self.values),
-                PaxDecideNotL_back=meet(strong(T-a("leader"), strong(a("decide", v), self.some(lambda x: min(self.atom("leader", n, x), self.atom("decide", n, x, v))))) for v in self.values),
-                PaxPropose_forward=weak(a("leader"), join(row("propose"))),
-                PaxSend_forward=self.ultimately(lambda k, x: weak(join(self.some(lambda y: self.atom("propose", k, y, v)) for v in self.values), join(self.atom("send", k, x, v) for v in self.values)), n),
-                PaxWrite_forward=self.ultimately(lambda k, x: weak(min(self.atom("leader", k, x), self.quorum(lambda y: join(self.atom("send", k, y, v) for v in self.values)), join(self.atom("propose", k, x, v) for v in self.values)), join(self.atom("write", k, x, v) for v in self.values)), n),
-                PaxDecideL_forward=self.ultimately(lambda k, x: weak(min(self.atom("leader", k, x), join(self.quorum(lambda y: self.atom("accept", k, y, v)) for v in self.values)), join(self.atom("decide", k, x, v) for v in self.values)), n),
-                PaxDecideNotL_forward=self.ultimately(lambda k, x: weak(min(T-self.atom("leader", k, x), self.some(lambda y: min(self.atom("leader", k, y), join(self.atom("decide", k, y, v) for v in self.values)))), join(self.atom("decide", k, x, v) for v in self.values)), n),
-                LdrUniq=leader_unique(tuple(self.atom("leader", n, x) for x in sorted(self.frame.quorums[qi]))),
-                PaxPCorrect=meet(self.quorum(lambda x: self.correct(pred, n, x)) for pred in ("propose", "send", "accept", "write", "decide")),
-                PaxPropose01=affine(row("propose")), PaxWrite01=affine(row("write")),
-                PaxNontriv=crisp(any(v != "undef" for v in self.values)),
-                DecidingQuorum=self.infinitely(lambda k: self.quorum(lambda x: crisp(join(self.atom("decide", k, x, v) for v in self.values) == T)), n),
-            )
+                "PaxDecideL?": meet(strong(a("leader"), strong(a("decide", v), q("accept", v))) for v in self.values),
+                "PaxDecide-not-L?": meet(strong(T-a("leader"), strong(a("decide", v), self.some(lambda x: min(self.atom("leader", n, x), self.atom("decide", n, x, v))))) for v in self.values),
+                "PaxPropose!": weak(a("leader"), join(row("propose"))),
+                "PaxSend!": self.ultimately(lambda k, x: weak(join(self.some(lambda y: self.atom("propose", k, y, v)) for v in self.values), join(self.atom("send", k, x, v) for v in self.values)), n),
+                "PaxWrite!": self.ultimately(lambda k, x: weak(min(self.atom("leader", k, x), self.quorum(lambda y: join(self.atom("send", k, y, v) for v in self.values)), join(self.atom("propose", k, x, v) for v in self.values)), join(self.atom("write", k, x, v) for v in self.values)), n),
+                "PaxDecideL!": self.ultimately(lambda k, x: weak(min(self.atom("leader", k, x), join(self.quorum(lambda y: self.atom("accept", k, y, v)) for v in self.values)), join(self.atom("decide", k, x, v) for v in self.values)), n),
+                "PaxDecide-not-L!": self.ultimately(lambda k, x: weak(min(T-self.atom("leader", k, x), self.some(lambda y: min(self.atom("leader", k, y), join(self.atom("decide", k, y, v) for v in self.values)))), join(self.atom("decide", k, x, v) for v in self.values)), n),
+                "LdrUniq": leader_unique(tuple(self.atom("leader", n, x) for x in sorted(self.frame.quorums[qi]))),
+                "PaxPCorrect": meet(self.quorum(lambda x: self.correct(pred, n, x)) for pred in ("propose", "send", "accept", "write", "decide")),
+                "PaxPropose01": affine(row("propose")), "PaxWrite01": affine(row("write")),
+                "PaxNontriv": crisp(any(v != "undef" for v in self.values)),
+                "DecidingQuorum": self.infinitely(lambda k: self.quorum(lambda x: crisp(join(self.atom("decide", k, x, v) for v in self.values) == T)), n),
+            })
         return result
 
 

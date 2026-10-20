@@ -87,7 +87,7 @@ predicate `vote` and nullary predicate `observe` declared.
 
 ```muql
 axiom Correct: (∀v. TF(vote(v))) ∧ TF(observe())
-axiom ObserveForward: (∃v. ∃ꟴ□(vote(v))) ⇀ observe()
+axiom Observe!: (∃v. ∃ꟴ□(vote(v))) ⇀ observe()
 property Justified: observe() → ∃v. ∃ꟴ◇(vote(v))
 ```
 
@@ -95,14 +95,14 @@ property Justified: observe() → ∃v. ∃ꟴ◇(vote(v))
 
 ```muql
 axiom Correct: (forall v. TF(vote(v))) & TF(observe())
-axiom ObserveForward: (exists v. quorum(vote(v))) -\ observe()
+axiom Observe!: (exists v. quorum(vote(v))) -\ observe()
 property Justified: observe() -> exists v. someQuorumSomePoint(vote(v))
 ```
 
 Mixing styles is also valid:
 
 ```muql
-axiom ObserveForward: (∃v. quorum(vote(v))) -\ observe()
+axiom Observe!: (∃v. quorum(vote(v))) -\ observe()
 ```
 
 The arrows have the same precedence and associate to the right in both
@@ -143,7 +143,7 @@ when the formula is embedded inside another language or command:
 For example, in a POSIX shell or PowerShell:
 
 ```sh
-python -m muql check examples/voting.md --replace 'ObserveForward=quorum(vote()) -\ observe()'
+python -m muql check examples/voting.md --replace 'Observe!=quorum(vote()) -\ observe()'
 ```
 
 Python source can use either spelling directly:
@@ -153,10 +153,10 @@ from muql import format_formula, load
 
 original = load("examples/voting.md")
 ascii_theory = original.replace(
-    "ObserveForward", r"quorum(vote()) -\ observe()"
+    "Observe!", r"quorum(vote()) -\ observe()"
 )
 unicode_theory = original.replace(
-    "ObserveForward", "∃ꟴ□(vote()) ⇀ observe()"
+    "Observe!", "∃ꟴ□(vote()) ⇀ observe()"
 )
 ```
 
@@ -165,54 +165,32 @@ Given a parsed formula node, `format_formula(node)` returns Unicode and
 parseable formulas. Use a JSON encoder such as `json.dumps` when storing a
 formula in JSON; it handles backslash escaping for you.
 
-## Compatibility and migration
+## Operator scope and accepted spellings
 
-**0.3.0 changes the scope of `somewhere` and `everywhere`.** These names now
-mean `diamond` / `◇` and `box` / `□`: some or all points in the current quorum.
-They no longer include a quantifier over quorums. Migrate old compound uses as
-follows to preserve their original meaning:
+`somewhere(P)` means `diamond(P)` / `◇(P)`, and `everywhere(P)` means
+`box(P)` / `□(P)`. These range over some or all points in the **current quorum**.
+Use explicit compounds when a formula must quantify over quorums too:
 
-| Input before 0.3.0 | Input from 0.3.0 | Unchanged Unicode meaning |
+| ASCII | Unicode | Scope |
 | --- | --- | --- |
-| `somewhere(P)` | `someQuorumSomePoint(P)` | ∃ꟴ◇(P) |
-| `everywhere(P)` | `everyQuorumEveryPoint(P)` | ∀ꟴ□(P) |
+| `somewhere(P)` | ◇(P) | Some point in the current quorum |
+| `everywhere(P)` | □(P) | Every point in the current quorum |
+| `someQuorumSomePoint(P)` | ∃ꟴ◇(P) | Some point in some quorum |
+| `everyQuorumEveryPoint(P)` | ∀ꟴ□(P) | Every point in every quorum |
 
-Review existing ASCII theory files, command-line replacements, and Python
-formula strings: an old spelling may still parse while expressing a different
-scope. Change operator calls only, preserving quoted names and comments.
-The bundled Unicode theories retain their formulas and scopes. `quorum` and
-`contra` keep their meanings; `someQuorumEveryPoint` and
-`everyQuorumSomePoint` are additional aliases for them. Temporal operators keep
-their semantics: `ultimately(P)` still expands to
+`quorum` / `someQuorumEveryPoint` and `contra` / `everyQuorumSomePoint`
+name the other two compounds. `ultimately(P)` expands to
 `sometime(everyQuorumEveryPoint(forever(P)))`.
 
-Starting with **0.2.1, `=>` is rejected**. That spelling clashes with another
-implication in the paper, so it must not serve as an alias for strong
-implication. The only accepted spellings for strong implication are `⇀` and
-`-\`.
-
-If a theory or script was written for an earlier package release, change each
-old `=>` strong-implication operator to `-\` or `⇀`. Keep `<=>` unchanged:
-it still means crisp truth-value equality. Change operators only; do not alter
-quoted names or explanatory text merely because they contain these characters.
-For example:
+Strong implication accepts only `⇀` and `-\`. The spelling `=>` is rejected
+because it clashes with another implication in the paper. `<=>` is a separate
+operator for crisp truth-value equality. For example:
 
 ```text
-Old input:  quorum(vote()) => observe()
 ASCII:      quorum(vote()) -\ observe()
 Unicode:    ∃ꟴ□(vote()) ⇀ observe()
 ```
 
-Generated ASCII output
-uses `-\`, and generated Unicode output uses `⇀`.
-
-For easier entry, the parser also accepts `⋄` for `◇`, micro sign `µ` for
-Greek `μ`, `∃1` or `∃!` for `∃¹`, and `∃01` for `∃⁰¹`. Output uses the
-canonical symbols in the table above. Predicate names, variable names, and
-declaration keywords remain ASCII; quoted point and value names can contain
-Unicode. Symbols inside quoted names and comments are not treated as
-operators.
-
-Changing notation does not change the scope of a check. A successful result
-still concerns only the declared finite frame; see
-[precise semantics](semantics.md) before interpreting temporal results.
+When editing formulas, distinguish operator calls from quoted names and
+comments. A formula's current-quorum scope and its global scope are different
+even if both spellings parse successfully.

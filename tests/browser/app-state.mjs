@@ -12,6 +12,7 @@ const source = (await readFile(new URL("../../web/app.js", import.meta.url), "ut
   .replace(/^import .* from "\.\/model-view\.js";$/m, "")
   .replace(/^import .* from "\.\/model-data\.js";$/m, "")
   .replace(/^import .* from "\.\/notation\.js";$/m, "")
+  .replace(/^import .* from "\.\/progress\.js";$/m, "")
   .replaceAll("import.meta.url", '"https://example.test/muql-explorer/app.js"');
 const legacyKey = "muql-explorer-draft-v1";
 const key = `${legacyKey}:/muql-explorer/`;
@@ -19,6 +20,8 @@ const modelSource = await readFile(new URL("../../web/model-data.js", import.met
 const { atomLabel, nameLabel } = await import(`data:text/javascript;base64,${Buffer.from(modelSource).toString("base64")}`);
 const notationSource = await readFile(new URL("../../web/notation.js", import.meta.url), "utf8");
 const { formulaHTML } = await import(`data:text/javascript;base64,${Buffer.from(notationSource).toString("base64")}`);
+const progressSource = await readFile(new URL("../../web/progress.js", import.meta.url), "utf8");
+const progressHelpers = await import(`data:text/javascript;base64,${Buffer.from(progressSource).toString("base64")}`);
 const theory = '```muql\ntheory "Saved work"\npredicate chosen/1\nproperty P: t\n```\n';
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const textOf = node => [node.textContent, ...node.children.map(textOf)].join(" ");
@@ -72,8 +75,8 @@ function element(id = "", focused = () => {}, scrolled = () => {}) {
 async function fixture({ draft = { source: theory }, failure, gate, exampleSource = theory,
   examples = [tinyExample], files = {}, confirm = true, fetchGate = {}, restore = true,
   sharedStorage, appPath = "/muql-explorer/", storageFailure = false, insecureCrypto = false } = {}) {
-  const nodes = new Map(), stored = sharedStorage || new Map(), writes = [], requests = [], timers = new Map(), workers = [], downloads = [], scrolls = [];
-  let timerId = 0, confirms = 0, activeElement;
+  const nodes = new Map(), stored = sharedStorage || new Map(), writes = [], requests = [], timers = new Map(), intervals = new Map(), workers = [], downloads = [], scrolls = [], timerDelays = [];
+  let timerId = 0, confirms = 0, activeElement, now = 0;
   const focused = node => { activeElement = node; };
   const scopedKey = `${legacyKey}:${appPath}`;
   if (draft !== null && !stored.has(scopedKey)) stored.set(scopedKey, JSON.stringify(draft));
@@ -91,6 +94,7 @@ async function fixture({ draft = { source: theory }, failure, gate, exampleSourc
   node("highlight-syntax").checked = true;
   node("solver").value = "builtin";
   for (const id of ["max-points", "max-values", "max-stages", "max-quorums", "max-frames", "max-nodes", "max-decisions", "timeout"]) node(id).value = "1";
+  node("timeout").max = "";
   node("run-form").reportValidity = () => true;
   node("run-controls").querySelectorAll = () => ["mode-search", "mode-check", "max-points", "max-values", "max-stages", "max-quorums", "max-frames", "max-nodes", "max-decisions", "timeout", "solver"].map(node);
   const window = target({ confirm(message) { confirms++; return typeof confirm === "function" ? confirm(message) : confirm; } });
@@ -103,11 +107,11 @@ async function fixture({ draft = { source: theory }, failure, gate, exampleSourc
   });
   activeElement = document.body;
   const context = vm.createContext({
-    crypto: insecureCrypto ? {} : { randomUUID }, atomLabel, nameLabel,
+    crypto: insecureCrypto ? {} : { randomUUID }, atomLabel, nameLabel, ...progressHelpers,
     URL: class extends URL {
       static createObjectURL(blob) { downloads.push(blob); return `blob:download-${downloads.length}`; }
       static revokeObjectURL() {}
-    }, Blob, performance, console,
+    }, Blob, performance: { now: () => now }, console,
     createSourceHighlighter: () => ({ refresh() {}, sync() {} }),
     formulaHTML,
     document,
@@ -119,13 +123,14 @@ async function fixture({ draft = { source: theory }, failure, gate, exampleSourc
       setItem(name, text) { if (storageFailure) throw new Error("Storage unavailable"); stored.set(name, text); if (name === scopedKey) writes.push(text); },
       removeItem(name) { stored.delete(name); },
     },
-    setTimeout(callback) { const id = ++timerId; timers.set(id, callback); return id; },
+    setTimeout(callback, delay) { const id = ++timerId; timerDelays.push(delay); timers.set(id, { callback, at: now + delay }); return id; },
     clearTimeout(id) { timers.delete(id); },
-    setInterval: () => ++timerId, clearInterval() {}, AbortController,
+    setInterval(callback, delay) { const id = ++timerId; intervals.set(id, { callback, delay, at: now + delay }); return id; },
+    clearInterval(id) { intervals.delete(id); }, AbortController,
     Worker: class {
       constructor() { Object.assign(this, target()); workers.push(this); }
       postMessage(request) { requests.push(request); }
-      terminate() {}
+      terminate() { this.terminated = true; }
     },
     async fetch(url) {
       const name = String(url).split("/").at(-1);
@@ -147,7 +152,23 @@ async function fixture({ draft = { source: theory }, failure, gate, exampleSourc
     await node("restore-draft").emit("click");
   }
   return {
-    node, window, document, stored, writes, requests, downloads, scrolls, confirms: () => confirms,
+    node, window, document, stored, writes, requests, downloads, scrolls, workers, timerDelays, confirms: () => confirms,
+    advance(milliseconds) {
+      const end = now + milliseconds;
+      while (true) {
+        const next = [...timers.entries(), ...intervals.entries()].filter(([, value]) => value.at <= end).sort((a, b) => a[1].at - b[1].at || a[0] - b[0])[0];
+        if (!next) break;
+        const [id, timer] = next;
+        now = timer.at;
+        if (intervals.has(id)) timer.at += timer.delay;
+        else timers.delete(id);
+        timer.callback();
+      }
+      now = end;
+    },
+    async message(data, worker = workers.at(-1)) {
+      await worker.emit("message", { data: { id: requests.at(-1).id, ...data } });
+    },
     async inspected(metadata = declaredMetadata()) {
       const request = requests.at(-1);
       assert.equal(request.type, "inspect");
@@ -401,6 +422,30 @@ test("source edits preserve deliberate property and axiom choices across inspect
   const restored = await fixture({ draft }); await restored.inspected();
   assert.equal(restored.node("property-options").querySelectorAll("input")[1].checked, false);
   assert.equal(restored.node("axiom-options").querySelectorAll("input")[0].checked, false);
+});
+
+test("symbolic labels survive checkbox selection, draft restoration and the worker request", async () => {
+  const metadata = declaredMetadata();
+  metadata.axioms[0].name = "PaxWrite?";
+  metadata.axioms[1].name = "PaxWrite!";
+  metadata.properties[0].name = "Goal?";
+  metadata.properties[1].name = "Goal!";
+  const f = await fixture(); await f.inspected(metadata);
+  const properties = f.node("property-options").querySelectorAll("input");
+  properties[1].checked = false; await properties[1].emit("change");
+  const axioms = f.node("axiom-options").querySelectorAll("input");
+  axioms[0].checked = false; await axioms[0].emit("change");
+  await f.window.emit("beforeunload");
+  const draft = JSON.parse(f.stored.get(key));
+  assert.deepEqual(draft.properties, ["Goal?"]);
+  assert.deepEqual(draft.drop, ["PaxWrite?"]);
+  const restored = await fixture({ draft }); await restored.inspected(metadata);
+  assert.equal(restored.node("property-options").querySelectorAll("input")[1].checked, false);
+  assert.equal(restored.node("axiom-options").querySelectorAll("input")[1].checked, true);
+  await restored.node("run-form").emit("submit");
+  const payload = JSON.parse(JSON.stringify(restored.requests.at(-1).payload));
+  assert.deepEqual(payload.properties, ["Goal?"]);
+  assert.deepEqual(payload.drop, ["PaxWrite?"]);
 });
 
 test("reinspection removes obsolete choices while preserving an axiom-model investigation", async () => {
@@ -1189,4 +1234,291 @@ test("refresh guidance stays coherent for axiom-model searches, failed reads, an
   const requests = f.requests.length;
   await f.node("run-form").emit("submit");
   assert.equal(f.requests.length, requests);
+});
+
+const searchProgress = (overrides = {}) => ({ phase: "consistency", frame: 3,
+  points: 2, values: 2, stages: 1, quorums: 2,
+  frames_completed: 2, frames_consistent: 1, frames_inconsistent: 0, frames_unknown: 1,
+  counterexamples_found: 0, variables: 12, clauses: 30, ...overrides });
+
+async function running({ timeout = 600, mode = "search" } = {}) {
+  const f = await fixture({ draft: { source: theory, mode, limits: { timeout } } });
+  await f.inspected(); await f.node("run-form").emit("submit");
+  await f.message({ type: "started" });
+  return f;
+}
+
+test("progress parsing accepts only usable snapshots and never invents unavailable counts", () => {
+  const { readProgress } = progressHelpers;
+  for (const value of [null, [], "phase", {}, { phase: "finished" },
+    { phase: "compiling", frame: 0 }, { phase: "compiling", points: -1 },
+    { phase: "compiling", variables: Infinity }, { phase: "property", property: null },
+    { phase: "property", property: "" }, { phase: "property", decisions: 1.1 },
+    { phase: "frame", frames_completed: Number.MAX_SAFE_INTEGER + 1 },
+    { phase: "frame", frames_consistent: "2" }]) assert.equal(readProgress(value), null);
+  assert.deepEqual(readProgress({ phase: "compiling", variables: 0, clauses: 0, extra: "ignored" }),
+    { phase: "compiling", variables: 0, clauses: 0 });
+  assert.equal(readProgress(searchProgress({ frames_completed: 1 }), searchProgress()), null);
+  assert.equal(readProgress(searchProgress({ counterexamples_found: 0 }), searchProgress({ counterexamples_found: 1 })), null);
+});
+
+test("live progress appears at the controls, results, and activity bar before completion", async () => {
+  const f = await running();
+  const focus = f.document.activeElement, scrolls = f.scrolls.length;
+  await f.message({ type: "progress", progress: searchProgress() });
+  assert.equal(f.node("run-progress").hidden, false);
+  assert.match(f.node("progress-phase").textContent, /axioms have a model/);
+  assert.match(f.node("progress-frame").textContent, /Frame 3: 2 participants · 2 values · 1 time stage · 2 quorums/);
+  assert.match(f.node("progress-counts").textContent, /2 frames completed · 1 frame with an axiom model/);
+  assert.match(f.node("progress-note").textContent, /axiom model can also have incomplete checks/);
+  assert.match(textOf(f.node("results")), /2 frames completed/);
+  assert.match(f.node("activity-detail").textContent, /2 frames completed · run 0s · limit 600s/);
+  assert.equal(f.node("run-controls").disabled, true);
+  assert.equal(f.node(".results-panel").getAttribute("aria-busy"), "true");
+  assert.equal(f.document.activeElement, focus);
+  assert.equal(f.scrolls.length, scrolls, "Progress must not navigate or steal focus");
+  f.advance(4500);
+  assert.match(f.node("progress-timing").textContent, /Run elapsed 4s.*4s in this phase/);
+  assert.equal(f.node("progress-counts").textContent, "2 frames completed · 1 frame with an axiom model · 0 inconsistent · 1 with incomplete checks");
+  assert.match(f.node("progress-work").textContent, /12 solver variables · 30 clauses/);
+  assert.doesNotMatch(f.node("progress-work").textContent, /decisions/);
+});
+
+test("phase clocks reset for a new phase, property, or candidate size but not repeated counters", async () => {
+  const f = await running();
+  await f.message({ type: "progress", progress: searchProgress() });
+  f.advance(3000);
+  await f.message({ type: "progress", progress: searchProgress({ frames_completed: 3 }) });
+  assert.match(f.node("progress-timing").textContent, /3s in this phase/);
+  f.advance(500);
+  await f.message({ type: "progress", progress: searchProgress({ phase: "property", property: "P", frames_completed: 3 }) });
+  f.advance(1500);
+  assert.match(f.node("progress-phase").textContent, /property “P”/);
+  assert.match(f.node("progress-timing").textContent, /Run elapsed 5s.*1s in this phase/);
+  await f.message({ type: "progress", progress: searchProgress({ phase: "property", property: "Q", frames_completed: 3 }) });
+  f.advance(500);
+  assert.match(f.node("progress-timing").textContent, /0s in this phase/);
+  await f.message({ type: "progress", progress: { phase: "enumerating", points: 3, values: 2, stages: 1 } });
+  f.advance(2000);
+  assert.match(f.node("progress-frame").textContent, /^Candidate size: 3 participants/);
+  await f.message({ type: "progress", progress: { phase: "enumerating", points: 4, values: 2, stages: 1 } });
+  f.advance(500);
+  assert.match(f.node("progress-frame").textContent, /^Candidate size: 4 participants/);
+  assert.match(f.node("progress-timing").textContent, /0s in this phase/);
+});
+
+test("visual clocks update without frequent live announcements", async () => {
+  const f = await running();
+  const starting = f.node("status-text").textContent;
+  await f.message({ type: "progress", progress: searchProgress() });
+  f.advance(4500);
+  assert.equal(f.node("status-text").textContent, starting);
+  f.advance(500);
+  const announced = f.node("status-text").textContent;
+  assert.match(announced, /axioms have a model.*2 frames completed/);
+  await f.message({ type: "progress", progress: searchProgress({ phase: "property", property: "P" }) });
+  f.advance(4500);
+  assert.equal(f.node("status-text").textContent, announced);
+  f.advance(500);
+  assert.match(f.node("status-text").textContent, /property “P”/);
+  const unchanged = f.node("status-text").textContent;
+  f.advance(10000);
+  assert.equal(f.node("status-text").textContent, unchanged, "Clock-only changes are not announcements");
+});
+
+test("rapid progress is coalesced while Stop retains the most recent unpainted snapshot", async () => {
+  const f = await running();
+  await f.message({ type: "progress", progress: searchProgress() });
+  const first = f.node("progress-counts").textContent;
+  for (let frames = 3; frames <= 1000; frames++) {
+    await f.message({ type: "progress", progress: searchProgress({ frames_completed: frames, frame: frames + 1 }) });
+  }
+  assert.equal(f.node("progress-counts").textContent, first, "Burst events must not repaint every snapshot");
+  await f.node("stop-button").emit("click");
+  assert.match(f.node("progress-counts").textContent, /^1000 frames completed/);
+  assert.match(textOf(f.node("results")), /1000 frames completed/);
+});
+
+test("coalesced updates catch up on the visual clock during a long synchronous phase", async () => {
+  const f = await running();
+  await f.message({ type: "progress", progress: searchProgress() });
+  await f.message({ type: "progress", progress: searchProgress({ phase: "property", property: "Long check" }) });
+  f.advance(500);
+  assert.match(f.node("progress-phase").textContent, /Long check/);
+  f.advance(2000);
+  assert.match(f.node("progress-timing").textContent, /2s in this phase/);
+});
+
+test("manual Stop freezes observed progress without exposing a witness or claiming completion", async () => {
+  const f = await running();
+  await f.message({ type: "progress", progress: searchProgress({ phase: "replaying", counterexamples_found: 1 }) });
+  f.advance(1500);
+  const worker = f.workers.at(-1), id = f.requests.at(-1).id;
+  await f.node("floating-stop").emit("click");
+  assert.equal(worker.terminated, true);
+  assert.equal(f.node("result-label").textContent, "Incomplete");
+  assert.match(textOf(f.node("results")), /Incomplete · stopped.*Last phase: Independently verifying/s);
+  assert.match(f.node("progress-findings").textContent, /Verified counterexamples reported: 1/);
+  assert.match(textOf(f.node("results")), /No downloadable witness or report was returned/);
+  assert.equal(f.node("results").querySelectorAll("*").some(node => node.tagName === "BUTTON"), false);
+  assert.equal(f.node("run-controls").disabled, false);
+  assert.equal(f.node(".results-panel").getAttribute("aria-busy"), "false");
+  const frozen = textOf(f.node("results")), timing = f.node("progress-timing").textContent;
+  f.advance(20000);
+  await f.message({ id, type: "progress", progress: searchProgress({ frames_completed: 10 }) }, worker);
+  await f.message({ id, type: "result", result: runResult() }, worker);
+  assert.equal(textOf(f.node("results")), frozen);
+  assert.equal(f.node("progress-timing").textContent, timing);
+  assert.equal(f.downloads.length, 0);
+});
+
+test("a new run clears interrupted progress and rejects messages from the terminated worker", async () => {
+  const f = await running();
+  await f.message({ type: "progress", progress: searchProgress({ counterexamples_found: 1 }) });
+  const oldWorker = f.workers.at(-1), oldId = f.requests.at(-1).id;
+  await f.node("stop-button").emit("click");
+  f.node("timeout").value = "700"; await f.node("timeout").emit("input");
+  assert.equal(f.node("run-progress").hidden, true);
+  assert.equal(f.node("result-label").textContent, "Previous interrupted run");
+  await f.node("run-form").emit("submit"); await f.message({ type: "started" });
+  assert.equal(f.node("progress-counts").hidden, true);
+  assert.match(f.node("progress-findings").textContent, /No verified counterexample update/);
+  await f.message({ type: "progress", progress: searchProgress() }, oldWorker);
+  await f.message({ id: oldId, type: "progress", progress: searchProgress() });
+  assert.equal(f.node("progress-counts").hidden, true);
+  assert.equal(f.node("result-label").textContent, "Running");
+  await f.message({ type: "progress", progress: { phase: "validating" } });
+  assert.match(f.node("progress-phase").textContent, /validating/);
+});
+
+test("malformed and stale progress cannot alter a current run or unlock its controls", async () => {
+  const f = await running();
+  await f.message({ type: "progress", progress: searchProgress() });
+  const counts = f.node("progress-counts").textContent;
+  for (const progress of [null, [], { phase: "complete" }, searchProgress({ points: NaN }),
+    searchProgress({ frames_completed: 1 }), searchProgress({ counterexamples_found: -1 }),
+    searchProgress({ property: 12 })]) {
+    await f.message({ type: "progress", progress });
+  }
+  await f.message({ id: -1, type: "progress", progress: searchProgress({ frames_completed: 10 }) });
+  f.advance(500);
+  assert.equal(f.node("progress-counts").textContent, counts);
+  assert.equal(f.node("run-controls").disabled, true);
+});
+
+test("inspection ignores run progress and keeps its own startup clock", async () => {
+  const f = await fixture();
+  await f.message({ type: "started" });
+  await f.message({ type: "progress", progress: searchProgress() });
+  f.advance(3000);
+  assert.equal(f.node("run-progress").hidden, true);
+  assert.match(f.node("activity-detail").textContent, /Reading elapsed 3s · separate 90s limit/);
+  assert.equal(f.node("run-controls").disabled, true);
+  await f.inspected();
+  assert.equal(f.node("run-controls").disabled, false);
+});
+
+test("fixed-frame progress and report preparation omit unavailable search counters", async () => {
+  const f = await running({ mode: "check" });
+  await f.message({ type: "progress", progress: { phase: "compiling", points: 3, values: 2, stages: 2, quorums: 3 } });
+  assert.match(f.node("progress-frame").textContent, /^Current frame: 3 participants/);
+  assert.equal(f.node("progress-counts").hidden, true);
+  assert.equal(f.node("progress-work").hidden, true);
+  assert.match(f.node("progress-findings").textContent, /No verified counterexample update yet/);
+  f.advance(100);
+  await f.message({ type: "progress", progress: { phase: "preparing_results", counterexamples_found: 1 } });
+  assert.equal(f.node("progress-phase").textContent, "Preparing reports and downloads");
+  assert.equal(f.node("result-label").textContent, "Running");
+  assert.match(f.node("progress-findings").textContent, /Verified counterexamples reported: 1/);
+  assert.equal(f.node("results").querySelectorAll("*").some(node => node.tagName === "BUTTON"), false);
+  await f.finished(runResult());
+  assert.equal(f.node("run-progress").hidden, true);
+  assert.equal(f.node("results").querySelector("#result-progress"), null);
+  const result = textOf(f.node("results"));
+  await f.message({ type: "progress", progress: { phase: "compiling" } });
+  assert.equal(textOf(f.node("results")), result);
+  assert.equal(f.node("run-progress").hidden, true);
+});
+
+test("startup has a separate 90-second limit and does not consume the chosen run budget", async () => {
+  const f = await fixture({ draft: { source: theory, limits: { timeout: 10 } } });
+  await f.inspected(); await f.node("run-form").emit("submit");
+  f.advance(80000);
+  assert.match(f.node("progress-timing").textContent, /Startup elapsed 1m 20s.*chosen run limit 10s starts after loading/);
+  await f.message({ type: "started" });
+  await f.message({ type: "progress", progress: { phase: "compiling" } });
+  f.advance(10000);
+  assert.equal(f.node("result-label").textContent, "Running", "Allow the completed report one second to serialize");
+  assert.match(f.node("progress-timing").textContent, /Run elapsed 10s/);
+  f.advance(1000);
+  assert.equal(f.node("result-label").textContent, "Incomplete");
+  assert.match(textOf(f.node("results")), /time limit reached.*Last phase: Building/s);
+  assert.match(f.node("progress-timing").textContent, /Run elapsed 11s/);
+});
+
+test("a stalled startup stops at 90 seconds regardless of a long run budget", async () => {
+  const f = await fixture({ draft: { source: theory, limits: { timeout: 600 } } });
+  await f.inspected(); await f.node("run-form").emit("submit");
+  f.advance(89999);
+  assert.equal(f.node("result-label").textContent, "Running");
+  f.advance(1);
+  assert.equal(f.node("result-label").textContent, "Incomplete");
+  assert.match(textOf(f.node("results")), /engine took too long to start/);
+  assert.match(f.node("progress-timing").textContent, /Startup elapsed 1m 30s/);
+});
+
+test("duplicate started messages do not reset the run clock or watchdog", async () => {
+  const f = await running({ timeout: 10 });
+  f.advance(9000); await f.message({ type: "started" });
+  f.advance(2000);
+  assert.equal(f.node("result-label").textContent, "Incomplete");
+  assert.match(f.node("progress-timing").textContent, /Run elapsed 11s/);
+});
+
+test("saved long and extreme finite time limits restore and use bounded watchdog slices", async () => {
+  for (const timeout of [600, 2147484, Number.MAX_VALUE]) {
+    const f = await running({ timeout });
+    assert.equal(Number(f.node("timeout").value), timeout);
+    assert.equal(f.requests.at(-1).payload.limits.timeout, timeout);
+    f.advance(120000);
+    assert.equal(f.node("result-label").textContent, "Running");
+    assert.ok(f.timerDelays.every(delay => Number.isFinite(delay) && delay > 0 && delay <= 60000));
+    await f.finished(runResult());
+    assert.equal(f.node("run-controls").disabled, false);
+  }
+  const { deadlineDelay } = progressHelpers;
+  assert.equal(deadlineDelay(Number.MAX_VALUE, 120), 60000);
+  assert.equal(deadlineDelay(600, 590), 10000);
+  assert.equal(deadlineDelay(600, 600, 1), 1000);
+  assert.equal(deadlineDelay(600, 601, 1), 0);
+  assert.equal(deadlineDelay(Number.MIN_VALUE, 0), 1);
+});
+
+test("the page accepts positive fractional budgets and rejects nonfinite or nonpositive scripted values", async () => {
+  const html = await readFile(new URL("../../web/index.html", import.meta.url), "utf8");
+  const input = html.match(/<input id="timeout"[^>]+>/)[0];
+  assert.doesNotMatch(input, /\bmax=/);
+  assert.match(input, /step="any"/);
+  const f = await fixture(); await f.inspected();
+  const before = f.requests.length;
+  for (const value of ["", "0", "-1", "Infinity", "NaN", "1e999"]) {
+    f.node("timeout").value = value;
+    await f.node("run-form").emit("submit");
+    assert.equal(f.requests.length, before, value);
+    assert.match(textOf(f.node("error-box")), /finite number of seconds greater than zero/);
+  }
+  f.node("timeout").value = "0.000001";
+  await f.node("run-form").emit("submit"); await f.message({ type: "started" });
+  assert.equal(f.requests.length, before + 1);
+  f.advance(2000);
+  assert.equal(f.node("result-label").textContent, "Incomplete");
+});
+
+test("an unexpected worker failure retains its last progress as incomplete", async () => {
+  const f = await running();
+  await f.message({ type: "progress", progress: searchProgress() });
+  await f.workers.at(-1).emit("error");
+  assert.equal(f.node("result-label").textContent, "Incomplete");
+  assert.match(textOf(f.node("results")), /engine stopped before returning a result.*2 frames completed/s);
+  assert.match(f.node("progress-note").textContent, /No downloadable witness or report was returned/);
 });

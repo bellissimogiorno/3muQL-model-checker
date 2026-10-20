@@ -8,6 +8,7 @@ from muql.backends import BackendUnavailable
 from muql.checker import check, replay
 from muql.theory import loads
 from muql.web import MAX_SOURCE_CHARS, handle_json
+from muql.web import _downloads
 
 
 SCOPED = """# Tiny choices
@@ -127,7 +128,7 @@ class WebBridgeTests(unittest.TestCase):
         limits = [{"max_points": 7}, {"max_values": 9}, {"max_stages": 13},
                   {"max_quorums": 65}, {"max_frames": 5001}, {"max_nodes": 500001},
                   {"max_decisions": 1000001}, {"max_mu_contexts": 13},
-                  {"timeout": 121}, {"timeout": -1}, {"timeout": True},
+                  {"timeout": -1}, {"timeout": True}, {"timeout": 10**400},
                   {"max_points": True}, {"max_points": 2.0}, {"max_nodes": 0},
                   {"timeout": "10"}, {"max_frames": None}, {"typo": 1}]
         with patch("muql.web.check") as checked, patch("muql.web.search") as searched:
@@ -189,6 +190,48 @@ class WebBridgeTests(unittest.TestCase):
         self.assertFalse(result["ok"])
         self.assertIn("built-in", result["error"]["message"])
         self.assertNotIn("install command", result["error"]["message"])
+
+    def test_large_finite_time_budgets_reach_the_checker_without_a_browser_cap(self):
+        for seconds in (121, 3600, 1e100):
+            with self.subTest(seconds=seconds), patch("muql.web.check", wraps=check) as checked:
+                result = request(limits={"timeout": seconds})
+                self.assertTrue(result["ok"], result)
+                self.assertEqual(checked.call_args.kwargs["timeout"], seconds)
+                self.assertEqual(checked.call_args.kwargs["total_timeout"], seconds)
+
+    def test_run_progress_uses_json_strings_and_inspection_never_calls_observer(self):
+        events = []
+        text = handle_json(json.dumps({"action": "run", "source": SCOPED}), events.append)
+        self.assertTrue(json.loads(text)["ok"])
+        self.assertTrue(events)
+        self.assertTrue(all(isinstance(event, str) for event in events))
+        snapshots = [json.loads(event) for event in events]
+        self.assertEqual(snapshots[0]["phase"], "validating")
+        self.assertEqual(snapshots[-1]["phase"], "preparing_results")
+        events.clear()
+        self.assertTrue(json.loads(handle_json(json.dumps({"action": "inspect", "source": SCOPED}), events.append))["ok"])
+        self.assertEqual(events, [])
+
+    def test_progress_callback_failure_does_not_replace_a_valid_response(self):
+        def failed(_snapshot):
+            raise RuntimeError("observer failed")
+        data = json.loads(handle_json(json.dumps({"action": "run", "source": SCOPED}), failed))
+        self.assertTrue(data["ok"], data)
+        self.assertEqual(data["report"]["status"], "checked")
+
+    def test_export_preparation_retains_search_counts_before_witness_download_replay(self):
+        snapshots = []
+
+        def downloads(theory, report, max_mu_contexts):
+            self.assertEqual(snapshots[-1]["phase"], "preparing_results")
+            self.assertEqual(snapshots[-1]["frames_completed"], report.stats["frames"])
+            self.assertEqual(snapshots[-1]["counterexamples_found"], 1)
+            return _downloads(theory, report, max_mu_contexts)
+
+        with patch("muql.web._downloads", side_effect=downloads):
+            result = json.loads(handle_json(json.dumps({"action": "run", "mode": "search", "source": TEMPLATE}),
+                                            lambda text: snapshots.append(json.loads(text))))
+        self.assertTrue(result["ok"], result)
 
     def test_declared_values_raise_implicit_search_default(self):
         source = "```muql\nvalues red blue green\nproperty Reflexive: t\n```"

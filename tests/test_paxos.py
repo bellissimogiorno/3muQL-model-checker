@@ -91,8 +91,8 @@ class AgreementWithCrashesTests(unittest.TestCase):
                     value = self.evaluator.eval(axiom, context)
                     self.assertIn(value, (1, 2))
                     expected = 1 if (
-                        name == "SPaxDecide_forward"
-                        or (name == "SPaxDecide_back" and context[1] == 1)
+                        name == "SPaxDecide!"
+                        or (name == "SPaxDecide?" and context[1] == 1)
                     ) else 2
                     self.assertEqual(value, expected)
 
@@ -128,7 +128,7 @@ class PaxosMutationTests(unittest.TestCase):
         self.assertTrue(conflicts)
 
     def test_removing_accept_provenance_permits_an_unproposed_true_decision(self):
-        theory = load(EXAMPLES / "paxos_simpler.md").without("SPaxAccept_back")
+        theory = load(EXAMPLES / "paxos_simpler.md").without("SPaxAccept?")
         report = check(theory, properties=["Validity"])
         self.assertEqual(report.status, "checked", report.reason)
         result, = report.properties

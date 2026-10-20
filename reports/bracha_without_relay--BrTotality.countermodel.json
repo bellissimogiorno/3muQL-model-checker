@@ -349,15 +349,15 @@
     "Intersection": [
       "t"
     ],
-    "BrDeliverBack": [
+    "BrDeliver?": [
       "b",
       "t"
     ],
-    "BrReadyBack": [
+    "BrReady?": [
       "b",
       "t"
     ],
-    "BrEchoBack": [
+    "BrEcho?": [
       "b",
       "t"
     ],
@@ -368,15 +368,15 @@
     "BrBroadcastUnique": [
       "b"
     ],
-    "BrDeliverForward": [
+    "BrDeliver!": [
       "b",
       "t"
     ],
-    "BrReadyForward": [
+    "BrReady!": [
       "b",
       "t"
     ],
-    "BrEchoForward": [
+    "BrEcho!": [
       "b",
       "t"
     ],
